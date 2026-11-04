@@ -1,9 +1,15 @@
 # AGENTS.md — Ecos de Nicaragua
 
 ## Estado actual
-- El repo solo contiene `ROADMAP.md`. **No hay código, `package.json`, lockfile ni scripts** todavía; no inventes comandos de build/test/lint.
+- Fase 0 en curso: `client/` (React 19 + Vite 8) y `server/` (Express 5) ya existen. Aún no hay base de datos, rutas de contenido ni tests.
 - El roadmap, los docs y el contenido del producto están en **español**; mantén ese idioma en la documentación y en todo texto visible al usuario.
-- La estructura `client/` + `server/` es parte de la tarea `t02`, aún no creada.
+
+## Comandos
+- Cliente: `cd client && npm install && npm run dev` → http://localhost:5173. Build: `npm run build`.
+- Servidor: `cd server && npm install && npm run dev` → http://localhost:3000 (`node --watch`).
+- Vite redirige `/api` a `http://localhost:3000`; no hace falta CORS en desarrollo.
+- `.env` va en la raíz (copia `.env.example`); el servidor carga `../../.env` explícitamente.
+- No hay tests ni linter configurados todavía. Si se agregan, documenta aquí el comando exacto.
 
 ## Fuente de verdad: `ROADMAP.md`
 - Trabaja **una tarea a la vez**, en el orden de su fase, y revisa su línea **Depende de** antes de empezar.
