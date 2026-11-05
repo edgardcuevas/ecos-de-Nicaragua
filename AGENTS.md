@@ -2,6 +2,7 @@
 
 ## Estado actual
 - Fase 0 completada: `client/` (React 19 + Vite 8), `server/` (Express 5) y base MySQL con esquema y seed aplicados. Aún no hay rutas de contenido ni tests.
+- Handoff detallado para retomar: [`docs/handoff.md`](docs/handoff.md).
 - El roadmap, los docs y el contenido del producto están en **español**; mantén ese idioma en la documentación y en todo texto visible al usuario.
 
 ## Comandos
