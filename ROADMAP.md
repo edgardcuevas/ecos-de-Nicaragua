@@ -66,7 +66,7 @@ Pasarela de pago, suscripciones automáticas, app móvil, panel institucional pa
 - [x] `t01` (S) Definir el alcance del MVP y guardar el documento en `docs/`. → [`docs/alcance-mvp.md`](docs/alcance-mvp.md)
 - [x] `t02` (S) Crear la estructura del repo: `client/` (React), `server/` (Node.js), README, `.env.example`. → [`README.md`](README.md)
 - [x] `t03` (M) Wireframes de 5 pantallas: inicio, biblioteca, ficha de leyenda, mapa y trivia. Primero versión celular. → [`docs/wireframes.md`](docs/wireframes.md)
-- [ ] `t04` (M) Esquema de MySQL con diagrama. Partir del borrador del MVP, recortado: sin `municipios`, `materiales_educativos` ni respuestas por usuario. Incluir `fuentes` y nivel de verificación.
+- [ ] `t04` (M) Esquema de MySQL con diagrama. Partir del borrador del MVP, recortado: sin `municipios`, `materiales_educativos` ni respuestas por usuario. Incluir `fuentes` y nivel de verificación. → borrador: [`docs/esquema-bd.md`](docs/esquema-bd.md)
 
 **Terminado cuando:** el repo tiene estructura y README, el esquema está revisado por el autor y los wireframes existen.
 
