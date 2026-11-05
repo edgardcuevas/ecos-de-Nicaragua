@@ -81,7 +81,6 @@ docs/                           alcance, wireframes, esquema
 
 ## Bloqueos y decisiones abiertas
 
-- **`t07` (identidad visual) está bloqueada:** no hay logo en el repo y falta decidir misterio / folclore tradicional / mezcla.
 - `t08` (ilustraciones) y `t25` (narraciones) requieren producción humana; no generarlas ni inventarlas.
 - `t05`/`t06`/`t50` requieren investigación con fuentes reales; el autor debe validar el contenido.
 - `t11` (reglas de citación y licencias) **no está hecho**; se intentó y se canceló.
