@@ -57,8 +57,9 @@ npm run db:setup     # ambas, en orden
 
 - `db:migrate` es idempotente: registra cada archivo en `schema_migrations`.
 - `db:seed` hace upsert por `codigo`; se puede repetir.
+- Si usas un usuario limitado a la base (como `ecos`), créala antes: `CREATE DATABASE` requiere permiso global.
 - El contenido de leyendas llega en la Fase 1; el seed actual solo carga regiones.
 
 ## Estado
 
-Fase 0 del roadmap en curso. El esquema y las migraciones están listos, pero aún no se han ejecutado contra un MySQL real.
+Fase 0 completada. Base de datos creada y verificada en MySQL 9.7: 16 tablas y las 17 regiones cargadas. Aún no hay rutas de contenido.

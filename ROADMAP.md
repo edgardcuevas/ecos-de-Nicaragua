@@ -66,7 +66,7 @@ Pasarela de pago, suscripciones automáticas, app móvil, panel institucional pa
 - [x] `t01` (S) Definir el alcance del MVP y guardar el documento en `docs/`. → [`docs/alcance-mvp.md`](docs/alcance-mvp.md)
 - [x] `t02` (S) Crear la estructura del repo: `client/` (React), `server/` (Node.js), README, `.env.example`. → [`README.md`](README.md)
 - [x] `t03` (M) Wireframes de 5 pantallas: inicio, biblioteca, ficha de leyenda, mapa y trivia. Primero versión celular. → [`docs/wireframes.md`](docs/wireframes.md)
-- [ ] `t04` (M) Esquema de MySQL con diagrama. Partir del borrador del MVP, recortado: sin `municipios`, `materiales_educativos` ni respuestas por usuario. Incluir `fuentes` y nivel de verificación. → borrador: [`docs/esquema-bd.md`](docs/esquema-bd.md)
+- [x] `t04` (M) Esquema de MySQL con diagrama. Partir del borrador del MVP, recortado: sin `municipios`, `materiales_educativos` ni respuestas por usuario. Incluir `fuentes` y nivel de verificación. → [`docs/esquema-bd.md`](docs/esquema-bd.md), aplicado en MySQL 9.7
 
 **Terminado cuando:** el repo tiene estructura y README, el esquema está revisado por el autor y los wireframes existen.
 
@@ -97,7 +97,7 @@ Pasarela de pago, suscripciones automáticas, app móvil, panel institucional pa
 **Objetivo:** base de datos y API que sirvan el contenido.
 **Depende de:** Fase 0 (`t02`, `t04`).
 
-- [ ] `t12` (M) Crear la base de datos con migraciones y un script de carga (seed) del contenido disponible. → código listo: [`server/db`](server/db), pendiente ejecutar contra MySQL
+- [x] `t12` (M) Crear la base de datos con migraciones y un script de carga (seed) del contenido disponible. → [`server/db`](server/db), migración y seed ejecutados
 - [ ] `t13` (M) API de leyendas: listar, detalle y filtrar por región y categoría.
 - [ ] `t14` (M) API de regiones para el mapa, con leyendas asociadas, fuente y nivel de verificación.
 - [ ] `t17` (S) Servir imágenes y audios con caché y rutas por leyenda.

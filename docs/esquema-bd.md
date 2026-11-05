@@ -1,6 +1,8 @@
 # Esquema de base de datos — MVP
 
-Borrador para revisión del autor. MySQL 8, InnoDB, `utf8mb4`. No se ha ejecutado contra un servidor todavía.
+Borrador para revisión del autor. MySQL 8 o superior, InnoDB, `utf8mb4`. Ya aplicado y verificado en MySQL 9.7 local.
+
+Si cambias el DDL, crea una migración nueva en `server/db/migrations/`; no edites una migración ya aplicada.
 
 Recorte aplicado: sin `municipios`, sin `materiales_educativos` y sin respuestas o progreso por usuario.
 
