@@ -44,6 +44,21 @@ npm run dev
 
 Copia `.env.example` a `.env` en la raíz y completa los valores locales. El archivo `.env` no se versiona.
 
+## Base de datos
+
+Requiere MySQL 8. Las migraciones crean la base si no existe.
+
+```bash
+cd server
+npm run db:migrate   # aplica server/db/migrations/*.sql
+npm run db:seed      # carga las 17 regiones del mapa
+npm run db:setup     # ambas, en orden
+```
+
+- `db:migrate` es idempotente: registra cada archivo en `schema_migrations`.
+- `db:seed` hace upsert por `codigo`; se puede repetir.
+- El contenido de leyendas llega en la Fase 1; el seed actual solo carga regiones.
+
 ## Estado
 
-Fase 0 del roadmap en curso. Todavía no hay base de datos ni rutas de contenido.
+Fase 0 del roadmap en curso. El esquema y las migraciones están listos, pero aún no se han ejecutado contra un MySQL real.

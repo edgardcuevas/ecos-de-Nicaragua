@@ -9,6 +9,7 @@
 - Servidor: `cd server && npm install && npm run dev` → http://localhost:3000 (`node --watch`).
 - Vite redirige `/api` a `http://localhost:3000`; no hace falta CORS en desarrollo.
 - `.env` va en la raíz (copia `.env.example`); el servidor carga `../../.env` explícitamente.
+- Base de datos (MySQL 8): `cd server && npm run db:migrate`, luego `npm run db:seed`. `db:migrate` crea la base si no existe y es idempotente; `db:seed` solo carga las 17 regiones por ahora.
 - No hay tests ni linter configurados todavía. Si se agregan, documenta aquí el comando exacto.
 
 ## Fuente de verdad: `ROADMAP.md`

@@ -1,0 +1,19 @@
+[
+  { "codigo": "boaco", "nombre": "Boaco", "tipo": "departamento" },
+  { "codigo": "carazo", "nombre": "Carazo", "tipo": "departamento" },
+  { "codigo": "chinandega", "nombre": "Chinandega", "tipo": "departamento" },
+  { "codigo": "chontales", "nombre": "Chontales", "tipo": "departamento" },
+  { "codigo": "esteli", "nombre": "Estelí", "tipo": "departamento" },
+  { "codigo": "granada", "nombre": "Granada", "tipo": "departamento" },
+  { "codigo": "jinotega", "nombre": "Jinotega", "tipo": "departamento" },
+  { "codigo": "leon", "nombre": "León", "tipo": "departamento" },
+  { "codigo": "madriz", "nombre": "Madriz", "tipo": "departamento" },
+  { "codigo": "managua", "nombre": "Managua", "tipo": "departamento" },
+  { "codigo": "masaya", "nombre": "Masaya", "tipo": "departamento" },
+  { "codigo": "matagalpa", "nombre": "Matagalpa", "tipo": "departamento" },
+  { "codigo": "nueva-segovia", "nombre": "Nueva Segovia", "tipo": "departamento" },
+  { "codigo": "rio-san-juan", "nombre": "Río San Juan", "tipo": "departamento" },
+  { "codigo": "rivas", "nombre": "Rivas", "tipo": "departamento" },
+  { "codigo": "costa-caribe-norte", "nombre": "Costa Caribe Norte", "tipo": "region_autonoma" },
+  { "codigo": "costa-caribe-sur", "nombre": "Costa Caribe Sur", "tipo": "region_autonoma" }
+]

@@ -97,7 +97,7 @@ Pasarela de pago, suscripciones automáticas, app móvil, panel institucional pa
 **Objetivo:** base de datos y API que sirvan el contenido.
 **Depende de:** Fase 0 (`t02`, `t04`).
 
-- [ ] `t12` (M) Crear la base de datos con migraciones y un script de carga (seed) del contenido disponible.
+- [ ] `t12` (M) Crear la base de datos con migraciones y un script de carga (seed) del contenido disponible. → código listo: [`server/db`](server/db), pendiente ejecutar contra MySQL
 - [ ] `t13` (M) API de leyendas: listar, detalle y filtrar por región y categoría.
 - [ ] `t14` (M) API de regiones para el mapa, con leyendas asociadas, fuente y nivel de verificación.
 - [ ] `t17` (S) Servir imágenes y audios con caché y rutas por leyenda.
