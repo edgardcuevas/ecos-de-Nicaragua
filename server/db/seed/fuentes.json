@@ -1,0 +1,83 @@
+[
+  {
+    "clave": "palma-mujeres-del-mito",
+    "titulo": "Mujeres del mito",
+    "autor": "Milagros Palma",
+    "tipo": "libro",
+    "referencia": "Edición consultada",
+    "url": null,
+    "licencia": null
+  },
+  {
+    "clave": "pena-folklore-nicaragua",
+    "titulo": "Folklore de Nicaragua",
+    "autor": "Enrique Peña Hernández",
+    "tipo": "libro",
+    "referencia": "Editorial Unión, Masaya, 1968",
+    "url": null,
+    "licencia": null
+  },
+  {
+    "clave": "portal-nicaragua",
+    "titulo": "Portal de Nicaragua - Leyendas y tradición oral",
+    "autor": null,
+    "tipo": "sitio_web",
+    "referencia": "Recopilación digital de leyendas nicaragüenses",
+    "url": "https://denicaragua.digital/leyendas-de-nicaragua/",
+    "licencia": null
+  },
+  {
+    "clave": "usc-folklore-archives",
+    "titulo": "USC Digital Folklore Archives - El Cadejo",
+    "autor": null,
+    "tipo": "sitio_web",
+    "referencia": "Testimonio sobre El Cadejo transmitido en familia",
+    "url": "https://folklore.usc.edu/el-cadejo-5/",
+    "licencia": null
+  },
+  {
+    "clave": "revista-temas-nicaraguenses",
+    "titulo": "Revista de Temas Nicaragüenses - La Mocuana",
+    "autor": null,
+    "tipo": "articulo",
+    "referencia": "Recopilación folklórica sobre La Mocuana",
+    "url": "https://enriquebolanos.org/media/publicacion/RevistaTemasNicaraguenses85mayo2015.pdf",
+    "licencia": null
+  },
+  {
+    "clave": "laprensa-mocuana-trinidad",
+    "titulo": "La Prensa - La Mocuana de La Trinidad",
+    "autor": null,
+    "tipo": "articulo",
+    "referencia": "3 de marzo de 2007",
+    "url": "https://www.laprensani.com/2007/03/03/suplemento/la-prensa-literaria/1744551-la-mocuana-de-la-trinidad",
+    "licencia": null
+  },
+  {
+    "clave": "mined-materiales-educativos",
+    "titulo": "MINED - Materiales educativos de Nicaragua",
+    "autor": "Ministerio de Educación de Nicaragua",
+    "tipo": "otro",
+    "referencia": "Materiales educativos sobre leyendas nicaragüenses",
+    "url": null,
+    "licencia": null
+  },
+  {
+    "clave": "tradicion-oral-nicaragua",
+    "titulo": "Tradición oral nicaragüense",
+    "autor": null,
+    "tipo": "testimonio_oral",
+    "referencia": "Relatos transmitidos por comunidades y familias",
+    "licencia": null,
+    "url": null
+  },
+  {
+    "clave": "historia-valdivieso",
+    "titulo": "Fray Antonio de Valdivieso y la colonia en Nicaragua",
+    "autor": null,
+    "tipo": "otro",
+    "referencia": "Reconstrucciones históricas sobre el obispo de Nicaragua",
+    "url": null,
+    "licencia": null
+  }
+]

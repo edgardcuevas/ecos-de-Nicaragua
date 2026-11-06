@@ -1,0 +1,1211 @@
+[
+  {
+    "slug": "la-mocuana",
+    "titulo": "La Mocuana",
+    "categoria": "tradicion-oral",
+    "resumen": "La Mocuana es una de las leyendas más conocidas de Nicaragua. Cuenta la historia de una joven indígena, hija de un cacique, que conocía el secreto de un tesoro oculto y fue engañada por un forastero.",
+    "historia": "La Mocuana es una leyenda de tradición oral nicaragüense. Narra la historia de una joven indígena, hija de un cacique, que guardaba el secreto de un tesoro oculto. Un forastero la engañó para obtener la ubicación del tesoro y luego la traicionó. Tras la traición, su espíritu comenzó a aparecer en caminos, montañas y cuevas, especialmente en el norte del país. La leyenda se transmite en Sébaco, Matagalpa, La Trinidad y Estelí, y se considera una advertencia sobre la confianza y la traición.",
+    "origen": "Tradición oral del norte de Nicaragua.",
+    "alcance": "local",
+    "regiones": [
+      {
+        "codigo": "matagalpa",
+        "fuente": "revista-temas-nicaraguenses",
+        "nivelVerificacion": "testimonio_oral",
+        "nota": "Sébaco"
+      },
+      {
+        "codigo": "esteli",
+        "fuente": "laprensa-mocuana-trinidad",
+        "nivelVerificacion": "testimonio_oral",
+        "nota": "La Trinidad"
+      }
+    ],
+    "versiones": [
+      {
+        "titulo": "Versión canónica",
+        "contenido": "La Mocuana es una leyenda de tradición oral nicaragüense. Narra la historia de una joven indígena, hija de un cacique, que guardaba el secreto de un tesoro oculto. Un forastero la engañó para obtener la ubicación del tesoro y luego la traicionó. Tras la traición, su espíritu comenzó a aparecer en caminos, montañas y cuevas, especialmente en el norte del país. La leyenda se transmite en Sébaco, Matagalpa, La Trinidad y Estelí, y se considera una advertencia sobre la confianza y la traición.",
+        "esPremium": false,
+        "orden": 1,
+        "fuente": "palma-mujeres-del-mito"
+      },
+      {
+        "titulo": "Versión ampliada",
+        "contenido": "La Mocuana es una leyenda de tradición oral nicaragüense. Narra la historia de una joven indígena, hija de un cacique, que guardaba el secreto de un tesoro oculto. Un forastero la engañó para obtener la ubicación del tesoro y luego la traicionó. Tras la traición, su espíritu comenzó a aparecer en caminos, montañas y cuevas, especialmente en el norte del país. La leyenda se transmite en Sébaco, Matagalpa, La Trinidad y Estelí, y se considera una advertencia sobre la confianza y la traición.",
+        "esPremium": true,
+        "orden": 2,
+        "fuente": "revista-temas-nicaraguenses"
+      }
+    ],
+    "imagenes": [
+      {
+        "archivo": "img/mocuana/portada.jpg",
+        "ruta": "leyendas/la-mocuana/portada.webp",
+        "textoAlternativo": "La Mocuana junto a una cueva.",
+        "licencia": "PENDIENTE",
+        "esPrincipal": true,
+        "esPremium": false
+      },
+      {
+        "archivo": "img/mocuana/aparicion.jpg",
+        "ruta": "leyendas/la-mocuana/aparicion.webp",
+        "textoAlternativo": "Aparición de La Mocuana en el camino.",
+        "licencia": "PENDIENTE",
+        "esPrincipal": false,
+        "esPremium": true
+      }
+    ],
+    "audios": [
+      {
+        "archivo": "audios/la mocuana.mp3",
+        "ruta": "audios/la-mocuana.mp3",
+        "titulo": "La Mocuana: La mujer de la cueva",
+        "duracionSegundos": null,
+        "licencia": "PENDIENTE",
+        "esPremium": true
+      }
+    ],
+    "preguntas": [
+      {
+        "orden": 1,
+        "enunciado": "¿Cómo se llama la protagonista de esta leyenda?",
+        "esPremium": false,
+        "explicacion": "La respuesta correcta es: La Mocuana",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "La Cegua",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "La Mocuana",
+            "esCorrecta": true
+          },
+          {
+            "orden": 3,
+            "texto": "La Llorona",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "La Tulivieja",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 2,
+        "enunciado": "¿Quién era el padre de La Mocuana?",
+        "esPremium": false,
+        "explicacion": "La respuesta correcta es: Un cacique indígena",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Un sacerdote",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Un agricultor",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "Un cacique indígena",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Un gobernador",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 3,
+        "enunciado": "¿Qué importante secreto conocía La Mocuana?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: La ubicación de un tesoro oculto",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "La ubicación de una ciudad perdida",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "La ubicación de un tesoro oculto",
+            "esCorrecta": true
+          },
+          {
+            "orden": 3,
+            "texto": "La ubicación de una iglesia",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "La ubicación de un volcán",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 4,
+        "enunciado": "¿Quién engaña a La Mocuana en la versión más conocida?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Un español o forastero",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Un comerciante",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Un soldado indígena",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "Un español o forastero",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Un sacerdote",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 5,
+        "enunciado": "¿En qué departamentos se asocia principalmente la leyenda?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Matagalpa y Estelí",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "León y Chinandega",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Managua y Masaya",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "Matagalpa y Estelí",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Granada y Rivas",
+            "esCorrecta": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "el-cadejo",
+    "titulo": "El Cadejo",
+    "categoria": "sobrenatural",
+    "resumen": "El Cadejo es un perro sobrenatural que aparece durante la noche en caminos solitarios. Existen dos versiones principales: el Cadejo Blanco, protector, y el Cadejo Negro, asociado al peligro.",
+    "historia": "El Cadejo es una leyenda sobrenatural de tradición oral centroamericana, presente en Nicaragua. Describe a un perro de gran tamaño que aparece en caminos nocturnos. La versión más conocida distingue entre el Cadejo Blanco, que protege a los viajeros, y el Cadejo Negro, que representa el peligro. La leyenda no está asociada a un único departamento y se relaciona con la vida rural y los caminos antiguos.",
+    "origen": "Tradición oral centroamericana.",
+    "alcance": "nacional",
+    "regiones": [],
+    "versiones": [
+      {
+        "titulo": "Versión canónica",
+        "contenido": "El Cadejo es una leyenda sobrenatural de tradición oral centroamericana, presente en Nicaragua. Describe a un perro de gran tamaño que aparece en caminos nocturnos. La versión más conocida distingue entre el Cadejo Blanco, que protege a los viajeros, y el Cadejo Negro, que representa el peligro. La leyenda no está asociada a un único departamento y se relaciona con la vida rural y los caminos antiguos.",
+        "esPremium": false,
+        "orden": 1,
+        "fuente": "pena-folklore-nicaragua"
+      },
+      {
+        "titulo": "Versión ampliada",
+        "contenido": "El Cadejo es una leyenda sobrenatural de tradición oral centroamericana, presente en Nicaragua. Describe a un perro de gran tamaño que aparece en caminos nocturnos. La versión más conocida distingue entre el Cadejo Blanco, que protege a los viajeros, y el Cadejo Negro, que representa el peligro. La leyenda no está asociada a un único departamento y se relaciona con la vida rural y los caminos antiguos.",
+        "esPremium": true,
+        "orden": 2,
+        "fuente": "portal-nicaragua"
+      }
+    ],
+    "imagenes": [
+      {
+        "archivo": "img/el cadejo/portada.jpg",
+        "ruta": "leyendas/el-cadejo/portada.webp",
+        "textoAlternativo": "El Cadejo en el camino nocturno.",
+        "licencia": "PENDIENTE",
+        "esPrincipal": true,
+        "esPremium": false
+      },
+      {
+        "archivo": "img/el cadejo/aparicion.jpg",
+        "ruta": "leyendas/el-cadejo/aparicion.webp",
+        "textoAlternativo": "Aparición del Cadejo.",
+        "licencia": "PENDIENTE",
+        "esPrincipal": false,
+        "esPremium": true
+      }
+    ],
+    "audios": [
+      {
+        "archivo": "audios/el cadejo.mp3",
+        "ruta": "audios/el-cadejo.mp3",
+        "titulo": "El Cadejo: El perro de la noche",
+        "duracionSegundos": null,
+        "licencia": "PENDIENTE",
+        "esPremium": true
+      }
+    ],
+    "preguntas": [
+      {
+        "orden": 1,
+        "enunciado": "¿Qué tipo de criatura es El Cadejo?",
+        "esPremium": false,
+        "explicacion": "La respuesta correcta es: Un perro sobrenatural",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Un caballo sobrenatural",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Un perro sobrenatural",
+            "esCorrecta": true
+          },
+          {
+            "orden": 3,
+            "texto": "Un espíritu humano",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "Un ave legendaria",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 2,
+        "enunciado": "¿En qué momento suele aparecer El Cadejo?",
+        "esPremium": false,
+        "explicacion": "La respuesta correcta es: Durante la noche",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Al amanecer",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Al mediodía",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "Durante la noche",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Durante la tarde",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 3,
+        "enunciado": "¿Cuántos Cadejos aparecen en la versión más conocida?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Dos",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Uno",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Dos",
+            "esCorrecta": true
+          },
+          {
+            "orden": 3,
+            "texto": "Tres",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "Cuatro",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 4,
+        "enunciado": "¿De qué color es el Cadejo protector?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Blanco",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Negro",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Gris",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "Rojo",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "Blanco",
+            "esCorrecta": true
+          }
+        ]
+      },
+      {
+        "orden": 5,
+        "enunciado": "¿De qué color es el Cadejo asociado al peligro?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Negro",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Negro",
+            "esCorrecta": true
+          },
+          {
+            "orden": 2,
+            "texto": "Blanco",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "Café",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "Dorado",
+            "esCorrecta": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "la-carreta-nagua",
+    "titulo": "La Carreta Nagua",
+    "categoria": "sobrenatural",
+    "resumen": "La Carreta Nagua es una carreta fantasmal que recorre caminos durante la noche. Se interpreta como presagio de tragedias, enfermedades o muerte.",
+    "historia": "La Carreta Nagua es una leyenda sobrenatural de caminos de la tradición oral nicaragüense. Describe el sonido de una carreta y cadenas acercándose durante la noche, aunque no se observe ningún animal tirando de ella. Tradicionalmente se interpreta como anuncio de tragedias o muerte. No se vincula oficialmente a un único municipio o departamento.",
+    "origen": "Tradición oral nicaragüense.",
+    "alcance": "nacional",
+    "regiones": [],
+    "versiones": [
+      {
+        "titulo": "Versión canónica",
+        "contenido": "La Carreta Nagua es una leyenda sobrenatural de caminos de la tradición oral nicaragüense. Describe el sonido de una carreta y cadenas acercándose durante la noche, aunque no se observe ningún animal tirando de ella. Tradicionalmente se interpreta como anuncio de tragedias o muerte. No se vincula oficialmente a un único municipio o departamento.",
+        "esPremium": false,
+        "orden": 1,
+        "fuente": "tradicion-oral-nicaragua"
+      },
+      {
+        "titulo": "Versión ampliada",
+        "contenido": "La Carreta Nagua es una leyenda sobrenatural de caminos de la tradición oral nicaragüense. Describe el sonido de una carreta y cadenas acercándose durante la noche, aunque no se observe ningún animal tirando de ella. Tradicionalmente se interpreta como anuncio de tragedias o muerte. No se vincula oficialmente a un único municipio o departamento.",
+        "esPremium": true,
+        "orden": 2,
+        "fuente": "portal-nicaragua"
+      }
+    ],
+    "imagenes": [
+      {
+        "archivo": "img/la carreta nagua/portada.jpeg",
+        "ruta": "leyendas/la-carreta-nagua/portada.webp",
+        "textoAlternativo": "La Carreta Nagua en el camino.",
+        "licencia": "PENDIENTE",
+        "esPrincipal": true,
+        "esPremium": false
+      },
+      {
+        "archivo": "img/la carreta nagua/aparicion.jpeg",
+        "ruta": "leyendas/la-carreta-nagua/aparicion.webp",
+        "textoAlternativo": "Aparición de la Carreta Nagua.",
+        "licencia": "PENDIENTE",
+        "esPrincipal": false,
+        "esPremium": true
+      }
+    ],
+    "audios": [
+      {
+        "archivo": "audios/la carreta nagua.mp3",
+        "ruta": "audios/la-carreta-nagua.mp3",
+        "titulo": "La Carreta Nagua: El sonido de la noche",
+        "duracionSegundos": null,
+        "licencia": "PENDIENTE",
+        "esPremium": true
+      }
+    ],
+    "preguntas": [
+      {
+        "orden": 1,
+        "enunciado": "¿Qué objeto es el protagonista principal de esta leyenda?",
+        "esPremium": false,
+        "explicacion": "La respuesta correcta es: Una carreta",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Un caballo",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Una carreta",
+            "esCorrecta": true
+          },
+          {
+            "orden": 3,
+            "texto": "Un barco",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "Una campana",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 2,
+        "enunciado": "¿En qué momento suele aparecer la Carreta Nagua?",
+        "esPremium": false,
+        "explicacion": "La respuesta correcta es: Durante la noche",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Al amanecer",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Al mediodía",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "Durante la noche",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Durante la tarde",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 3,
+        "enunciado": "¿Qué suele escuchar primero una persona antes de encontrarse con la Carreta Nagua?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: El sonido de ruedas y madera",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Música",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Campanas",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "El sonido de ruedas y madera",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Gritos",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 4,
+        "enunciado": "¿Dónde suele desarrollarse esta leyenda?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: En caminos rurales",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "En ciudades modernas",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "En aeropuertos",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "En caminos rurales",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "En puertos marítimos",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 5,
+        "enunciado": "¿Por qué surgieron historias como La Carreta Nagua?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Para explicar fenómenos nocturnos y transmitir advertencias",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Para enseñar matemáticas",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Para explicar fenómenos nocturnos y transmitir advertencias",
+            "esCorrecta": true
+          },
+          {
+            "orden": 3,
+            "texto": "Para enseñar agricultura",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "Para promover el turismo",
+            "esCorrecta": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "la-cegua",
+    "titulo": "La Cegua",
+    "categoria": "sobrenatural",
+    "resumen": "La Cegua es una entidad sobrenatural que aparece como una mujer atractiva en caminos oscuros y revela un rostro monstruoso cuando la víctima se acerca.",
+    "historia": "La Cegua es una leyenda sobrenatural de la tradición oral nicaragüense. Aparece como una mujer atractiva en caminos oscuros; cuando la víctima se acerca, revela un rostro monstruoso o aterrador. Se utiliza tradicionalmente como advertencia para viajeros nocturnos. Su alcance es regional, asociado a la región del Pacífico y caminos rurales.",
+    "origen": "Tradición oral nicaragüense.",
+    "alcance": "regional",
+    "regiones": [],
+    "versiones": [
+      {
+        "titulo": "Versión canónica",
+        "contenido": "La Cegua es una leyenda sobrenatural de la tradición oral nicaragüense. Aparece como una mujer atractiva en caminos oscuros; cuando la víctima se acerca, revela un rostro monstruoso o aterrador. Se utiliza tradicionalmente como advertencia para viajeros nocturnos. Su alcance es regional, asociado a la región del Pacífico y caminos rurales.",
+        "esPremium": false,
+        "orden": 1,
+        "fuente": "tradicion-oral-nicaragua"
+      },
+      {
+        "titulo": "Versión ampliada",
+        "contenido": "La Cegua es una leyenda sobrenatural de la tradición oral nicaragüense. Aparece como una mujer atractiva en caminos oscuros; cuando la víctima se acerca, revela un rostro monstruoso o aterrador. Se utiliza tradicionalmente como advertencia para viajeros nocturnos. Su alcance es regional, asociado a la región del Pacífico y caminos rurales.",
+        "esPremium": true,
+        "orden": 2,
+        "fuente": "portal-nicaragua"
+      }
+    ],
+    "imagenes": [
+      {
+        "archivo": "img/la cegua/portada.jpeg",
+        "ruta": "leyendas/la-cegua/portada.webp",
+        "textoAlternativo": "La Cegua en el camino.",
+        "licencia": "PENDIENTE",
+        "esPrincipal": true,
+        "esPremium": false
+      },
+      {
+        "archivo": "img/la cegua/aparicion.jpeg",
+        "ruta": "leyendas/la-cegua/aparicion.webp",
+        "textoAlternativo": "Transformación de La Cegua.",
+        "licencia": "PENDIENTE",
+        "esPrincipal": false,
+        "esPremium": true
+      }
+    ],
+    "audios": [
+      {
+        "archivo": "audios/la cegua.mp3",
+        "ruta": "audios/la-cegua.mp3",
+        "titulo": "La Cegua: La mujer del camino",
+        "duracionSegundos": null,
+        "licencia": "PENDIENTE",
+        "esPremium": true
+      }
+    ],
+    "preguntas": [
+      {
+        "orden": 1,
+        "enunciado": "¿Cómo se llama la figura principal de esta leyenda?",
+        "esPremium": false,
+        "explicacion": "La respuesta correcta es: La Cegua",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "La Llorona",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "La Mocuana",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "La Cegua",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "La Carreta Nagua",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 2,
+        "enunciado": "¿Dónde suele aparecer La Cegua?",
+        "esPremium": false,
+        "explicacion": "La respuesta correcta es: En caminos y senderos solitarios",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "En iglesias",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "En mercados",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "En caminos y senderos solitarios",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "En volcanes",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 3,
+        "enunciado": "¿Cómo suele presentarse inicialmente?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Como una mujer hermosa",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Como una anciana",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Como una mujer hermosa",
+            "esCorrecta": true
+          },
+          {
+            "orden": 3,
+            "texto": "Como una sombra",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "Como una niña",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 4,
+        "enunciado": "¿En qué momento suelen ocurrir los encuentros con La Cegua?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Durante la noche",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Al mediodía",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Durante la mañana",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "Durante la noche",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Durante la tarde",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 5,
+        "enunciado": "¿Qué revela La Cegua después de acercarse al viajero?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Un rostro monstruoso o semejante al de un caballo",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Un tesoro oculto",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Un mapa antiguo",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "Un rostro monstruoso o semejante al de un caballo",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Una máscara dorada",
+            "esCorrecta": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "la-llorona",
+    "titulo": "La Llorona",
+    "categoria": "apariciones",
+    "resumen": "La Llorona es una leyenda de aparecidos. Relata la aparición de una mujer errante cuyos lamentos se escuchan cerca de ríos, lagunas o caminos solitarios.",
+    "historia": "La Llorona es una de las leyendas más difundidas de Hispanoamérica, con una versión principal en Nicaragua asociada a Ometepe. Relata la aparición de una mujer errante cuyos lamentos se escuchan cerca de ríos, lagunas o caminos solitarios, asociada a historias de pérdida, tragedia o arrepentimiento. La versión de Ometepe fue estudiada por Milagros Palma.",
+    "origen": "Tradición oral nicaragüense e hispanoamericana.",
+    "alcance": "local",
+    "regiones": [
+      {
+        "codigo": "rivas",
+        "fuente": "palma-mujeres-del-mito",
+        "nivelVerificacion": "testimonio_oral",
+        "nota": "Ometepe"
+      },
+      {
+        "codigo": "leon",
+        "fuente": "tradicion-oral-nicaragua",
+        "nivelVerificacion": "testimonio_oral",
+        "nota": "León"
+      }
+    ],
+    "versiones": [
+      {
+        "titulo": "Versión canónica",
+        "contenido": "La Llorona es una de las leyendas más difundidas de Hispanoamérica, con una versión principal en Nicaragua asociada a Ometepe. Relata la aparición de una mujer errante cuyos lamentos se escuchan cerca de ríos, lagunas o caminos solitarios, asociada a historias de pérdida, tragedia o arrepentimiento. La versión de Ometepe fue estudiada por Milagros Palma.",
+        "esPremium": false,
+        "orden": 1,
+        "fuente": "palma-mujeres-del-mito"
+      },
+      {
+        "titulo": "Versión ampliada",
+        "contenido": "La Llorona es una de las leyendas más difundidas de Hispanoamérica, con una versión principal en Nicaragua asociada a Ometepe. Relata la aparición de una mujer errante cuyos lamentos se escuchan cerca de ríos, lagunas o caminos solitarios, asociada a historias de pérdida, tragedia o arrepentimiento. La versión de Ometepe fue estudiada por Milagros Palma.",
+        "esPremium": true,
+        "orden": 2,
+        "fuente": "tradicion-oral-nicaragua"
+      }
+    ],
+    "imagenes": [
+      {
+        "archivo": "img/la llorona/WhatsApp Image 2026-11-05 at 8.34.14 AM.jpeg",
+        "ruta": "leyendas/la-llorona/portada.webp",
+        "textoAlternativo": "La Llorona en el río.",
+        "licencia": "PENDIENTE",
+        "esPrincipal": true,
+        "esPremium": false
+      },
+      {
+        "archivo": "img/la llorona/WhatsApp Image 2026-11-05 at 8.31.45 AM.jpeg",
+        "ruta": "leyendas/la-llorona/aparicion.webp",
+        "textoAlternativo": "Aparición de La Llorona.",
+        "licencia": "PENDIENTE",
+        "esPrincipal": false,
+        "esPremium": true
+      }
+    ],
+    "audios": [
+      {
+        "archivo": "audios/la llorona.mp3",
+        "ruta": "audios/la-llorona.mp3",
+        "titulo": "La Llorona: El lamento que viaja junto al río",
+        "duracionSegundos": null,
+        "licencia": "PENDIENTE",
+        "esPremium": true
+      }
+    ],
+    "preguntas": [
+      {
+        "orden": 1,
+        "enunciado": "¿Cómo se llama la protagonista de esta leyenda?",
+        "esPremium": false,
+        "explicacion": "La respuesta correcta es: La Llorona",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "La Mocuana",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "La Cegua",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "La Llorona",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "La Chancha",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 2,
+        "enunciado": "¿Qué sonido caracteriza principalmente a La Llorona?",
+        "esPremium": false,
+        "explicacion": "La respuesta correcta es: Un llanto",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Una campana",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Un silbido",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "Un llanto",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Un canto",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 3,
+        "enunciado": "¿Dónde suele escucharse el lamento de La Llorona?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Ríos y quebradas",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Volcanes",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Ríos y quebradas",
+            "esCorrecta": true
+          },
+          {
+            "orden": 3,
+            "texto": "Mercados",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "Iglesias",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 4,
+        "enunciado": "¿En qué isla se desarrolla una de las versiones más conocidas de esta leyenda?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Ometepe",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Zapatera",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Solentiname",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "Ometepe",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Juan Venado",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 5,
+        "enunciado": "¿Qué relación tiene la protagonista con el niño de la historia?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Es su madre",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Es su hermana",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Es su madre",
+            "esCorrecta": true
+          },
+          {
+            "orden": 3,
+            "texto": "Es su abuela",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "Es su tía",
+            "esCorrecta": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "el-padre-sin-cabeza",
+    "titulo": "El Padre sin Cabeza",
+    "categoria": "historica-religiosa",
+    "resumen": "El Padre sin Cabeza es una aparición asociada a antiguos templos, conventos e iglesias. Se relaciona con el asesinato de Fray Antonio de Valdivieso en León Viejo.",
+    "historia": "El Padre sin Cabeza es una leyenda histórica y religiosa de la tradición oral nicaragüense. Describe a un sacerdote que recorre calles, atrios e iglesias durante la noche, sin cabeza, vestido con sotana negra. Su historia se relaciona con el asesinato de Fray Antonio de Valdivieso en León Viejo en el siglo XVI. La leyenda se asocia a León Viejo y a la ciudad de León.",
+    "origen": "Tradición oral e historia colonial de Nicaragua.",
+    "alcance": "local",
+    "regiones": [
+      {
+        "codigo": "leon",
+        "fuente": "historia-valdivieso",
+        "nivelVerificacion": "verificado",
+        "nota": "León Viejo y ciudad de León"
+      }
+    ],
+    "versiones": [
+      {
+        "titulo": "Versión canónica",
+        "contenido": "El Padre sin Cabeza es una leyenda histórica y religiosa de la tradición oral nicaragüense. Describe a un sacerdote que recorre calles, atrios e iglesias durante la noche, sin cabeza, vestido con sotana negra. Su historia se relaciona con el asesinato de Fray Antonio de Valdivieso en León Viejo en el siglo XVI. La leyenda se asocia a León Viejo y a la ciudad de León.",
+        "esPremium": false,
+        "orden": 1,
+        "fuente": "historia-valdivieso"
+      },
+      {
+        "titulo": "Versión ampliada",
+        "contenido": "El Padre sin Cabeza es una leyenda histórica y religiosa de la tradición oral nicaragüense. Describe a un sacerdote que recorre calles, atrios e iglesias durante la noche, sin cabeza, vestido con sotana negra. Su historia se relaciona con el asesinato de Fray Antonio de Valdivieso en León Viejo en el siglo XVI. La leyenda se asocia a León Viejo y a la ciudad de León.",
+        "esPremium": true,
+        "orden": 2,
+        "fuente": "mined-materiales-educativos"
+      }
+    ],
+    "imagenes": [
+      {
+        "archivo": "img/el padre sin cabeza/portada.jpg",
+        "ruta": "leyendas/el-padre-sin-cabeza/portada.webp",
+        "textoAlternativo": "El Padre sin Cabeza en León Viejo.",
+        "licencia": "PENDIENTE",
+        "esPrincipal": true,
+        "esPremium": false
+      },
+      {
+        "archivo": "img/el padre sin cabeza/aparicion.jpg",
+        "ruta": "leyendas/el-padre-sin-cabeza/aparicion.webp",
+        "textoAlternativo": "Aparición del Padre sin Cabeza.",
+        "licencia": "PENDIENTE",
+        "esPrincipal": false,
+        "esPremium": true
+      }
+    ],
+    "audios": [
+      {
+        "archivo": "audios/el padre sin cabeza.mp3",
+        "ruta": "audios/el-padre-sin-cabeza.mp3",
+        "titulo": "El Padre sin Cabeza: El guardián de la memoria colonial",
+        "duracionSegundos": null,
+        "licencia": "PENDIENTE",
+        "esPremium": true
+      }
+    ],
+    "preguntas": [
+      {
+        "orden": 1,
+        "enunciado": "¿Cuál es el nombre de la leyenda?",
+        "esPremium": false,
+        "explicacion": "La respuesta correcta es: El Padre Sin Cabeza",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "El Cadejo",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "El Padre Sin Cabeza",
+            "esCorrecta": true
+          },
+          {
+            "orden": 3,
+            "texto": "El Monje Oscuro",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "El Guardián del Templo",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 2,
+        "enunciado": "¿Con qué figura histórica se relaciona esta leyenda?",
+        "esPremium": false,
+        "explicacion": "La respuesta correcta es: Fray Antonio de Valdivieso",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Rubén Darío",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "José Dolores Estrada",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "Fray Antonio de Valdivieso",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Andrés Castro",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 3,
+        "enunciado": "¿En qué ciudad se ubica principalmente el origen de la leyenda?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: León Viejo",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Granada",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Managua",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "León Viejo",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Estelí",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 4,
+        "enunciado": "¿Qué característica distingue al personaje principal?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: No tiene cabeza",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Tiene alas",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Lleva una espada",
+            "esCorrecta": false
+          },
+          {
+            "orden": 3,
+            "texto": "No tiene cabeza",
+            "esCorrecta": true
+          },
+          {
+            "orden": 4,
+            "texto": "Tiene ojos brillantes",
+            "esCorrecta": false
+          }
+        ]
+      },
+      {
+        "orden": 5,
+        "enunciado": "¿Qué prenda utiliza el personaje?",
+        "esPremium": true,
+        "explicacion": "La respuesta correcta es: Sotana negra",
+        "opciones": [
+          {
+            "orden": 1,
+            "texto": "Armadura",
+            "esCorrecta": false
+          },
+          {
+            "orden": 2,
+            "texto": "Sotana negra",
+            "esCorrecta": true
+          },
+          {
+            "orden": 3,
+            "texto": "Uniforme militar",
+            "esCorrecta": false
+          },
+          {
+            "orden": 4,
+            "texto": "Traje blanco",
+            "esCorrecta": false
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -346,15 +346,15 @@ Opciones:
 
 ## Checklist de instalación
 
-- [ ] `node -v` devuelve 20.19 o superior.
+- [x] `node -v` devuelve 20.19 o superior.
 - [ ] `npm -v` devuelve 10 o superior.
 - [ ] MySQL está iniciado y responde en `DB_HOST:DB_PORT`.
 - [ ] El repositorio está clonado y se ejecutó `npm install` en la raíz.
 - [ ] `npm run setup` termina sin errores.
 - [ ] `.env` existe en la raíz y no está versionado.
-- [ ] `npm run db:seed:validate` termina con `Seed válido`.
+- [x] `npm run db:seed:validate` termina con `Seed válido`.
 - [ ] `npm run dev:api` inicia en `http://localhost:3000`.
-- [ ] `GET /api/health` devuelve `status: ok` y `db: ok`.
+- [x] `GET /api/health` devuelve `status: ok` y `db: ok`.
 - [ ] `npm run dev` levanta API y cliente.
 - [ ] Una segunda ejecución de `npm run setup` no duplica datos.
 
@@ -2829,7 +2829,7 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 ## 2. Base de datos y seed
 
 - [ ] Las migraciones 001, 002, 003 y 004 se aplican desde una base vacía y son idempotentes.
-- [ ] `npm run db:seed:validate` termina con `Seed válido`.
+- [x] `npm run db:seed:validate` termina con `Seed válido`.
 - [ ] `npm run db:seed` dos veces deja los mismos conteos.
 - [ ] Existen 17 regiones, 4 categorías, 6 leyendas, al menos 6 fuentes, 6 imágenes principales, 6 audios, 30 preguntas y 120 opciones.
 - [ ] Cada leyenda tiene al menos una versión gratuita.
