@@ -1,10 +1,10 @@
 # Handoff — Ecos de Nicaragua
 
-Actualizado: 2026-11-04. Rama central: `main`. Último commit: `3066e80`.
+Actualizado: 2026-11-07. Rama central: `main`. Último commit: `22fb909` (sin push). Cambios de M08 sin commitear.
 
 ## Resumen
 
-MVP de una plataforma web de leyendas nicaragüenses. **Fase 0 completa** y base de datos operativa. **Fase 1 (contenido) no iniciada.** No hay rutas de contenido, autenticación ni tests.
+MVP de una plataforma web de leyendas nicaragüenses. **Fase 0 completa** y base de datos operativa. **M06 (auth), M07 (premium) y M08 (administración) implementados** con 37 pruebas. M09/M10 pendientes. **Fase 1 (contenido) no iniciada.**
 
 ## Hecho y verificado
 
@@ -15,14 +15,18 @@ MVP de una plataforma web de leyendas nicaragüenses. **Fase 0 completa** y base
 | `t03` | [`docs/wireframes.md`](wireframes.md) | Completa |
 | `t04` | [`docs/esquema-bd.md`](esquema-bd.md) + `server/db/migrations/001_esquema-inicial.sql` | Completa y aplicada |
 | `t12` | `server/scripts/migrate.js`, `server/scripts/seed.js`, `server/db/seed/regiones.json` | Completa y ejecutada |
+| `M06` | Sesiones, CSRF, registro/login/logout/refresh/recuperación con Argon2id | Completa y probada |
+| `M07` | Planes, suscripciones por fechas, canje de códigos y middleware premium | Completa y probada |
+| `M08` | API de administración, auditoría y 9 pruebas de integración | Completa y probada |
 
 Comprobaciones reales:
 
 - `client`: `npm run build` termina bien (React 19.3.1, Vite 8.3.5).
 - `server`: `GET /api/health` responde `{"status":"ok"}` (Express 5.3.0).
-- MySQL 9.7: 16 tablas creadas, 17 regiones cargadas (15 departamentos + 2 regiones autónomas).
+- MySQL 9.7: 17 tablas creadas (incluida `auditoria_admin`), 17 regiones y seed completo.
 - `npm run db:migrate` es idempotente; `npm run db:seed` se puede repetir sin duplicar.
-- **No se ha probado la interfaz en navegador**, solo el build. No hay tests ni linter.
+- `npm test` pasa con 37 pruebas (auth, premium, admin, trivia, media, seed).
+- **No se ha probado la interfaz en navegador**, solo el build. No hay linter.
 
 ## Cómo ejecutar
 
@@ -90,14 +94,15 @@ docs/                           alcance, wireframes, esquema
 
 ## Próximos pasos sugeridos
 
-1. **Fase 1:** resolver identidad/logo (`t07`) o empezar por `t11` (citar fuentes y licencias) y `t05` (investigar las 6 leyendas con mínimo 2 fuentes cada una).
-2. **Fase 2:** `t13` API de leyendas. La base ya existe, pero **no hay leyendas ni fuentes cargadas**; hará falta contenido de Fase 1 o fixtures de prueba.
-3. Configurar tests (Node test runner) y linter antes de crecer.
+1. **B debe cerrar M02/M03** (leyendas, categorías, regiones) para desbloquear M09.
+2. **M09 — Seguridad** (A): validación, SQL, rate limit, CORS, headers, cookies, logs.
+3. **M10 — Pruebas** (C): cerrar suite completa y contratos.
+4. **D (seguimiento):** añadir rutas admin a `RUTAS_PROTEGIDAS` en `csrf.js`.
 
 ## Git
 
 - Rama central `main`; todo el trabajo va ahí.
-- Commits: `2c719ef` (t01), `d3c3095` (t02), `8c85a63` (t03), `e35e5b8` (t04), `4f16e6f` (t12), `3066e80` (verificación).
+- Commits: `2c719ef` (t01), `d3c3095` (t02), `8c85a63` (t03), `e35e5b8` (t04), `4f16e6f` (t12), `3066e80` (verificación), `20402e8` (M00/M01), `70104e8` (M04/M05 esqueleto), `25515df`/`53a6053`/`22fb909` (M06/M07). M08 sin commitear.
 - No se ha pusheado nada.
 
 ## Gotchas

@@ -2384,6 +2384,12 @@ M02, M03, M04 y M05 pueden avanzar en paralelo, pero no se consideran terminados
 - `400 TOKEN_INVALIDO`; `400 VALIDACION`; `429`.
 - Invalida sesiones anteriores al incrementar `sesion_version`.
 
+### Tareas de seguimiento (D)
+
+| ID | Tarea | Archivos | Depende de |
+|---|---|---|---|
+| M06-T01 | Añadir las rutas `/api/admin` a `RUTAS_PROTEGIDAS` en `csrf.js` para que las mutaciones admin sin sesión devuelvan `401 SESION_REQUERIDA` en lugar de `403 CSRF_INVALIDO` | `server/src/middleware/csrf.js` | M08 |
+
 ## M07 — Premium
 
 ### `GET /api/premium/planes`
@@ -2867,14 +2873,14 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 
 ## 5. Administración
 
-- [ ] Todas las rutas `/api/admin` exigen `rol='admin'` y CSRF en mutaciones.
-- [ ] Un usuario normal recibe 403.
-- [ ] Se puede buscar por correo y nombre de usuario.
-- [ ] Se puede cambiar rol, activar o quitar premium y fijar fechas.
-- [ ] No se puede degradar al último administrador ni cambiarse el rol propio.
-- [ ] Se pueden generar códigos y verlos una sola vez.
-- [ ] Cada mutación deja una fila en `auditoria_admin` sin secretos.
-- [ ] El panel visual no forma parte de este backend; la API está lista para construirlo.
+- [x] Todas las rutas `/api/admin` exigen `rol='admin'` y CSRF en mutaciones.
+- [x] Un usuario normal recibe 403.
+- [x] Se puede buscar por correo y nombre de usuario.
+- [x] Se puede cambiar rol, activar o quitar premium y fijar fechas.
+- [x] No se puede degradar al último administrador ni cambiarse el rol propio.
+- [x] Se pueden generar códigos y verlos una sola vez.
+- [x] Cada mutación deja una fila en `auditoria_admin` sin secretos.
+- [x] El panel visual no forma parte de este backend; la API está lista para construirlo.
 
 ## 6. Seguridad
 

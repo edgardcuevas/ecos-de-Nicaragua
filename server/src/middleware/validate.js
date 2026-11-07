@@ -8,7 +8,14 @@ export function validate(schemas = {}) {
         req.params = schemas.params.parse(req.params)
       }
       if (schemas.query) {
-        req.query = schemas.query.parse(req.query)
+        // En Express 5 req.query es un getter sin setter; se define una
+        // propiedad propia en la petición para conservar el valor validado.
+        Object.defineProperty(req, 'query', {
+          value: schemas.query.parse(req.query),
+          writable: true,
+          configurable: true,
+          enumerable: true,
+        })
       }
       if (schemas.body) {
         req.body = schemas.body.parse(req.body)
