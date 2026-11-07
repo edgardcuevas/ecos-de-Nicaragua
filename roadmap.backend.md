@@ -2826,7 +2826,7 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 
 - [x] Un colaborador con Node.js 20.19+ y MySQL 8+ ejecuta `npm install`, `npm run setup` y `npm run dev` sin crear bases ni tablas a mano.
 - [x] `npm run setup` se puede repetir sin duplicar datos ni romper el entorno.
-- [ ] `npm run reset-db` recrea la base desde cero y vuelve a cargar el seed.
+- [x] `npm run reset-db` recrea la base desde cero y vuelve a cargar el seed.
 - [x] `.env` se genera con `SESSION_SECRET` y `TOKEN_PEPPER` aleatorios; `.env` no está versionado.
 - [x] `GET /api/health` responde `200` con `status: ok` y `db: ok`.
 - [x] El README explica instalación, comandos, variables y errores frecuentes.
@@ -2840,21 +2840,21 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 - [x] Existen 17 regiones, 4 categorías, 6 leyendas, al menos 6 fuentes, 6 imágenes principales, 6 audios, 30 preguntas y 120 opciones.
 - [x] Cada leyenda tiene al menos una versión gratuita.
 - [x] Cada vínculo leyenda–región tiene fuente y nivel de verificación.
-- [ ] Las leyendas nacionales o regionales no están asignadas a departamentos sin respaldo.
+- [x] Las leyendas nacionales o regionales no están asignadas a departamentos sin respaldo.
 - [x] Los archivos de imagen y audio del seed existen y se importan a `storage/media`.
 - [x] El seed no toca usuarios, suscripciones, códigos ni auditoría.
 
 ## 3. API de contenido
 
-- [ ] `GET /api/leyendas` lista, filtra por región, categoría, texto y alcance, y pagina.
-- [ ] `GET /api/leyendas/:slug` devuelve ficha, versiones, regiones, fuentes, imágenes y audios según el acceso.
-- [ ] `GET /api/categorias` devuelve las categorías con conteo.
+- [x] `GET /api/leyendas` lista, filtra por región, categoría, texto y alcance, y pagina.
+- [x] `GET /api/leyendas/:slug` devuelve ficha, versiones, regiones, fuentes, imágenes y audios según el acceso.
+- [x] `GET /api/categorias` devuelve las categorías con conteo.
 - [x] `GET /api/regiones` devuelve las 17 unidades y separa nacionales/regionales.
-- [ ] `GET /api/regiones/:codigo` devuelve vínculos, fuentes y nivel de verificación.
+- [x] `GET /api/regiones/:codigo` devuelve vínculos, fuentes y nivel de verificación.
 - [x] `GET /api/trivia` y `GET /api/trivia/:slug` no revelan respuestas correctas.
 - [x] `POST /api/trivia/:slug/responder` valida y calcula el puntaje en el servidor.
 - [x] `GET /api/media/imagenes/:id` y `/api/media/audios/:id` autorizan, cachean y soportan `Range`.
-- [ ] Ningún endpoint devuelve rutas internas de archivos, `password_hash`, `codigo_hash` ni `token_hash`.
+- [x] Ningún endpoint devuelve rutas internas de archivos, `password_hash`, `codigo_hash` ni `token_hash`.
 
 ## 4. Autenticación y premium
 
@@ -2865,7 +2865,7 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 - [x] La recuperación de contraseña usa token de un solo uso, con vencimiento, y no revela si la cuenta existe.
 - [x] Restablecer contraseña invalida sesiones anteriores.
 - [x] El acceso premium depende de `suscripciones` y fechas, no de `rol`.
-- [ ] Un usuario gratis no accede a versiones premium, imágenes adicionales, audios ni preguntas 3-5 cambiando la URL o un ID.
+- [x] Un usuario gratis no accede a versiones premium, imágenes adicionales, audios ni preguntas 3-5 cambiando la URL o un ID.
 - [x] Un usuario premium pierde el acceso al vencer la suscripción.
 - [x] La activación manual y el canje de códigos se reflejan en la siguiente petición.
 - [x] Un código no se puede canjear dos veces.
@@ -2909,16 +2909,16 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 
 El frontend puede empezar cuando:
 
-- [ ] Todos los endpoints del resumen responden con los contratos de este documento.
+- [x] Todos los endpoints del resumen responden con los contratos de este documento.
 - [x] Existe un usuario de prueba gratis, uno premium y uno admin; el README explica cómo crearlos.
 - [ ] El seed tiene contenido real y el frontend no necesita mocks.
-- [ ] Las imágenes principales y los audios se sirven con URLs estables.
+- [x] Las imágenes principales y los audios se sirven con URLs estables.
 - [x] El flujo de CSRF está documentado para el cliente.
 - [x] Los errores tienen códigos estables que el frontend puede traducir.
 - [x] La API corre en `http://localhost:3000` y el proxy de Vite sigue funcionando.
 - [ ] Los contratos están congelados; cualquier cambio incompatible requiere `/api/v2`.
 - [x] El README incluye ejemplos de `fetch` con `credentials: 'include'` y `X-CSRF-Token`.
-- [ ] Existe una etiqueta `backend-mvp` en git.
+- [x] Existe una etiqueta `backend-mvp` en git.
 
 ## 9. Evidencias de cierre
 
