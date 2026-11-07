@@ -12,6 +12,13 @@ const RUTAS_PROTEGIDAS = new Set([
   '/api/premium/canjear',
 ])
 
+function esRutaProtegida(path) {
+  if (RUTAS_PROTEGIDAS.has(path)) return true
+  // Las mutaciones de administración exigen sesión; sin ella, requiereRol
+  // debe responder 401 SESION_REQUERIDA, no 403 CSRF_INVALIDO.
+  return path.startsWith('/api/admin/')
+}
+
 export function csrf(req, _res, next) {
   if (!METODOS_MUTANTES.has(req.method)) {
     return next()
@@ -24,7 +31,7 @@ export function csrf(req, _res, next) {
     }
   }
 
-  if (RUTAS_PROTEGIDAS.has(req.path) && !req.session?.usuarioId) {
+  if (esRutaProtegida(req.path) && !req.session?.usuarioId) {
     return next()
   }
 

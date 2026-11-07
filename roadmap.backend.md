@@ -2388,7 +2388,7 @@ M02, M03, M04 y M05 pueden avanzar en paralelo, pero no se consideran terminados
 
 | ID | Tarea | Archivos | Depende de |
 |---|---|---|---|
-| M06-T01 | Añadir las rutas `/api/admin` a `RUTAS_PROTEGIDAS` en `csrf.js` para que las mutaciones admin sin sesión devuelvan `401 SESION_REQUERIDA` en lugar de `403 CSRF_INVALIDO` | `server/src/middleware/csrf.js` | M08 |
+| ~~M06-T01~~ ✅ | ~~Añadir las rutas `/api/admin` a `RUTAS_PROTEGIDAS` en `csrf.js` para que las mutaciones admin sin sesión devuelvan `401 SESION_REQUERIDA` en lugar de `403 CSRF_INVALIDO`~~ (completado) | `server/src/middleware/csrf.js` | M08 (listo) |
 
 ## M07 — Premium
 
