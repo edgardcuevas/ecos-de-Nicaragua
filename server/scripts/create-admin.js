@@ -26,15 +26,75 @@ function validar({ correo, usuario, password }) {
   }
 }
 
+// Lee la contraseña sin mostrarla en pantalla. Solo funciona con terminal
+// interactiva; en CI se debe pasar --password.
+function preguntarPassword(prompt) {
+  if (!input.isTTY) {
+    return Promise.reject(
+      new Error('No hay terminal interactiva para pedir la contraseña; usa --password solo en CI'),
+    )
+  }
+
+  return new Promise((resolve, reject) => {
+    let valor = ''
+
+    function terminar(error) {
+      input.setRawMode(false)
+      input.pause()
+      input.removeListener('data', alEscribir)
+      output.write('\n')
+      if (error) reject(error)
+      else resolve(valor)
+    }
+
+    function alEscribir(chunk) {
+      for (const caracter of chunk) {
+        if (caracter === '\u0003') {
+          terminar(new Error('Cancelado por el usuario'))
+          return
+        }
+        if (caracter === '\r' || caracter === '\n') {
+          terminar()
+          return
+        }
+        if (caracter === '\u007f' || caracter === '\b') {
+          if (valor.length > 0) {
+            valor = valor.slice(0, -1)
+            output.write('\b \b')
+          }
+          continue
+        }
+        if (caracter >= ' ') {
+          valor += caracter
+          output.write('*')
+        }
+      }
+    }
+
+    output.write(prompt)
+    input.setRawMode(true)
+    input.setEncoding('utf8')
+    input.resume()
+    input.on('data', alEscribir)
+  })
+}
+
 async function main() {
   const rl = createInterface({ input, output })
+  let rlCerrado = false
 
   try {
     const correo = (valorArg('--correo') || (await rl.question('Correo del administrador: ')))
       .trim()
       .toLowerCase()
     const usuario = (valorArg('--usuario') || (await rl.question('Nombre de usuario: '))).trim()
-    const password = valorArg('--password') || (await rl.question('Contraseña: '))
+
+    let password = valorArg('--password')
+    if (!password) {
+      rl.close()
+      rlCerrado = true
+      password = await preguntarPassword('Contraseña: ')
+    }
 
     validar({ correo, usuario, password })
 
@@ -67,7 +127,7 @@ async function main() {
     )
     console.log(`Administrador creado: ${usuario} <${correo}> (id ${resultado.insertId})`)
   } finally {
-    rl.close()
+    if (!rlCerrado) rl.close()
   }
 }
 
