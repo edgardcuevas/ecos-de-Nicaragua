@@ -72,6 +72,79 @@ El contenido se carga por seed desde `server/db/seed/`. Para modificar leyendas,
 
 El seed no modifica usuarios ni suscripciones.
 
+## Variables de entorno
+
+El archivo `.env` se genera en la raíz con `npm run setup`. Variables principales:
+
+| Variable | Descripción | Por defecto |
+|---|---|---|
+| `NODE_ENV` | Entorno (`development`/`production`/`test`) | `development` |
+| `PORT` | Puerto de la API | `3000` |
+| `APP_URL` | URL pública del cliente (enlaces de recuperación) | `http://localhost:5173` |
+| `CLIENT_ORIGIN` | Origen permitido para CORS | `http://localhost:5173` |
+| `CORS_ENABLED` | Habilitar CORS con credenciales | `false` |
+| `TRUST_PROXY` | Número de proxies de confianza (Nginx) | `0` |
+| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Conexión MySQL | — |
+| `SESSION_SECRET` | Secreto de sesión (obligatorio en producción) | generado |
+| `SESSION_NAME` | Nombre de la cookie de sesión | `ecos.sid` |
+| `SESSION_TTL_HORAS` | Duración de la sesión en horas | `8` |
+| `COOKIE_SECURE` | Cookie `Secure` (forzado en producción) | `false` |
+| `TOKEN_PEPPER` | Pepper para HMAC de tokens y códigos | generado |
+| `RESET_TOKEN_MINUTOS` | Vencimiento del token de recuperación | `60` |
+| `MEDIA_ROOT`, `MEDIA_URL` | Almacenamiento y URL de medios | `./storage/media`, `/media` |
+| `MAIL_TRANSPORT` | `console`, `memory` o `smtp` | `console` |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM` | Correo SMTP | — |
+| `LOG_LEVEL` | Nivel de log (pino) | `info` |
+| `RATE_LIMIT_ENABLED` | Activar rate limiting | `true` |
+
+Los valores con `#` deben ir entrecomillados en `.env` (dotenv los corta como comentario).
+
+## Usuarios de prueba
+
+El seed no crea usuarios. Para probar los tres roles:
+
+```bash
+# Administrador (crea o promueve)
+npm run admin:create -- --correo admin@ejemplo.com --usuario admin --password ClaveSegura123
+
+# Usuario gratis: registrarse vía POST /api/auth/registro
+# Usuario premium: registrar y canjear un código, o activar desde admin
+```
+
+Para generar códigos de activación (como admin, vía API):
+
+```bash
+POST /api/admin/codigos
+{ "planId": 1, "cantidad": 5, "fechaVencimiento": "2027-01-31T23:59:59.000Z" }
+```
+
+Los códigos se muestran una sola vez en la respuesta.
+
+## Autenticación y CSRF (cliente)
+
+La API usa sesiones con cookies (`HttpOnly`, `Secure` en producción, `SameSite=Lax`). El cliente debe:
+
+1. Pedir el token CSRF al cargar:
+   ```js
+   const res = await fetch('/api/auth/csrf', { credentials: 'include' })
+   const { data } = await res.json()
+   const csrfToken = data.csrfToken
+   ```
+
+2. Enviar `credentials: 'include'` y `X-CSRF-Token` en cada mutación:
+   ```js
+   await fetch('/api/auth/login', {
+     method: 'POST',
+     credentials: 'include',
+     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+     body: JSON.stringify({ correoOUsuario, password }),
+   })
+   ```
+
+3. Tras login/registro, usar el nuevo `csrfToken` devuelto en la respuesta.
+
+Los métodos `GET` no exigen CSRF. Sin sesión, `POST /api/auth/logout`, `/api/auth/refresh` y `/api/premium/canjear` devuelven `401 SESION_REQUERIDA` (no `403 CSRF_INVALIDO`).
+
 ## Solución de problemas
 
 | Síntoma | Causa probable | Acción |
@@ -84,6 +157,26 @@ El seed no modifica usuarios ni suscripciones.
 | `SESSION_SECRET` vacío | `.env` incompleto | `npm run setup` |
 | Migración aplicada a medias | Error SQL | Corregir y crear migración nueva; no editar la anterior |
 
+## Ejemplos de fetch
+
+```js
+// Listar leyendas (público)
+const leyendas = await fetch('/api/leyendas?region=managua&premium=false', { credentials: 'include' })
+
+// Suscripción actual
+const sus = await fetch('/api/premium/mi-suscripcion', { credentials: 'include' })
+
+// Canjear código (mutación: CSRF)
+await fetch('/api/premium/canjear', {
+  method: 'POST',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+  body: JSON.stringify({ codigo: 'ECOS-XXXX-XXXX-XXXX' }),
+})
+```
+
+Los errores tienen forma `{ error: { codigo, mensaje, detalles } }` con códigos estables (`SESION_REQUERIDA`, `CSRF_INVALIDO`, `CODIGO_INVALIDO`, `PREMIUM_REQUERIDO`, `VALIDACION`, etc.).
+
 ## Estado
 
-Fase 0 en progreso: entorno de desarrollo con workspaces, scripts raíz, middlewares base, routers vacíos (501) y health con comprobación de base. Migraciones y seed básicos operativos.
+Backend MVP completado: entorno, seed, multimedia, health, autenticación con sesiones y CSRF, premium y canje de códigos, administración, seguridad y pruebas. Migraciones 001–004 aplicadas. `npm test` pasa completo. El frontend puede consumir la API en `http://localhost:3000` con el proxy de Vite.
