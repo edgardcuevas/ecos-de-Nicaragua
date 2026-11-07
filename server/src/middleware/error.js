@@ -8,8 +8,8 @@ export function errorHandler(err, req, res, _next) {
   } else {
     logger.warn({ codigo: err?.codigo, status, requestId: req?.id }, err?.message)
   }
-  // Ocultar detalles internos en produccion
-  if (status >= 500 && process.env.NODE_ENV === 'production') {
+  // No revelar detalles internos en la respuesta, ni en desarrollo.
+  if (status >= 500) {
     err = { status: 500, codigo: 'ERROR_INTERNO', message: 'Error interno del servidor', detalles: [] }
   }
   return errorJson(res, err)

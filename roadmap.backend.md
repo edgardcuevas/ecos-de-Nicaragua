@@ -2889,10 +2889,10 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 - [ ] Los payloads de inyección no alteran consultas.
 - [ ] Rate limiting activo en global, login, recuperación, canje, trivia y admin.
 - [ ] CORS solo se habilita con origen exacto y credenciales.
-- [ ] Helmet, `nosniff`, `X-Frame-Options` y `Referrer-Policy` están configurados.
-- [ ] Los logs redactan cookies, tokens y contraseñas.
-- [ ] Los errores 500 no revelan stack ni SQL.
-- [ ] `.env`, `storage/` y `node_modules/` están fuera de git.
+- [x] Helmet, `nosniff`, `X-Frame-Options` y `Referrer-Policy` están configurados.
+- [x] Los logs redactan cookies, tokens y contraseñas.
+- [x] Los errores 500 no revelan stack ni SQL.
+- [x] `.env`, `storage/` y `node_modules/` están fuera de git.
 - [ ] `npm audit --omit=dev` no tiene vulnerabilidades críticas o altas sin justificar.
 
 ## 7. Pruebas

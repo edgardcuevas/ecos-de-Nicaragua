@@ -52,7 +52,12 @@ if (trustProxy > 0) {
 }
 
 app.use(requestId)
-app.use(helmet())
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  }),
+)
 if (corsEnabled) {
   app.use(cors({ origin: clientOrigin, credentials: true }))
 }
