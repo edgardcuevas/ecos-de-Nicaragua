@@ -23,7 +23,7 @@ const CONTENT_TYPES = {
   '.mp3': 'audio/mpeg',
 }
 
-function safeResolve(rutaRelativa) {
+export function safeResolve(rutaRelativa) {
   const root = mediaRoot()
   const rootWithSep = root.endsWith(path.sep) ? root : root + path.sep
   const full = path.resolve(root, rutaRelativa)
