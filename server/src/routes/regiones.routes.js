@@ -1,7 +1,12 @@
 import { Router } from 'express'
-import { Errores } from '../utils/errors.js'
+
+import * as regionesController from '../controllers/regiones.controller.js'
+import { validate } from '../middleware/validate.js'
+import { codigoParamSchema, listQuerySchema } from '../schemas/regiones.schema.js'
 
 const router = Router()
-router.use((_req, _res, next) => next(Errores.noImplementado('Regiones no implementadas aun')))
+
+router.get('/', validate({ query: listQuerySchema }), regionesController.listarRegiones)
+router.get('/:codigo', validate({ params: codigoParamSchema }), regionesController.obtenerRegion)
 
 export default router
