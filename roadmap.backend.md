@@ -2897,13 +2897,13 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 
 ## 7. Pruebas
 
-- [ ] `npm test` pasa completo desde una base de test limpia.
-- [ ] Las pruebas no tocan `ecos_nicaragua_dev`.
-- [ ] La suite se niega a ejecutarse si `DB_NAME` no termina en `_test`.
-- [ ] Hay pruebas unitarias de validación, fechas premium, puntaje, tokens y rutas de archivo.
-- [ ] Hay pruebas de integración de leyendas, regiones, trivia, medios, auth, premium, admin y seguridad.
-- [ ] Hay pruebas de contrato para todos los endpoints del resumen.
-- [ ] Free, premium y admin están cubiertos por separado.
+- [x] `npm test` pasa completo desde una base de test limpia.
+- [x] Las pruebas no tocan `ecos_nicaragua_dev`.
+- [x] La suite se niega a ejecutarse si `DB_NAME` no termina en `_test`.
+- [x] Hay pruebas unitarias de validación, fechas premium, puntaje, tokens y rutas de archivo.
+- [x] Hay pruebas de integración de leyendas, regiones, trivia, medios, auth, premium, admin y seguridad.
+- [x] Hay pruebas de contrato para todos los endpoints del resumen.
+- [x] Free, premium y admin están cubiertos por separado.
 
 ## 8. Listo para frontend
 
