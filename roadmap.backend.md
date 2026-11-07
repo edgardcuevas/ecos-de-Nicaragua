@@ -2884,16 +2884,16 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 
 ## 6. Seguridad
 
-- [ ] Todas las entradas pasan por Zod y los campos desconocidos se rechazan.
-- [ ] Todas las consultas son parametrizadas.
-- [ ] Los payloads de inyección no alteran consultas.
-- [ ] Rate limiting activo en global, login, recuperación, canje, trivia y admin.
-- [ ] CORS solo se habilita con origen exacto y credenciales.
+- [x] Todas las entradas pasan por Zod y los campos desconocidos se rechazan.
+- [x] Todas las consultas son parametrizadas.
+- [x] Los payloads de inyección no alteran consultas.
+- [x] Rate limiting activo en global, login, recuperación, canje, trivia y admin.
+- [x] CORS solo se habilita con origen exacto y credenciales.
 - [x] Helmet, `nosniff`, `X-Frame-Options` y `Referrer-Policy` están configurados.
 - [x] Los logs redactan cookies, tokens y contraseñas.
 - [x] Los errores 500 no revelan stack ni SQL.
 - [x] `.env`, `storage/` y `node_modules/` están fuera de git.
-- [ ] `npm audit --omit=dev` no tiene vulnerabilidades críticas o altas sin justificar.
+- [x] `npm audit --omit=dev` no tiene vulnerabilidades críticas o altas sin justificar.
 
 ## 7. Pruebas
 
