@@ -2852,18 +2852,18 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 
 ## 4. Autenticación y premium
 
-- [ ] Registro, login, logout, `me` y `refresh` funcionan con cookies.
-- [ ] La cookie es `HttpOnly`, `Secure` en producción y `SameSite=Lax`.
-- [ ] Todos los métodos mutantes exigen `X-CSRF-Token`.
-- [ ] Las contraseñas usan Argon2id.
-- [ ] La recuperación de contraseña usa token de un solo uso, con vencimiento, y no revela si la cuenta existe.
-- [ ] Restablecer contraseña invalida sesiones anteriores.
-- [ ] El acceso premium depende de `suscripciones` y fechas, no de `rol`.
+- [x] Registro, login, logout, `me` y `refresh` funcionan con cookies.
+- [x] La cookie es `HttpOnly`, `Secure` en producción y `SameSite=Lax`.
+- [x] Todos los métodos mutantes exigen `X-CSRF-Token`.
+- [x] Las contraseñas usan Argon2id.
+- [x] La recuperación de contraseña usa token de un solo uso, con vencimiento, y no revela si la cuenta existe.
+- [x] Restablecer contraseña invalida sesiones anteriores.
+- [x] El acceso premium depende de `suscripciones` y fechas, no de `rol`.
 - [ ] Un usuario gratis no accede a versiones premium, imágenes adicionales, audios ni preguntas 3-5 cambiando la URL o un ID.
-- [ ] Un usuario premium pierde el acceso al vencer la suscripción.
+- [x] Un usuario premium pierde el acceso al vencer la suscripción.
 - [ ] La activación manual y el canje de códigos se reflejan en la siguiente petición.
-- [ ] Un código no se puede canjear dos veces.
-- [ ] Cambiar el rol a `premium` no concede contenido premium.
+- [x] Un código no se puede canjear dos veces.
+- [x] Cambiar el rol a `premium` no concede contenido premium.
 
 ## 5. Administración
 

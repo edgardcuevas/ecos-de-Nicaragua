@@ -65,7 +65,8 @@ export const sessionConfig = {
   secret: sessionSecret,
   name: env('SESSION_NAME', 'ecos.sid'),
   ttlHoras: Number(env('SESSION_TTL_HORAS', '8')),
-  cookieSecure: env('COOKIE_SECURE', 'false') === 'true',
+  // En produccion la cookie siempre es Secure, aunque el .env diga lo contrario.
+  cookieSecure: isProd || env('COOKIE_SECURE', 'false') === 'true',
 }
 
 export const tokenPepperValue = tokenPepper
