@@ -11,6 +11,13 @@ function sendError(res, err) {
   res.status(status).json({ error: { codigo, mensaje: err?.message || 'Error interno' } })
 }
 
+function mapearDetalles(error) {
+  return error.issues.map((issue) => ({
+    campo: issue.path.join('.'),
+    mensaje: issue.message,
+  }))
+}
+
 export async function listarTrivias(req, res) {
   try {
     const data = await triviaService.listar({ premium: premium(req) })
@@ -24,7 +31,13 @@ export async function obtenerTrivia(req, res) {
   try {
     const parsed = slugParamSchema.safeParse(req.params)
     if (!parsed.success) {
-      return res.status(400).json({ error: { codigo: 'VALIDACION', mensaje: 'Parámetros inválidos.' } })
+      return res.status(400).json({
+        error: {
+          codigo: 'VALIDACION',
+          mensaje: 'La solicitud contiene campos inválidos.',
+          detalles: mapearDetalles(parsed.error),
+        },
+      })
     }
     const data = await triviaService.obtenerPorLeyenda(parsed.data.slug, premium(req))
     res.json({ data })
@@ -37,13 +50,29 @@ export async function responderTrivia(req, res) {
   try {
     const parsedParams = slugParamSchema.safeParse(req.params)
     if (!parsedParams.success) {
-      return res.status(400).json({ error: { codigo: 'VALIDACION', mensaje: 'Parámetros inválidos.' } })
+      return res.status(400).json({
+        error: {
+          codigo: 'VALIDACION',
+          mensaje: 'La solicitud contiene campos inválidos.',
+          detalles: mapearDetalles(parsedParams.error),
+        },
+      })
     }
     const parsedBody = responderBodySchema.safeParse(req.body)
     if (!parsedBody.success) {
-      return res.status(400).json({ error: { codigo: 'VALIDACION', mensaje: 'Cuerpo inválido.', detalles: parsedBody.error.issues } })
+      return res.status(400).json({
+        error: {
+          codigo: 'VALIDACION',
+          mensaje: 'La solicitud contiene campos inválidos.',
+          detalles: mapearDetalles(parsedBody.error),
+        },
+      })
     }
-    const data = await triviaService.calcularPuntaje(parsedParams.data.slug, parsedBody.data.respuestas, premium(req))
+    const data = await triviaService.calcularPuntaje(
+      parsedParams.data.slug,
+      parsedBody.data.respuestas,
+      premium(req),
+    )
     res.json({ data })
   } catch (err) {
     sendError(res, err)

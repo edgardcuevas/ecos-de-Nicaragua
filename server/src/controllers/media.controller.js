@@ -15,7 +15,16 @@ export async function obtenerImagen(req, res) {
   try {
     const parsed = idParamSchema.safeParse(req.params)
     if (!parsed.success) {
-      return res.status(400).json({ error: { codigo: 'VALIDACION', mensaje: 'Parámetros inválidos.' } })
+      return res.status(400).json({
+        error: {
+          codigo: 'VALIDACION',
+          mensaje: 'La solicitud contiene campos inválidos.',
+          detalles: parsed.error.issues.map((issue) => ({
+            campo: issue.path.join('.'),
+            mensaje: issue.message,
+          })),
+        },
+      })
     }
     const info = await mediaService.obtenerImagen(parsed.data.id, premium(req))
 
@@ -43,7 +52,16 @@ export async function obtenerAudio(req, res) {
   try {
     const parsed = idParamSchema.safeParse(req.params)
     if (!parsed.success) {
-      return res.status(400).json({ error: { codigo: 'VALIDACION', mensaje: 'Parámetros inválidos.' } })
+      return res.status(400).json({
+        error: {
+          codigo: 'VALIDACION',
+          mensaje: 'La solicitud contiene campos inválidos.',
+          detalles: parsed.error.issues.map((issue) => ({
+            campo: issue.path.join('.'),
+            mensaje: issue.message,
+          })),
+        },
+      })
     }
     const info = await mediaService.obtenerAudio(parsed.data.id, premium(req))
 

@@ -2851,9 +2851,9 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 - [ ] `GET /api/categorias` devuelve las categorías con conteo.
 - [ ] `GET /api/regiones` devuelve las 17 unidades y separa nacionales/regionales.
 - [ ] `GET /api/regiones/:codigo` devuelve vínculos, fuentes y nivel de verificación.
-- [ ] `GET /api/trivia` y `GET /api/trivia/:slug` no revelan respuestas correctas.
-- [ ] `POST /api/trivia/:slug/responder` valida y calcula el puntaje en el servidor.
-- [ ] `GET /api/media/imagenes/:id` y `/api/media/audios/:id` autorizan, cachean y soportan `Range`.
+- [x] `GET /api/trivia` y `GET /api/trivia/:slug` no revelan respuestas correctas.
+- [x] `POST /api/trivia/:slug/responder` valida y calcula el puntaje en el servidor.
+- [x] `GET /api/media/imagenes/:id` y `/api/media/audios/:id` autorizan, cachean y soportan `Range`.
 - [ ] Ningún endpoint devuelve rutas internas de archivos, `password_hash`, `codigo_hash` ni `token_hash`.
 
 ## 4. Autenticación y premium
