@@ -8,9 +8,11 @@ import { Obstacle } from './Obstacle.js'
 import { Background } from './Background.js'
 import { Input } from './Input.js'
 import { colisionaJugador } from './Collision.js'
+import { Spawner } from './Spawner.js'
+import { vidasMaximas } from '../config.js'
 
 export class Game {
-  constructor(canvas, { premium = false, maxLives = 5, onLivesChange = null, onGameOver = null, onScore = null } = {}) {
+  constructor(canvas, { premium = false, onLivesChange = null, onGameOver = null, onScore = null } = {}) {
     this.canvas = canvas
     this.ctx = canvas.getContext('2d')
     this.running = false
@@ -23,8 +25,8 @@ export class Game {
     this._fpsAccum = 0
 
     this.premium = Boolean(premium)
-    this.maxLives = maxLives
-    this.lives = this.premium ? Infinity : maxLives
+    this.maxLives = vidasMaximas(this.premium)
+    this.lives = this.maxLives
     this.gameOver = false
     this.onLivesChange = onLivesChange
     this.onGameOver = onGameOver
@@ -46,8 +48,7 @@ export class Game {
     this.enemies = []
     this.obstacles = []
     this.speed = 230 * this.player.scale
-    this.spawnTimer = 1.2
-    this.obstacleTimer = 2.2
+    this.spawner = new Spawner()
     this.collisions = 0
     this.flash = 0
 
@@ -75,8 +76,7 @@ export class Game {
     this.background.reset(w, h, this.player.groundY)
     this.enemies = []
     this.obstacles = []
-    this.spawnTimer = 1.2
-    this.obstacleTimer = 2.2
+    this.spawner.reset()
   }
 
   start() {
@@ -93,11 +93,11 @@ export class Game {
     this.enemies = []
     this.obstacles = []
     this.speed = 230 * this.player.scale
-    this.spawnTimer = 1.2
-    this.obstacleTimer = 2.2
+    this.spawner.reset()
     this.collisions = 0
     this.flash = 0
-    this.lives = this.premium ? Infinity : this.maxLives
+    this.maxLives = vidasMaximas(this.premium)
+    this.lives = this.maxLives
     this.gameOver = false
     this.distance = 0
     this.score = 0
@@ -178,19 +178,13 @@ export class Game {
       }
     }
 
-    this.spawnTimer -= dt
-    if (this.spawnTimer <= 0 && this.enemies.length < 3) {
-      this.spawnEnemy()
-      this.spawnTimer = 1.4 + Math.random() * 1.1
-      if (this.obstacleTimer < 0.6) this.obstacleTimer = 0.6
-    }
-
-    this.obstacleTimer -= dt
-    if (this.obstacleTimer <= 0 && this.obstacles.length < 2) {
-      this.spawnObstacle()
-      this.obstacleTimer = 1.8 + Math.random() * 1.2
-      if (this.spawnTimer < 0.6) this.spawnTimer = 0.6
-    }
+    // Un solo generador para obstáculos y Ceguas: garantiza separación mínima entre ellos.
+    this.spawner.update(dt, {
+      speed: this.speed,
+      playerX: this.player.x,
+      peligros: [...this.enemies, ...this.obstacles],
+      crear: (tipo) => (tipo === 'enemigo' ? this.spawnEnemy() : this.spawnObstacle()),
+    })
 
     for (const enemy of this.enemies) enemy.update(dt, this.speed)
     for (const obstacle of this.obstacles) obstacle.update(dt, this.speed)
@@ -218,8 +212,6 @@ export class Game {
     this.collisions++
     this.flash = 0.2
 
-    if (this.premium) return
-
     this.lives = Math.max(0, this.lives - 1)
     this.onLivesChange?.(this.lives)
 
@@ -241,8 +233,15 @@ export class Game {
   setPremium(value) {
     const premium = Boolean(value)
     if (premium === this.premium) return
+    const anterior = this.maxLives
     this.premium = premium
-    this.lives = premium ? Infinity : this.maxLives
+    this.maxLives = vidasMaximas(premium)
+    if (!this.running) {
+      this.lives = this.maxLives
+    } else {
+      // A media partida no se regalan ni se reinician vidas: solo se ajusta la diferencia.
+      this.lives = Math.min(this.maxLives, Math.max(0, this.lives + (this.maxLives - anterior)))
+    }
     this.onLivesChange?.(this.lives)
   }
 
@@ -256,6 +255,7 @@ export class Game {
     })
     enemy.x += enemy.w
     this.enemies.push(enemy)
+    return enemy
   }
 
   spawnObstacle() {
@@ -268,6 +268,7 @@ export class Game {
     })
     obstacle.x += obstacle.w
     this.obstacles.push(obstacle)
+    return obstacle
   }
 
   jump() {

@@ -2,10 +2,10 @@
 import { useRef } from 'react'
 import { useAuth } from '../auth.jsx'
 import { useRunner } from './useRunner.js'
+import { vidasMaximas } from './config.js'
 import './styles/runner.css'
 
-const MAX_VIDAS = 5
-const corazones = (n) => '♥'.repeat(Math.max(0, n)) + '♡'.repeat(Math.max(0, MAX_VIDAS - n))
+const corazones = (n, max) => '♥'.repeat(Math.max(0, n)) + '♡'.repeat(Math.max(0, max - n))
 const segundos = (n) => `${Math.max(0, Math.round(n))} s`
 
 export default function RunnerGame() {
@@ -13,6 +13,7 @@ export default function RunnerGame() {
   const { premium } = useAuth()
   const { running, paused, lives, score, gameOver, resultado, start, stop, togglePause } = useRunner(canvasRef, { premium })
 
+  const maxVidas = vidasMaximas(premium)
   const overlay = !running || paused || gameOver
 
   return (
@@ -40,9 +41,9 @@ export default function RunnerGame() {
             <span
               className={`runner-hud__vidas ${premium ? 'runner-hud__vidas--premium' : ''}`}
               role="img"
-              aria-label={premium ? 'Vidas ilimitadas (premium)' : `Vidas: ${lives} de ${MAX_VIDAS}`}
+              aria-label={`Vidas: ${lives} de ${maxVidas}`}
             >
-              <span aria-hidden="true">{premium ? '∞' : corazones(lives)}</span>
+              <span aria-hidden="true">{corazones(lives, maxVidas)}</span>
             </span>
           </div>
         )}

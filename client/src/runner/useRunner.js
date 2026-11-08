@@ -1,8 +1,7 @@
 // client/src/runner/useRunner.js
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Game } from './engine/Game.js'
-
-const VIDAS_INICIALES = 5
+import { vidasMaximas } from './config.js'
 
 export function useRunner(canvasRef, { premium = false } = {}) {
   const gameRef = useRef(null)
@@ -10,7 +9,7 @@ export function useRunner(canvasRef, { premium = false } = {}) {
   const [running, setRunning] = useState(false)
   const [paused, setPaused] = useState(false)
   const [fps, setFps] = useState(0)
-  const [lives, setLives] = useState(VIDAS_INICIALES)
+  const [lives, setLives] = useState(vidasMaximas(premium))
   const [score, setScore] = useState(0)
   const [gameOver, setGameOver] = useState(false)
   const [resultado, setResultado] = useState(null)
