@@ -12,15 +12,17 @@ export default function Legend() {
   const { data: l, error, cargando, recargar } = useApi(`/leyendas/${slug}`)
   useTitulo(l?.titulo)
 
-  if (cargando && !l) return <Cargando />
+  if (cargando && !l) return <div className="noche-pagina"><Cargando /></div>
   if (error?.status === 404)
     return (
-      <div className="contenedor estado">
-        <h1>No encontramos esa leyenda</h1>
-        <Link className="btn btn--noche" to="/leyendas">Volver a la biblioteca</Link>
+      <div className="noche-pagina">
+        <div className="contenedor estado">
+          <h1>No encontramos esa leyenda</h1>
+          <Link className="btn btn--noche" to="/leyendas">Volver a la biblioteca</Link>
+        </div>
       </div>
     )
-  if (error) return <ErrorCaja error={error} onReintentar={recargar} />
+  if (error) return <div className="noche-pagina"><ErrorCaja error={error} onReintentar={recargar} /></div>
   if (!l) return null
 
   const principal = l.imagenes.find((i) => i.esPrincipal) || l.imagenes[0] || null
@@ -39,7 +41,7 @@ export default function Legend() {
   if (bloq.preguntas) faltantes.push(plural(bloq.preguntas, 'pregunta de trivia', 'preguntas de trivia'))
 
   return (
-    <>
+    <div className="noche-pagina">
       <div className="cabecera-ficha">
         <div className="contenedor">
           <nav className="migas" aria-label="Ruta">
@@ -112,7 +114,7 @@ export default function Legend() {
                 <details key={v.id} className="version">
                   <summary>
                     <span>{v.titulo}</span>
-                    {v.fuente && <small style={{ fontWeight: 400, color: 'var(--tinta-suave)' }}>Fuente: {v.fuente.titulo}</small>}
+                    {v.fuente && <small className="version__fuente">Fuente: {v.fuente.titulo}</small>}
                   </summary>
                   <div className="version__cuerpo historia" style={{ fontSize: '1rem' }}>
                     <Markdown>{v.contenido}</Markdown>
@@ -124,7 +126,7 @@ export default function Legend() {
 
           <div className="fila-botones">
             <Link className="btn btn--noche" to={`/trivias/${l.slug}`}>Jugar trivia</Link>
-            <Link className="btn btn--borde sobre-papel" to={primeraRegion ? `/mapa?region=${primeraRegion}` : '/mapa'} style={{ color: 'var(--noche)' }}>
+            <Link className="btn btn--borde" to={primeraRegion ? `/mapa?region=${primeraRegion}` : '/mapa'}>
               Ubicar en el mapa
             </Link>
           </div>
@@ -188,6 +190,6 @@ export default function Legend() {
           </section>
         </aside>
       </div>
-    </>
+    </div>
   )
 }

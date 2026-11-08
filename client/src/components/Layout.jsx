@@ -20,7 +20,7 @@ export default function Layout() {
         Saltar al contenido
       </a>
       <header className="cabecera">
-        <div className="contenedor cabecera__fila" style={{ position: 'relative' }}>
+        <div className="contenedor cabecera__fila">
           <Link to="/" className="marca">
             <Luna /> Ecos de Nicaragua
           </Link>

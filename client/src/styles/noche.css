@@ -1,0 +1,208 @@
+/* Ecos de Nicaragua — capa "noche": cabecera, portada y pie.
+   Idea: todo vive en la oscuridad y la luz revela. Dorado = luna y acción principal.
+   Violeta (el aura de la Cegua) = solo el resplandor al pasar el cursor por una leyenda. */
+
+@property --x { syntax: '<percentage>'; inherits: true; initial-value: 64%; }
+@property --y { syntax: '<percentage>'; inherits: true; initial-value: 42%; }
+
+:root {
+  --n-0: #050a1c;
+  --n-1: #0a1433;
+  --n-2: #12204f;
+  --n-linea: rgb(159 176 216 / 0.2);
+  --n-niebla: #a9b8dc;
+  --n-hueso: #eee8d8;
+  --n-cegua: #8b6bd9;
+  --f-leyenda: 'IM Fell English', 'Merriweather', Georgia, serif;
+}
+
+/* ---------- Cabecera ---------- */
+.cabecera {
+  background: rgb(5 10 28 / 0.94);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+  border-bottom: 1px solid var(--n-linea);
+}
+.marca { font-family: var(--f-leyenda); font-weight: 400; font-size: 1.55rem; letter-spacing: 0; gap: 0.7rem; color: var(--n-hueso); }
+.marca svg { width: 1.9rem; height: 1.9rem; }
+.nav a, .nav button { color: var(--n-niebla); font-size: 0.95rem; }
+.nav a:hover, .nav button:hover { background: rgb(255 255 255 / 0.07); color: var(--n-hueso); }
+.nav a[aria-current='page'] { color: var(--luna); box-shadow: inset 0 -2px 0 var(--luna); }
+.nav .nav__cuenta { border-color: rgb(241 198 109 / 0.5); }
+.nav .nav__cuenta:hover { background: rgb(241 198 109 / 0.12); color: var(--luna); }
+.nav--abierto { background: var(--n-0); border-bottom: 1px solid var(--n-linea); padding: 0.25rem 1rem 1.25rem; }
+.nav--abierto a, .nav--abierto button { font-family: var(--f-leyenda); font-size: 1.3rem; border-radius: 0; border-bottom: 1px solid var(--n-linea); padding-block: 0.9rem; }
+.nav--abierto a[aria-current='page'] { box-shadow: none; }
+.nav--abierto .nav__cuenta { border: 1px solid rgb(241 198 109 / 0.5); border-radius: var(--radio); margin-top: 1rem; justify-content: center; }
+.menu-boton { border-color: var(--n-linea); color: var(--n-hueso); }
+
+/* ---------- Pie ---------- */
+.pie { background: var(--n-0); color: var(--n-niebla); border-top: 1px solid var(--n-linea); padding-block: 3rem; }
+.pie strong { font-family: var(--f-leyenda); font-weight: 400; font-size: 1.5rem; color: var(--n-hueso); }
+.pie p { max-width: 34rem; }
+
+/* ---------- Portada ---------- */
+.inicio, .noche-pagina {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Ccircle cx='471' cy='581' r='1' fill='%23eee8d8' opacity='0.65'/%3E%3Ccircle cx='528' cy='609' r='0.7' fill='%23eee8d8' opacity='0.4'/%3E%3Ccircle cx='532' cy='495' r='1.5' fill='%23eee8d8' opacity='0.85'/%3E%3Ccircle cx='198' cy='104' r='1' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='153' cy='100' r='1.2' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='617' cy='413' r='1' fill='%23eee8d8' opacity='0.85'/%3E%3Ccircle cx='673' cy='169' r='1.2' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='549' cy='72' r='0.6' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='202' cy='255' r='1.2' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='483' cy='342' r='1' fill='%23eee8d8' opacity='0.85'/%3E%3Ccircle cx='208' cy='539' r='0.7' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='519' cy='12' r='1.5' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='476' cy='678' r='0.8' fill='%23eee8d8' opacity='0.65'/%3E%3Ccircle cx='572' cy='93' r='1.5' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='330' cy='243' r='1.2' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='38' cy='79' r='1.2' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='418' cy='118' r='0.8' fill='%23eee8d8' opacity='0.65'/%3E%3Ccircle cx='76' cy='25' r='1.5' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='226' cy='222' r='0.6' fill='%23eee8d8' opacity='0.65'/%3E%3Ccircle cx='392' cy='414' r='1' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='587' cy='652' r='0.7' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='352' cy='97' r='0.8' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='23' cy='427' r='0.6' fill='%23eee8d8' opacity='0.4'/%3E%3Ccircle cx='260' cy='111' r='0.6' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='484' cy='506' r='0.7' fill='%23eee8d8' opacity='0.85'/%3E%3Ccircle cx='200' cy='466' r='1.2' fill='%23eee8d8' opacity='0.4'/%3E%3Ccircle cx='142' cy='437' r='1.5' fill='%23eee8d8' opacity='0.65'/%3E%3Ccircle cx='127' cy='412' r='1' fill='%23eee8d8' opacity='0.4'/%3E%3Ccircle cx='8' cy='284' r='1.2' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='28' cy='223' r='0.7' fill='%23eee8d8' opacity='0.65'/%3E%3Ccircle cx='624' cy='665' r='1.2' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='51' cy='157' r='0.7' fill='%23eee8d8' opacity='0.65'/%3E%3Ccircle cx='272' cy='17' r='1.2' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='311' cy='403' r='0.6' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='100' cy='221' r='1.2' fill='%23eee8d8' opacity='0.4'/%3E%3Ccircle cx='23' cy='623' r='0.8' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='645' cy='472' r='0.7' fill='%23eee8d8' opacity='0.85'/%3E%3Ccircle cx='503' cy='596' r='0.7' fill='%23eee8d8' opacity='0.65'/%3E%3Ccircle cx='195' cy='650' r='0.7' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='241' cy='633' r='0.7' fill='%23eee8d8' opacity='0.4'/%3E%3Ccircle cx='170' cy='652' r='1.2' fill='%23eee8d8' opacity='0.4'/%3E%3Ccircle cx='405' cy='502' r='1.2' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='439' cy='56' r='0.6' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='47' cy='532' r='0.8' fill='%23eee8d8' opacity='0.4'/%3E%3Ccircle cx='409' cy='271' r='1' fill='%23eee8d8' opacity='0.85'/%3E%3Ccircle cx='510' cy='308' r='1.2' fill='%23eee8d8' opacity='0.4'/%3E%3Ccircle cx='78' cy='137' r='0.7' fill='%23eee8d8' opacity='0.65'/%3E%3Ccircle cx='580' cy='677' r='1.2' fill='%23eee8d8' opacity='0.85'/%3E%3Ccircle cx='83' cy='294' r='0.7' fill='%23eee8d8' opacity='0.4'/%3E%3Ccircle cx='24' cy='78' r='0.8' fill='%23eee8d8' opacity='0.65'/%3E%3Ccircle cx='464' cy='263' r='0.6' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='188' cy='296' r='0.8' fill='%23eee8d8' opacity='0.85'/%3E%3Ccircle cx='593' cy='142' r='0.6' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='149' cy='469' r='0.8' fill='%23eee8d8' opacity='0.85'/%3E%3Ccircle cx='606' cy='151' r='1.2' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='26' cy='494' r='0.8' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='42' cy='29' r='1.2' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='501' cy='76' r='1.5' fill='%23eee8d8' opacity='0.5'/%3E%3Ccircle cx='334' cy='147' r='0.6' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='471' cy='567' r='0.8' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='140' cy='357' r='0.8' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='492' cy='87' r='1' fill='%23eee8d8' opacity='0.3'/%3E%3Ccircle cx='519' cy='594' r='0.6' fill='%23eee8d8' opacity='0.85'/%3E%3Ccircle cx='686' cy='399' r='1' fill='%23eee8d8' opacity='0.85'/%3E%3C/svg%3E") 0 0 / 700px 700px repeat,
+    linear-gradient(180deg, var(--n-1) 0%, var(--n-0) 100%);
+  color: var(--n-hueso);
+}
+.inicio h1, .inicio h2, .inicio h3, .noche-pagina h1, .noche-pagina h2, .noche-pagina h3 { font-family: var(--f-leyenda); font-weight: 400; letter-spacing: 0; color: var(--n-hueso); }
+.inicio p, .noche-pagina p { color: var(--n-niebla); }
+.inicio a { color: var(--luna); }
+
+.inicio-hero { position: relative; overflow: hidden; }
+.inicio-hero::before {
+  /* la luna, detrás de la lámina */
+  content: ''; position: absolute; right: -5rem; top: -6rem; width: min(30rem, 60vw); aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle at 38% 36%, rgb(255 246 216 / 0.75) 0%, rgb(241 198 109 / 0.5) 30%, rgb(241 198 109 / 0.14) 52%, transparent 68%);
+  opacity: 0.7; pointer-events: none;
+}
+.inicio-hero__rejilla { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 3rem; padding-block: clamp(3rem, 8vw, 6.5rem); align-items: center; }
+.inicio-hero h1 { font-size: clamp(2.8rem, 6vw, 5rem); line-height: 1; margin-bottom: 0.4em; text-wrap: balance; }
+.inicio-hero__texto p { font-size: 1.15rem; max-width: 30rem; margin-bottom: 1.75rem; }
+@media (min-width: 62rem) { .inicio-hero__rejilla { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 4.5rem; } }
+
+/* Lámina con farol: la ilustración está en penumbra y la luz sigue al cursor. */
+.inicio-lamina { margin: 0; }
+.inicio-lamina__marco {
+  position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 3px; touch-action: pan-y;
+  box-shadow: 0 0 0 1px rgb(241 198 109 / 0.4), 0 40px 90px rgb(0 0 0 / 0.6);
+  transition: --x 0.35s ease-out, --y 0.35s ease-out;
+}
+.inicio-lamina__marco img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 0; background: var(--n-2); }
+.inicio-lamina__marco::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle 12rem at var(--x) var(--y), transparent 0%, rgb(5 10 28 / 0.4) 50%, rgb(5 10 28 / 0.93) 100%);
+}
+@media (hover: none) {
+  /* En pantallas táctiles la lámina se ve completa; el farol queda como un matiz. */
+  .inicio-lamina__marco::after { background: radial-gradient(circle 16rem at var(--x) var(--y), transparent 0%, rgb(5 10 28 / 0.3) 100%); }
+}
+.inicio-lamina__marco .entra { animation: aparece 0.6s ease both; height: 100%; }
+.inicio-lamina__pie { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.4rem 1.5rem; margin-top: 1.1rem; }
+.inicio-lamina__titulo { font-size: clamp(1.6rem, 3vw, 2.2rem); font-style: italic; margin: 0; }
+.inicio-lamina__enlace { font-weight: 600; text-underline-offset: 0.25em; }
+.inicio-lamina__enlace:hover { color: #fff; }
+.inicio-lamina__tira { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.5rem; margin: 1.1rem 0 0; padding: 0; list-style: none; }
+.inicio-miniatura { display: block; width: 100%; min-height: 44px; aspect-ratio: 16 / 10; padding: 0; border: 0; border-bottom: 3px solid transparent; background: none; cursor: pointer; overflow: hidden; opacity: 0.5; transition: opacity 0.2s, border-color 0.2s; }
+.inicio-miniatura img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.inicio-miniatura:hover { opacity: 0.85; }
+.inicio-miniatura[aria-current='true'] { opacity: 1; border-bottom-color: var(--luna); }
+
+/* Secciones */
+.inicio-seccion { padding-block: clamp(3rem, 7vw, 5.5rem); }
+.inicio-seccion > .contenedor > h2 { font-size: clamp(2rem, 4.5vw, 3rem); margin-bottom: 0.3em; }
+.inicio-seccion__intro { max-width: 34rem; margin-bottom: 2.5rem; }
+
+/* Carteles de leyenda (LegendCard variante "cartel") */
+.inicio .rejilla, .noche-pagina .rejilla { gap: 2.5rem 1.75rem; }
+.tarjeta-ley--cartel { background: none; border: 0; border-radius: 0; overflow: visible; color: var(--n-hueso); gap: 0.9rem; }
+.tarjeta-ley--cartel:hover { color: var(--n-hueso); box-shadow: none; border: 0; }
+.tarjeta-ley--cartel .tarjeta-ley__img { border-radius: 3px; overflow: hidden; background: var(--n-2); transition: box-shadow 0.3s; }
+.tarjeta-ley--cartel .tarjeta-ley__img img { filter: brightness(0.72) saturate(0.85); transition: filter 0.35s, transform 0.6s; }
+.tarjeta-ley--cartel:hover .tarjeta-ley__img, .tarjeta-ley--cartel:focus-visible .tarjeta-ley__img { box-shadow: 0 0 0 1px rgb(139 107 217 / 0.7), 0 14px 50px rgb(139 107 217 / 0.3); }
+.tarjeta-ley--cartel:hover .tarjeta-ley__img img, .tarjeta-ley--cartel:focus-visible .tarjeta-ley__img img { filter: none; transform: scale(1.03); }
+.tarjeta-ley--cartel .tarjeta-ley__cuerpo { padding: 0; gap: 0.5rem; }
+.tarjeta-ley--cartel h3 { font-family: var(--f-leyenda); font-weight: 400; font-size: 1.75rem; color: var(--n-hueso); }
+.tarjeta-ley--cartel p { color: var(--n-niebla); }
+.tarjeta-ley--cartel .chip { background: none; color: var(--n-niebla); border: 1px solid var(--n-linea); }
+.tarjeta-ley--cartel .tarjeta-ley__candado { background: var(--n-0); color: var(--luna); border: 1px solid rgb(241 198 109 / 0.4); }
+
+/* Atajos: lista tipográfica, no tarjetas */
+.inicio-atajos { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--n-linea); }
+.inicio-atajos a { display: grid; gap: 0.35rem 3rem; padding: 1.6rem 0; border-top: 1px solid var(--n-linea); text-decoration: none; color: var(--n-hueso); transition: padding-left 0.25s, color 0.2s; }
+.inicio-atajos h3 { margin: 0; font-size: clamp(1.7rem, 3.5vw, 2.4rem); transition: color 0.2s; }
+.inicio-atajos p { margin: 0; max-width: 32rem; align-self: center; }
+.inicio-atajos a:hover { padding-left: 0.75rem; }
+.inicio-atajos a:hover h3 { color: var(--luna); }
+@media (min-width: 50rem) { .inicio-atajos a { grid-template-columns: minmax(0, 20rem) 1fr; align-items: baseline; } }
+
+/* Invitación al premium */
+.inicio-premium { position: relative; overflow: hidden; background: linear-gradient(180deg, var(--n-0), #0c1740); border-top: 1px solid var(--n-linea); }
+.inicio-premium::after { content: ''; position: absolute; left: 50%; bottom: -24rem; width: 40rem; aspect-ratio: 1; translate: -50% 0; border-radius: 50%; background: radial-gradient(circle, rgb(241 198 109 / 0.35) 0%, rgb(241 198 109 / 0.08) 45%, transparent 68%); pointer-events: none; }
+.inicio-premium .contenedor { position: relative; z-index: 1; display: grid; gap: 1.5rem; padding-block: clamp(3rem, 7vw, 5rem); align-items: center; }
+.inicio-premium h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); margin-bottom: 0.3em; }
+.inicio-premium p { margin: 0; max-width: 36rem; }
+@media (min-width: 50rem) { .inicio-premium .contenedor { grid-template-columns: 1fr auto; } }
+
+/* Botones dentro de la portada */
+.inicio .btn--luna { color: var(--n-0); }
+.inicio .btn--luna:hover { color: var(--n-0); box-shadow: 0 0 32px rgb(241 198 109 / 0.45); }
+.inicio .btn--borde { color: var(--n-hueso); border-color: var(--n-linea); }
+.inicio .btn--borde:hover { background: rgb(255 255 255 / 0.07); border-color: var(--n-niebla); color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .inicio-lamina__marco { transition: none; }
+  .tarjeta-ley--cartel .tarjeta-ley__img img, .inicio-atajos a { transition: none; }
+  .tarjeta-ley--cartel:hover .tarjeta-ley__img img { transform: none; }
+}
+
+/* ---------- Páginas interiores nocturnas (biblioteca y ficha de leyenda) ---------- */
+.noche-pagina { min-height: 70vh; }
+.noche-pagina a:not(.btn):not(.tarjeta-ley) { color: var(--luna); }
+.noche-pagina a:not(.btn):not(.tarjeta-ley):hover { color: #fff; }
+.noche-pagina .btn--noche { background: var(--luna); color: var(--n-0); }
+.noche-pagina .btn--noche:hover { background: #f7d98e; color: var(--n-0); box-shadow: 0 0 32px rgb(241 198 109 / 0.4); }
+.noche-pagina .btn--borde { color: var(--n-hueso); border-color: var(--n-linea); }
+.noche-pagina .btn--borde:hover { background: rgb(255 255 255 / 0.07); border-color: var(--n-niebla); color: #fff; }
+
+.noche-pagina .estado { color: var(--n-niebla); }
+.noche-pagina .estado h1, .noche-pagina .estado h2, .noche-pagina .estado h3 { color: var(--n-hueso); }
+.noche-pagina .giro { border-color: var(--n-linea); border-top-color: var(--luna); }
+
+/* Biblioteca */
+.noche-pagina .titulo-pagina { background: none; border-bottom: 1px solid var(--n-linea); padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(1.75rem, 4vw, 2.75rem); }
+.noche-pagina .titulo-pagina h1 { font-size: clamp(2.6rem, 6vw, 4.4rem); line-height: 1.05; margin-bottom: 0.25em; }
+.noche-pagina .titulo-pagina p { font-size: 1.1rem; max-width: 36rem; }
+.noche-pagina .input, .noche-pagina .select { background: rgb(255 255 255 / 0.05); border-color: var(--n-linea); color: var(--n-hueso); color-scheme: dark; }
+.noche-pagina .input::placeholder { color: var(--n-niebla); opacity: 0.8; }
+.noche-pagina .input:focus, .noche-pagina .select:focus { border-color: var(--luna); outline-color: rgb(241 198 109 / 0.5); }
+.noche-pagina .filtro-chip { background: none; border-color: var(--n-linea); color: var(--n-niebla); }
+.noche-pagina .filtro-chip:hover { border-color: var(--n-niebla); color: var(--n-hueso); }
+.noche-pagina .filtro-chip[aria-pressed='true'] { background: var(--luna); border-color: var(--luna); color: var(--n-0); font-weight: 600; }
+.noche-pagina .resultados { color: var(--n-niebla); margin-bottom: 1.5rem; }
+
+/* Ficha de leyenda */
+.noche-pagina .cabecera-ficha { background: none; position: relative; overflow: hidden; padding-block: 1.5rem clamp(2.5rem, 6vw, 4.5rem); }
+.noche-pagina .cabecera-ficha::before { content: ''; position: absolute; right: -6rem; top: -8rem; width: min(26rem, 60vw); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 38% 36%, rgb(255 246 216 / 0.75) 0%, rgb(241 198 109 / 0.5) 30%, rgb(241 198 109 / 0.14) 52%, transparent 68%); opacity: 0.55; pointer-events: none; }
+.noche-pagina .cabecera-ficha .contenedor { position: relative; }
+.noche-pagina .cabecera-ficha h1 { font-size: clamp(2.8rem, 6.5vw, 5rem); line-height: 1.02; margin: 0.3em 0; }
+.noche-pagina .cabecera-ficha p { font-size: 1.15rem; }
+.noche-pagina .chip { background: none; color: var(--n-niebla); border-color: var(--n-linea); }
+.noche-pagina .chip--luna { background: var(--luna); color: var(--n-0); border-color: var(--luna); font-weight: 600; }
+.noche-pagina .lamina { padding: 0; background: none; border-radius: 3px; overflow: hidden; box-shadow: 0 0 0 1px rgb(241 198 109 / 0.4), 0 40px 90px rgb(0 0 0 / 0.6); }
+.noche-pagina .lamina__img { border-radius: 0; display: block; }
+.noche-pagina .credito { color: var(--n-niebla); }
+
+.noche-pagina .ficha { padding-block: 1rem 5rem; }
+.noche-pagina .historia { line-height: 1.85; }
+.noche-pagina .historia p { color: var(--n-hueso); }
+.noche-pagina .historia > p:first-child::first-letter { color: var(--luna); font-family: var(--f-leyenda); font-size: 4.2em; }
+.noche-pagina .bloque > h2 { font-size: clamp(1.7rem, 3vw, 2.2rem); border-bottom-color: rgb(241 198 109 / 0.5); }
+.noche-pagina .nota-origen { color: var(--n-niebla); }
+.noche-pagina .nota-origen strong, .noche-pagina .fuente strong { color: var(--n-hueso); }
+
+.noche-pagina .caja { background: rgb(18 32 79 / 0.4); border-color: var(--n-linea); }
+.noche-pagina .caja h3 { font-size: 1.4rem; color: var(--n-hueso); }
+.noche-pagina .caja--luna { background: rgb(241 198 109 / 0.07); border-color: rgb(241 198 109 / 0.45); }
+.noche-pagina .caja--luna h3 { color: var(--luna); }
+.noche-pagina .lugar { border-bottom-color: var(--n-linea); }
+.noche-pagina .lugar small, .noche-pagina .fuente small { color: var(--n-niebla); }
+.noche-pagina .version { background: none; border-color: var(--n-linea); }
+.noche-pagina .version summary { color: var(--n-hueso); }
+.noche-pagina .version__fuente { font-weight: 400; color: var(--n-niebla); }
+.noche-pagina .galeria figcaption { color: var(--n-niebla); }
+.noche-pagina .galeria img { background: var(--n-2); }
+.noche-pagina .aviso { background: rgb(241 198 109 / 0.08); border-left-color: var(--luna); color: var(--n-hueso); }
+.noche-pagina .verif--verificado { color: #86dba8; background: rgb(46 160 98 / 0.15); }
+.noche-pagina .verif--testimonio_oral { color: #c9baf7; background: rgb(139 107 217 / 0.2); }
+.noche-pagina .verif--pendiente, .noche-pagina .verif--sin_verificar { color: var(--luna); background: rgb(241 198 109 / 0.12); }
+
+.noche-pagina .audio { background: rgb(18 32 79 / 0.5); border: 1px solid var(--n-linea); border-left: 3px solid var(--luna); }
+.noche-pagina .audio strong { font-family: var(--f-leyenda); font-weight: 400; font-size: 1.3rem; color: var(--n-hueso); }
+.noche-pagina .audio audio { color-scheme: dark; }
+.noche-pagina .audio--bloqueado { background: rgb(241 198 109 / 0.07); border-color: rgb(241 198 109 / 0.45); border-left-color: var(--luna); }
+.noche-pagina .audio { margin-bottom: 2.25rem; }
+.noche-pagina .version { max-width: var(--ancho-lectura); }

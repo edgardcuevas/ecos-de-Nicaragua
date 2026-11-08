@@ -39,7 +39,7 @@ export default function Library() {
   const hayFiltro = region || categoria || qUrl
 
   return (
-    <>
+    <div className="noche-pagina">
       <div className="titulo-pagina">
         <div className="contenedor">
           <h1>Leyendas</h1>
@@ -104,17 +104,17 @@ export default function Library() {
         )}
         {data && data.length > 0 && (
           <>
-            <p aria-live="polite" style={{ color: 'var(--tinta-suave)' }}>
+            <p aria-live="polite" className="resultados">
               {hayFiltro ? `${meta?.total ?? data.length} resultado${(meta?.total ?? data.length) === 1 ? '' : 's'}` : `${meta?.total ?? data.length} leyendas`}
             </p>
             <div className="rejilla">
               {data.map((l) => (
-                <LegendCard key={l.slug} leyenda={l} premium={premium} />
+                <LegendCard key={l.slug} leyenda={l} premium={premium} variante="cartel" />
               ))}
             </div>
           </>
         )}
       </div>
-    </>
+    </div>
   )
 }

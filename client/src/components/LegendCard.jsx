@@ -6,12 +6,12 @@ export function hayBloqueo(l) {
   return !!b && b.versiones + b.imagenes + b.audios + b.preguntas > 0
 }
 
-export default function LegendCard({ leyenda, premium }) {
+export default function LegendCard({ leyenda, premium, variante }) {
   const lugares = leyenda.regiones?.length
     ? leyenda.regiones.map((r) => r.nombre)
     : [ALCANCE[leyenda.alcance] || leyenda.alcance]
   return (
-    <Link to={`/leyendas/${leyenda.slug}`} className="tarjeta-ley">
+    <Link to={`/leyendas/${leyenda.slug}`} className={`tarjeta-ley ${variante ? `tarjeta-ley--${variante}` : ''}`}>
       <div className="tarjeta-ley__img">
         <ImagenLeyenda slug={leyenda.slug} imagen={leyenda.imagenPrincipal} alt="" />
         {!premium && hayBloqueo(leyenda) && (

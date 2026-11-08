@@ -9,7 +9,7 @@ import { Background } from './Background.js'
 import { Input } from './Input.js'
 import { colisionaJugador } from './Collision.js'
 import { Spawner } from './Spawner.js'
-import { vidasMaximas } from '../config.js'
+import { vidasMaximas, factorVelocidad } from '../config.js'
 
 export class Game {
   constructor(canvas, { premium = false, onLivesChange = null, onGameOver = null, onScore = null } = {}) {
@@ -164,7 +164,7 @@ export class Game {
   update(dt) {
     if (this.gameOver) return
     this.player.update(dt)
-    this.speed = 230 * this.player.scale
+    this.speed = 230 * this.player.scale * factorVelocidad(this.elapsed)
     this.background.update(dt, this.speed)
 
     this.distance += (this.speed * dt) / 10 // 10 px = 1 m
