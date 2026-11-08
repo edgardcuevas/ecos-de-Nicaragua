@@ -76,7 +76,7 @@ a:hover { color: var(--noche); }
 .menu-boton svg { width: 22px; height: 22px; }
 .nav--abierto { display: flex; flex-direction: column; align-items: stretch; position: absolute; left: 0; right: 0; top: 100%; background: var(--noche); padding: 0.5rem 1rem 1rem; border-bottom: 1px solid rgb(241 198 109 / 0.35); }
 .nav--abierto .nav__cuenta { margin: 0.5rem 0 0; justify-content: center; }
-@media (min-width: 52rem) {
+@media (min-width: 60rem) {
   .nav { display: flex; }
   .menu-boton { display: none; }
 }

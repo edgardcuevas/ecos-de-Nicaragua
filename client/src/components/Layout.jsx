@@ -34,6 +34,7 @@ export default function Layout() {
             <NavLink to="/leyendas">Leyendas</NavLink>
             <NavLink to="/mapa">Mapa</NavLink>
             <NavLink to="/trivias">Trivias</NavLink>
+            <NavLink to="/runner">Juego</NavLink>
             <NavLink to="/ubica">Ubica la leyenda</NavLink>
             <NavLink to="/planes">Planes</NavLink>
             {esAdmin && <NavLink to="/admin">Administración</NavLink>}

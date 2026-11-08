@@ -16,6 +16,7 @@ const Trivia = lazy(() => import('./pages/Trivia.jsx'))
 const Account = lazy(() => import('./pages/Account.jsx'))
 const Plans = lazy(() => import('./pages/Plans.jsx'))
 const Admin = lazy(() => import('./pages/Admin.jsx'))
+const RunnerGame = lazy(() => import('./runner/RunnerGame.jsx'))
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="restablecer" element={<Restablecer />} />
           <Route path="cuenta" element={<Account />} />
           <Route path="admin" element={<Admin />} />
+          <Route path="runner" element={<RunnerGame />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

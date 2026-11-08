@@ -119,19 +119,19 @@ Assets en WebP/PNG optimizados, < 200 KB totales.
 
 ## 8. Definition of Done
 
-- [ ] El juego corre a 60 FPS en Canvas 2D.
-- [ ] El Borracho salta, corre y se anima.
-- [ ] Las Ceguas aparecen continuamente y se mueven hacia el jugador.
-- [ ] Los obstáculos aparecen y colisionan.
-- [ ] El puntaje aumenta con la distancia y se muestra en pantalla.
-- [ ] Usuario gratis: máximo 5 vidas; al perder la 5ª → Game Over.
-- [ ] Usuario premium: vidas ilimitadas; respawn con invulnerabilidad tras golpe.
-- [ ] Pantalla de Game Over con puntaje final y botón "Reintentar".
-- [ ] Controles: teclado (Espacio/↑) y touch (tap).
-- [ ] Integrado en React sin modificar módulos existentes (solo añadir ruta y enlace).
-- [ ] Desmontaje limpio (cancelAnimationFrame, removeEventListener).
-- [ ] Sin fugas de memoria ni listeners huérfanos.
-- [ ] Funciona en móvil y escritorio.
+- [x] El juego corre a 60 FPS en Canvas 2D.
+- [x] El Borracho salta, corre y se anima.
+- [x] Las Ceguas aparecen continuamente y se mueven hacia el jugador.
+- [x] Los obstáculos aparecen y colisionan.
+- [x] El puntaje aumenta con la distancia y se muestra en pantalla.
+- [x] Usuario gratis: máximo 5 vidas; al perder la 5ª → Game Over.
+- [x] Usuario premium: vidas ilimitadas; respawn con invulnerabilidad tras golpe.
+- [x] Pantalla de Game Over con puntaje final y botón "Reintentar".
+- [x] Controles: teclado (Espacio/↑) y touch (tap).
+- [x] Integrado en React sin modificar módulos existentes (solo añadir ruta y enlace).
+- [x] Desmontaje limpio (cancelAnimationFrame, removeEventListener).
+- [x] Sin fugas de memoria ni listeners huérfanos.
+- [x] Funciona en móvil y escritorio.
 
 ## 9. Complejidad estimada
 

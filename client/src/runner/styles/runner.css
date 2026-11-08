@@ -1,0 +1,178 @@
+.runner-container {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.runner-cabecera {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.runner-cabecera h1 {
+  margin: 0 0 0.35rem;
+  font-family: var(--f-titulo);
+  color: var(--noche);
+}
+
+.runner-cabecera p {
+  margin: 0;
+  color: var(--tinta-suave);
+}
+
+.runner-escenario {
+  position: relative;
+}
+
+.runner-canvas {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--noche-hondo);
+  box-shadow: var(--sombra);
+  touch-action: none;
+}
+
+.runner-hud {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.85rem;
+  right: 0.85rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  pointer-events: none;
+  color: #fff;
+  text-shadow: 0 1px 4px rgb(0 0 0 / 0.65);
+}
+
+.runner-hud__puntaje {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.runner-hud__puntaje strong {
+  margin-left: 0.3rem;
+  font-size: 1.45rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--luna);
+}
+
+.runner-hud__vidas {
+  font-size: 1.2rem;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  color: #ff8fa3;
+}
+
+.runner-hud__vidas--premium {
+  color: var(--luna);
+}
+
+.runner-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1.25rem;
+  text-align: center;
+  color: #fff;
+  background: rgb(0 19 58 / 0.78);
+  border-radius: var(--radio);
+}
+
+.runner-overlay--final {
+  background: rgb(0 19 58 / 0.86);
+}
+
+.runner-overlay__titulo {
+  margin: 0;
+  font-family: var(--f-titulo);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  line-height: 1.15;
+  color: var(--luna);
+}
+
+.runner-overlay__puntaje {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.runner-overlay__puntaje strong {
+  display: block;
+  font-size: 2rem;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--luna);
+}
+
+.runner-overlay__detalle {
+  margin: 0;
+  max-width: 24rem;
+  font-size: 0.95rem;
+  color: #dfe8f7;
+}
+
+.runner-overlay .btn {
+  margin-top: 0.4rem;
+}
+
+.runner-ayuda {
+  margin: 0.75rem 0 0;
+  text-align: center;
+  font-size: 0.92rem;
+  color: var(--tinta-suave);
+}
+
+.runner-container kbd {
+  font-family: inherit;
+  font-size: 0.85em;
+  padding: 0.1rem 0.35rem;
+  border: 1px solid var(--linea);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--papel);
+  color: var(--tinta);
+}
+
+.runner-controls {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+@media (max-width: 30rem) {
+  .runner-container {
+    padding: 1rem 0.75rem 2rem;
+  }
+
+  .runner-controls .btn {
+    flex: 1 1 8rem;
+  }
+
+  .runner-hud {
+    top: 0.5rem;
+    left: 0.65rem;
+    right: 0.65rem;
+  }
+
+  .runner-hud__puntaje strong {
+    font-size: 1.2rem;
+  }
+
+  .runner-hud__vidas {
+    font-size: 1.05rem;
+  }
+
+  .runner-overlay {
+    padding: 0.9rem;
+  }
+}
