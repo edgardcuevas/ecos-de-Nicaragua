@@ -14,7 +14,7 @@ export default function Account() {
   const [codigo, setCodigo] = useState('')
   const [estado, setEstado] = useState({ enviando: false, error: '', ok: '' })
 
-  if (cargando) return <Cargando />
+  if (cargando) return <div className="noche-pagina"><Cargando /></div>
   if (!usuario) return <Navigate to="/ingresar" replace state={{ desde: ubicacion.pathname }} />
 
   const canjear = async (e) => {
@@ -31,7 +31,7 @@ export default function Account() {
   }
 
   return (
-    <>
+    <div className="noche-pagina">
       <div className="titulo-pagina">
         <div className="contenedor"><h1>Mi cuenta</h1></div>
       </div>
@@ -48,7 +48,7 @@ export default function Account() {
               </>
             )}
           </dl>
-          {esAdmin && <p style={{ marginTop: '1.25rem' }}><Link className="btn btn--borde sobre-papel" style={{ color: 'var(--noche)' }} to="/admin">Ir a administración</Link></p>}
+          {esAdmin && <p style={{ marginTop: '1.25rem' }}><Link className="btn btn--borde" to="/admin">Ir a administración</Link></p>}
         </section>
 
         <section className="panel">
@@ -66,6 +66,6 @@ export default function Account() {
           <p style={{ marginTop: '1rem' }}><Link to="/planes">Ver qué incluye el premium</Link></p>
         </section>
       </div>
-    </>
+    </div>
   )
 }

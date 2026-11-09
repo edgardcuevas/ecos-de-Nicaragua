@@ -26,15 +26,17 @@ export default function Trivia() {
   const [enviando, setEnviando] = useState(false)
   const [falla, setFalla] = useState('')
 
-  if (cargando && !t) return <Cargando />
+  if (cargando && !t) return <div className="noche-pagina"><Cargando /></div>
   if (error?.status === 404)
     return (
-      <div className="contenedor estado">
-        <h1>Esta leyenda todavía no tiene trivia</h1>
-        <Link className="btn btn--noche" to="/trivias">Ver trivias</Link>
+      <div className="noche-pagina">
+        <div className="contenedor estado">
+          <h1>Esta leyenda todavía no tiene trivia</h1>
+          <Link className="btn btn--noche" to="/trivias">Ver trivias</Link>
+        </div>
       </div>
     )
-  if (error) return <ErrorCaja error={{ message: MENSAJES[error.message] || error.message }} onReintentar={recargar} />
+  if (error) return <div className="noche-pagina"><ErrorCaja error={{ message: MENSAJES[error.message] || error.message }} onReintentar={recargar} /></div>
   if (!t) return null
 
   const total = t.preguntas.length
@@ -66,9 +68,10 @@ export default function Trivia() {
   if (resultado) {
     const porPregunta = new Map(resultado.detalle.map((d) => [d.preguntaId, d]))
     return (
+      <div className="noche-pagina">
       <div className="contenedor trivia">
         <div className="puntaje" aria-live="polite">
-          <h1 style={{ fontSize: '1.4rem' }}>{t.titulo}</h1>
+          <h1 className="trivia__titulo">{t.titulo}</h1>
           <p className="puntaje__num">{resultado.puntaje} de {resultado.total}</p>
           <p>{resultado.puntaje === resultado.total ? '¡Respondiste todo bien!' : 'Revisa las respuestas para aprender más.'}</p>
         </div>
@@ -96,18 +99,20 @@ export default function Trivia() {
         )}
         <div className="fila-botones">
           <button type="button" className="btn btn--noche" onClick={reiniciar}>Repetir</button>
-          <Link className="btn btn--borde sobre-papel" style={{ color: 'var(--noche)' }} to={`/leyendas/${slug}`}>Leer la leyenda</Link>
-          <Link className="btn btn--borde sobre-papel" style={{ color: 'var(--noche)' }} to="/leyendas">Biblioteca</Link>
+          <Link className="btn btn--borde" to={`/leyendas/${slug}`}>Leer la leyenda</Link>
+          <Link className="btn btn--borde" to="/leyendas">Biblioteca</Link>
         </div>
+      </div>
       </div>
     )
   }
 
   const ultima = paso === total - 1
   return (
+    <div className="noche-pagina">
     <div className="contenedor trivia">
-      <p style={{ margin: 0, color: 'var(--tinta-suave)' }}><Link to="/trivias">← Trivias</Link></p>
-      <h1 style={{ fontSize: '1.4rem', marginTop: '0.75rem' }}>{t.titulo}</h1>
+      <p style={{ margin: 0 }}><Link to="/trivias">← Trivias</Link></p>
+      <h1 className="trivia__titulo" style={{ marginTop: '0.75rem' }}>{t.titulo}</h1>
       <p style={{ margin: 0 }} aria-live="polite">Pregunta {paso + 1} de {total}</p>
       <div className="progreso" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={paso} aria-label="Progreso"><i style={{ width: `${(paso / total) * 100}%` }} /></div>
 
@@ -123,14 +128,15 @@ export default function Trivia() {
 
       {falla && <div className="aviso aviso--error" role="alert"><p>{falla}</p></div>}
       <div className="fila-botones">
-        {paso > 0 && <button type="button" className="btn btn--borde sobre-papel" style={{ color: 'var(--noche)' }} onClick={() => setPaso(paso - 1)}>Anterior</button>}
+        {paso > 0 && <button type="button" className="btn btn--borde" onClick={() => setPaso(paso - 1)}>Anterior</button>}
         {ultima ? (
           <button type="button" className="btn btn--noche" disabled={!resp[q.id] || enviando} onClick={enviar}>{enviando ? 'Calificando…' : 'Ver mi puntaje'}</button>
         ) : (
           <button type="button" className="btn btn--noche" disabled={!resp[q.id]} onClick={() => setPaso(paso + 1)}>Siguiente</button>
         )}
       </div>
-      {faltaPremium && <p style={{ marginTop: '1.5rem', color: 'var(--tinta-suave)', fontSize: '0.95rem' }}>Con la cuenta gratis juegas {t.totalGratis} de {t.totalGratis + t.totalPremium} preguntas. <Link to="/planes">Ver planes</Link></p>}
+      {faltaPremium && <p style={{ marginTop: '1.5rem', fontSize: '0.95rem' }}>Con la cuenta gratis juegas {t.totalGratis} de {t.totalGratis + t.totalPremium} preguntas. <Link to="/planes">Ver planes</Link></p>}
+    </div>
     </div>
   )
 }

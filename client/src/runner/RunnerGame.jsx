@@ -11,16 +11,21 @@ const segundos = (n) => `${Math.max(0, Math.round(n))} s`
 export default function RunnerGame() {
   const canvasRef = useRef(null)
   const { premium } = useAuth()
-  const { running, paused, lives, score, gameOver, resultado, start, stop, togglePause } = useRunner(canvasRef, { premium })
+  const {
+    running, paused, lives, score, gameOver, resultado, start, stop, togglePause,
+    record, silencio, toggleSilencio, saltar, soltarSalto, agachar,
+  } = useRunner(canvasRef, { premium })
+  const victoria = Boolean(resultado?.victoria)
 
   const maxVidas = vidasMaximas(premium)
   const overlay = !running || paused || gameOver
 
   return (
+    <div className="noche-pagina">
     <section className="runner-container">
       <header className="runner-cabecera">
         <h1>Huir de las Ceguas</h1>
-        <p>El Borracho corre entre las sombras. Esquiva a las Ceguas y salta los obstáculos.</p>
+        <p>El Borracho corre entre las sombras. Resiste hasta que cante el gallo.</p>
       </header>
 
       <div className="runner-escenario">
@@ -37,6 +42,7 @@ export default function RunnerGame() {
           <div className="runner-hud">
             <span className="runner-hud__puntaje">
               Puntaje <strong>{score}</strong>
+              {record > 0 && <small className="runner-hud__record"> · Récord {record}</small>}
             </span>
             <span
               className={`runner-hud__vidas ${premium ? 'runner-hud__vidas--premium' : ''}`}
@@ -52,7 +58,9 @@ export default function RunnerGame() {
           <div className={`runner-overlay ${gameOver ? 'runner-overlay--final' : ''}`}>
             {gameOver ? (
               <>
-                <p className="runner-overlay__titulo">Game Over</p>
+                <p className="runner-overlay__titulo">{victoria ? '¡Amaneció!' : 'Game Over'}</p>
+                {victoria && <p className="runner-overlay__detalle">Cantó el gallo y la Cegua se esfumó.</p>}
+                {resultado?.nuevoRecord && <p className="runner-overlay__record">¡Nuevo récord!</p>}
                 <p className="runner-overlay__puntaje">
                   Puntaje final: <strong>{resultado?.score ?? score}</strong>
                 </p>
@@ -75,7 +83,8 @@ export default function RunnerGame() {
               <>
                 <p className="runner-overlay__titulo">¿Listo para huir?</p>
                 <p className="runner-overlay__detalle">
-                  Salta con <kbd>Espacio</kbd> o <kbd>↑</kbd>, o toca la pantalla.
+                  Salta con <kbd>Espacio</kbd> o <kbd>↑</kbd> (mantén para saltar más alto) y agáchate con <kbd>↓</kbd>.
+                  Sobrevive 100 s hasta el amanecer.
                 </p>
                 <button type="button" className="btn btn--luna" onClick={start}>
                   Comenzar
@@ -87,8 +96,30 @@ export default function RunnerGame() {
       </div>
 
       <p className="runner-ayuda">
-        Salta con <kbd>Espacio</kbd> o <kbd>↑</kbd>, o toca el canvas.
+        Salta con <kbd>Espacio</kbd> o <kbd>↑</kbd>, agáchate con <kbd>↓</kbd> o <kbd>S</kbd>. Las lianas colgantes exigen agacharse.
       </p>
+
+      <div className="runner-tactil" aria-label="Controles táctiles">
+        <button
+          type="button"
+          className="runner-tactil__btn"
+          onPointerDown={(e) => { e.preventDefault(); agachar(true) }}
+          onPointerUp={() => agachar(false)}
+          onPointerCancel={() => agachar(false)}
+          onPointerLeave={() => agachar(false)}
+        >
+          Agacharse
+        </button>
+        <button
+          type="button"
+          className="runner-tactil__btn runner-tactil__btn--salto"
+          onPointerDown={(e) => { e.preventDefault(); saltar() }}
+          onPointerUp={soltarSalto}
+          onPointerCancel={soltarSalto}
+        >
+          Saltar
+        </button>
+      </div>
 
       <div className="runner-controls">
         <button type="button" className="btn btn--noche" onClick={start} disabled={running}>
@@ -100,7 +131,16 @@ export default function RunnerGame() {
         <button type="button" className="btn btn--borde" onClick={stop} disabled={!running}>
           Detener
         </button>
+        <button
+          type="button"
+          className="btn btn--borde"
+          onClick={toggleSilencio}
+          aria-pressed={silencio}
+        >
+          {silencio ? 'Sonido: no' : 'Sonido: sí'}
+        </button>
       </div>
     </section>
+    </div>
   )
 }

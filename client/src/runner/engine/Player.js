@@ -4,6 +4,9 @@
 
 const GRAVITY = 2200 // px/s² a escala 1
 const JUMP_SPEED = 760 // px/s a escala 1
+const JUMP_CUT = 0.72 * JUMP_SPEED // al soltar el salto, la subida se corta a esta velocidad
+const DUCK_GRAVITY = 2.4 // en el aire, agacharse acelera la caída
+const DUCK_H = 0.45 // fracción de la altura al agacharse
 const UNIT_HEIGHT = 58 // altura de referencia del personaje
 
 const COLORES = {
@@ -24,6 +27,7 @@ export class Player {
     this.y = 0 // posición de los pies
     this.vy = 0
     this.onGround = true
+    this.ducking = false
     this.state = 'running' // running | jumping | hit
     this.time = 0
     this.hitTimer = 0
@@ -45,6 +49,7 @@ export class Player {
     this.y = this.groundY
     this.vy = 0
     this.onGround = true
+    this.ducking = false
     this.state = 'running'
     this.hitTimer = 0
     this.invulnerable = 0
@@ -69,7 +74,7 @@ export class Player {
     }
 
     if (!this.onGround) {
-      this.vy += GRAVITY * this.scale * dt
+      this.vy += GRAVITY * this.scale * (this.ducking ? DUCK_GRAVITY : 1) * dt
       this.y += this.vy * dt
 
       if (this.y >= this.groundY) {
@@ -83,10 +88,21 @@ export class Player {
 
   jump() {
     if (!this.onGround || this.state === 'hit') return false
+    this.ducking = false
     this.vy = -JUMP_SPEED * this.scale
     this.onGround = false
     this.state = 'jumping'
     return true
+  }
+
+  /** Soltar el salto en plena subida lo deja más corto (mantén para saltar más alto). */
+  jumpRelease() {
+    if (!this.onGround && this.vy < -JUMP_CUT * this.scale) this.vy = -JUMP_CUT * this.scale
+  }
+
+  /** En el suelo te agachas (caja más baja); en el aire caes más rápido. */
+  duck(on) {
+    this.ducking = Boolean(on)
   }
 
   /** Animación de golpe. La invulnerabilidad la gestiona R07. */
@@ -101,11 +117,12 @@ export class Player {
 
   /** Caja de colisión para R05 (AABB). */
   getBounds() {
+    const h = this.ducking && this.onGround ? this.h * DUCK_H : this.h
     return {
       x: this.x - this.w / 2,
-      y: this.y - this.h,
+      y: this.y - h,
       w: this.w,
-      h: this.h,
+      h,
     }
   }
 
@@ -133,6 +150,7 @@ export class Player {
     ctx.save()
     ctx.translate(this.x, this.y - bob)
     ctx.scale(s, s)
+    if (this.ducking && this.onGround) ctx.scale(1.15, 0.45)
     if (this.state === 'hit') ctx.rotate(-0.22)
 
     const enSalto = this.state === 'jumping' || !this.onGround

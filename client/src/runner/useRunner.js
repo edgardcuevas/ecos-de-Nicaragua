@@ -3,6 +3,32 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Game } from './engine/Game.js'
 import { vidasMaximas } from './config.js'
 
+function leerSilencioInicial() {
+  try {
+    return localStorage.getItem('ecos.runner.silencio') === '1'
+  } catch {
+    return false
+  }
+}
+
+const CLAVE_RECORD = 'ecos.runner.record'
+
+function leerRecord() {
+  try {
+    return Number(localStorage.getItem(CLAVE_RECORD)) || 0
+  } catch {
+    return 0
+  }
+}
+
+function guardarRecord(valor) {
+  try {
+    localStorage.setItem(CLAVE_RECORD, String(valor))
+  } catch {
+    /* sin almacenamiento: el récord dura solo esta visita */
+  }
+}
+
 export function useRunner(canvasRef, { premium = false } = {}) {
   const gameRef = useRef(null)
   const premiumRef = useRef(premium)
@@ -13,10 +39,18 @@ export function useRunner(canvasRef, { premium = false } = {}) {
   const [score, setScore] = useState(0)
   const [gameOver, setGameOver] = useState(false)
   const [resultado, setResultado] = useState(null)
+  const [record, setRecord] = useState(leerRecord)
+  const [silencio, setSilencio] = useState(() => leerSilencioInicial())
 
   const alGameOver = useCallback((info) => {
+    const previo = leerRecord()
+    const nuevo = (info.score ?? 0) > previo
+    if (nuevo) {
+      guardarRecord(info.score)
+      setRecord(info.score)
+    }
     setGameOver(true)
-    setResultado(info)
+    setResultado({ ...info, nuevoRecord: nuevo })
     setScore(info.score ?? 0)
     setRunning(false)
     setPaused(false)
@@ -104,5 +138,33 @@ export function useRunner(canvasRef, { premium = false } = {}) {
     setPaused(game.paused)
   }, [])
 
-  return { running, paused, fps, lives, score, gameOver, resultado, start, stop, pause, resume, togglePause }
+  const toggleSilencio = useCallback(() => {
+    const game = gameRef.current
+    if (!game) return
+    game.sound.setMuted(!game.sound.muted)
+    setSilencio(game.sound.muted)
+  }, [])
+
+  // Controles táctiles
+  const saltar = useCallback(() => gameRef.current?.jump(), [])
+  const soltarSalto = useCallback(() => gameRef.current?.jumpRelease(), [])
+  const agachar = useCallback((on) => gameRef.current?.duck(on), [])
+
+  return {
+    record,
+    silencio,
+    toggleSilencio,
+    saltar,
+    soltarSalto,
+    agachar,
+    running, paused, fps, lives,
+    score,
+    gameOver,
+    resultado,
+    start,
+    stop,
+    pause,
+    resume,
+    togglePause,
+  }
 }

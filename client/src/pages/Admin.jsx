@@ -11,9 +11,9 @@ function Paginacion({ meta, onPagina }) {
   if (!meta || meta.totalPaginas <= 1) return null
   return (
     <div className="paginacion">
-      <button type="button" className="btn btn--borde sobre-papel btn--chico" style={{ color: 'var(--noche)' }} disabled={meta.page <= 1} onClick={() => onPagina(meta.page - 1)}>Anterior</button>
+      <button type="button" className="btn btn--borde btn--chico" disabled={meta.page <= 1} onClick={() => onPagina(meta.page - 1)}>Anterior</button>
       <span>Página {meta.page} de {meta.totalPaginas}</span>
-      <button type="button" className="btn btn--borde sobre-papel btn--chico" style={{ color: 'var(--noche)' }} disabled={meta.page >= meta.totalPaginas} onClick={() => onPagina(meta.page + 1)}>Siguiente</button>
+      <button type="button" className="btn btn--borde btn--chico" disabled={meta.page >= meta.totalPaginas} onClick={() => onPagina(meta.page + 1)}>Siguiente</button>
     </div>
   )
 }
@@ -77,7 +77,7 @@ function ModalSuscripcion({ usuario, planes, onCerrar, onHecho }) {
           <div className="campo"><label htmlFor="fin">Fin (opcional)</label><input id="fin" className="input" type="date" value={fin} onChange={(e) => setFin(e.target.value)} /><small>Si lo dejas vacío, se calcula según el plan.</small></div>
           <div className="fila-botones">
             <button className="btn btn--noche" type="submit" disabled={enviando || !planId}>{enviando ? 'Activando…' : 'Activar premium'}</button>
-            <button className="btn btn--borde sobre-papel" style={{ color: 'var(--noche)' }} type="button" onClick={onCerrar}>Cancelar</button>
+            <button className="btn btn--borde" type="button" onClick={onCerrar}>Cancelar</button>
           </div>
         </form>
       </div>
@@ -207,7 +207,7 @@ function Codigos({ planes }) {
         <div style={{ marginBottom: '1.5rem' }}>
           <p><strong>Cópialos ahora:</strong> por seguridad no se vuelven a mostrar.</p>
           <div className="codigos-nuevos" tabIndex={0}>{nuevos.join('\n')}</div>
-          <p style={{ marginTop: '0.5rem' }}><button type="button" className="btn btn--borde sobre-papel btn--chico" style={{ color: 'var(--noche)' }} onClick={() => navigator.clipboard?.writeText(nuevos.join('\n'))}>Copiar al portapapeles</button></p>
+          <p style={{ marginTop: '0.5rem' }}><button type="button" className="btn btn--borde btn--chico" onClick={() => navigator.clipboard?.writeText(nuevos.join('\n'))}>Copiar al portapapeles</button></p>
         </div>
       )}
 
@@ -280,18 +280,18 @@ export default function Admin() {
   const { usuario, esAdmin, cargando } = useAuth()
   const [tab, setTab] = useState('usuarios')
   const planes = useApi('/premium/planes')
-  if (cargando) return <Cargando />
+  if (cargando) return <div className="noche-pagina"><Cargando /></div>
   if (!usuario) return <Navigate to="/ingresar" replace state={{ desde: '/admin' }} />
   if (!esAdmin)
     return (
-      <div className="contenedor estado" style={{ paddingBlock: '4rem' }}>
+      <div className="noche-pagina"><div className="contenedor estado" style={{ paddingBlock: '4rem' }}>
         <h1>No tienes permiso para ver esta página</h1>
         <p>Solo las cuentas de administración pueden entrar aquí.</p>
-      </div>
+      </div></div>
     )
   const lista = planes.data || []
   return (
-    <>
+    <div className="noche-pagina">
       <div className="titulo-pagina"><div className="contenedor"><h1>Administración</h1><p>Usuarios, premium y códigos de activación.</p></div></div>
       <div className="contenedor seccion" style={{ paddingTop: '1.5rem' }}>
         <div className="pestanas" role="tablist" aria-label="Secciones">
@@ -305,6 +305,6 @@ export default function Admin() {
           {tab === 'auditoria' && <Auditoria />}
         </div>
       </div>
-    </>
+    </div>
   )
 }

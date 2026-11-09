@@ -16,7 +16,7 @@ export default function Plans() {
   const { premium, usuario } = useAuth()
   const { data, error, cargando, recargar } = useApi('/premium/planes')
   return (
-    <>
+    <div className="noche-pagina">
       <div className="titulo-pagina">
         <div className="contenedor">
           <h1>Planes</h1>
@@ -56,11 +56,11 @@ export default function Plans() {
           ) : (
             <>
               <Link className="btn btn--noche" to="/registro">Crear cuenta</Link>
-              <Link className="btn btn--borde sobre-papel" style={{ color: 'var(--noche)' }} to="/ingresar">Ya tengo cuenta</Link>
+              <Link className="btn btn--borde" to="/ingresar">Ya tengo cuenta</Link>
             </>
           )}
         </div>
       </div>
-    </>
+    </div>
   )
 }

@@ -16,7 +16,7 @@ function Campo({ id, etiqueta, ayuda, ...props }) {
 
 function Formulario({ titulo, intro, onEnviar, enviando, error, ok, children, boton, pie }) {
   return (
-    <div className="tarjeta-form">
+    <div className="noche-pagina"><div className="tarjeta-form">
       <h1>{titulo}</h1>
       {intro && <p>{intro}</p>}
       {error && <div className="aviso aviso--error" role="alert"><p>{error}</p></div>}
@@ -26,7 +26,7 @@ function Formulario({ titulo, intro, onEnviar, enviando, error, ok, children, bo
         <button className="btn btn--noche" type="submit" disabled={enviando}>{enviando ? 'Un momento…' : boton}</button>
       </form>
       {pie && <div className="pie-form">{pie}</div>}
-    </div>
+    </div></div>
   )
 }
 
@@ -116,11 +116,11 @@ export function Restablecer() {
   })
   if (!token)
     return (
-      <div className="tarjeta-form">
+      <div className="noche-pagina"><div className="tarjeta-form">
         <h1>Enlace incompleto</h1>
         <p>Abre el enlace completo que te enviamos por correo o pide uno nuevo.</p>
         <Link className="btn btn--noche" to="/recuperar">Pedir un enlace nuevo</Link>
-      </div>
+      </div></div>
     )
   return (
     <Formulario titulo="Nueva contraseña" onEnviar={enviar} {...estado} boton="Guardar contraseña"

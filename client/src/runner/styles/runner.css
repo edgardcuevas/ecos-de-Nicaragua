@@ -176,3 +176,16 @@
     padding: 0.9rem;
   }
 }
+
+/* v2: récord, botones táctiles */
+.runner-hud__record { opacity: 0.75; font-weight: 400; }
+.runner-overlay__record { color: #f1c66d; font-weight: 700; margin: 0.2rem 0; }
+.runner-tactil { display: none; gap: 0.75rem; margin: 0.75rem 0; }
+.runner-tactil__btn {
+  flex: 1; min-height: 3.5rem; border-radius: 0.75rem;
+  border: 1px solid rgb(241 198 109 / 0.5); background: rgb(10 20 50 / 0.8);
+  color: #f1e6c8; font: inherit; font-weight: 600; touch-action: none; user-select: none;
+}
+.runner-tactil__btn--salto { background: rgb(241 198 109 / 0.2); }
+.runner-tactil__btn:active { background: rgb(241 198 109 / 0.35); }
+@media (pointer: coarse) { .runner-tactil { display: flex; } }

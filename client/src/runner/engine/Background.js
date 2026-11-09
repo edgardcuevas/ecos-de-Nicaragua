@@ -1,6 +1,7 @@
 // engine/Background.js
-// Fondo parallax en tres capas: cielo con luna, montañas lejanas y colinas cercanas.
-// Todo procedural; R09 puede sustituirlo por imágenes sin cambiar la API.
+// Fondo parallax en capas: cielo con luna y estrellas, montañas lejanas y colinas cercanas.
+// El cielo recorre la noche: a partir del 55 % de la partida empieza a amanecer,
+// la luna se hunde, las estrellas se apagan y sale el sol detrás de las colinas.
 
 const LEJOS = [
   [0, 1],
@@ -35,6 +36,24 @@ const PERIODO_LEJOS = 760
 const PERIODO_CERCA = 540
 const PERIODO_SUELO = 160
 
+// Paleta de noche → amanecer.
+const CIELO_NOCHE = ['#04122e', '#081d42', '#123a6e']
+const CIELO_ALBA = ['#1f2f6e', '#d6705f', '#ffd58a']
+const LEJOS_NOCHE = '#17315e'
+const LEJOS_ALBA = '#3b3f7d'
+const CERCA_NOCHE = '#0c2148'
+const CERCA_ALBA = '#1f2a5c'
+const SUELO_NOCHE = '#07152c'
+const SUELO_ALBA = '#101c3d'
+
+const hex = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]
+const mezcla = (a, b, t) => {
+  const A = hex(a)
+  const B = hex(b)
+  return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',')})`
+}
+const suave = (t) => t * t * (3 - 2 * t)
+
 export class Background {
   constructor() {
     this.width = 0
@@ -45,7 +64,7 @@ export class Background {
     this.offsetCerca = 0
     this.offsetSuelo = 0
     this.stars = []
-    this._sky = null
+    this.alba = 0
   }
 
   reset(width, height, groundY) {
@@ -56,7 +75,7 @@ export class Background {
     this.offsetLejos = 0
     this.offsetCerca = 0
     this.offsetSuelo = 0
-    this._sky = null
+    this.alba = 0
     this.stars = Array.from({ length: 44 }, (_, i) => ({
       x: (((i * 73) % 101) / 101) * width,
       y: (((i * 37) % 89) / 89) * height * 0.52,
@@ -73,61 +92,87 @@ export class Background {
     this.offsetSuelo = (this.offsetSuelo + speed * dt) % PERIODO_SUELO
   }
 
-  render(ctx) {
+  /** @param {number} progreso 0 = anochece, 1 = amanece */
+  render(ctx, progreso = 0) {
+    this.alba = suave(Math.min(1, Math.max(0, (progreso - 0.55) / 0.45)))
     this.dibujarCielo(ctx)
     this.dibujarLuna(ctx)
-    this.dibujarRidge(ctx, LEJOS, PERIODO_LEJOS, this.height * 0.22, '#17315e', 1)
-    this.dibujarRidge(ctx, CERCA, PERIODO_CERCA, this.height * 0.14, '#0c2148', 1)
+    this.dibujarSol(ctx)
+    this.dibujarRidge(ctx, LEJOS, PERIODO_LEJOS, this.height * 0.22, mezcla(LEJOS_NOCHE, LEJOS_ALBA, this.alba), 1)
+    this.dibujarRidge(ctx, CERCA, PERIODO_CERCA, this.height * 0.14, mezcla(CERCA_NOCHE, CERCA_ALBA, this.alba), 1)
     this.dibujarSuelo(ctx)
   }
 
   dibujarCielo(ctx) {
-    if (!this._sky) {
-      const sky = ctx.createLinearGradient(0, 0, 0, this.groundY)
-      sky.addColorStop(0, '#04122e')
-      sky.addColorStop(0.55, '#081d42')
-      sky.addColorStop(1, '#123a6e')
-      this._sky = sky
-    }
-    ctx.fillStyle = this._sky
+    const sky = ctx.createLinearGradient(0, 0, 0, this.groundY)
+    sky.addColorStop(0, mezcla(CIELO_NOCHE[0], CIELO_ALBA[0], this.alba))
+    sky.addColorStop(0.55, mezcla(CIELO_NOCHE[1], CIELO_ALBA[1], this.alba))
+    sky.addColorStop(1, mezcla(CIELO_NOCHE[2], CIELO_ALBA[2], this.alba))
+    ctx.fillStyle = sky
     ctx.fillRect(0, 0, this.width, this.groundY)
 
-    for (const star of this.stars) {
-      ctx.globalAlpha = star.a * (0.7 + 0.3 * Math.sin(this.time * 1.8 + star.fase))
-      ctx.fillStyle = '#dfe8f7'
-      ctx.beginPath()
-      ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2)
-      ctx.fill()
+    const brillo = Math.max(0, 1 - this.alba * 1.3)
+    if (brillo > 0) {
+      for (const star of this.stars) {
+        ctx.globalAlpha = star.a * brillo * (0.7 + 0.3 * Math.sin(this.time * 1.8 + star.fase))
+        ctx.fillStyle = '#dfe8f7'
+        ctx.beginPath()
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2)
+        ctx.fill()
+      }
+      ctx.globalAlpha = 1
     }
-    ctx.globalAlpha = 1
   }
 
   dibujarLuna(ctx) {
+    const visible = 1 - this.alba
+    if (visible <= 0.02) return
     const x = this.width * 0.8
-    const y = Math.max(30, this.height * 0.2)
+    const y = Math.max(30, this.height * 0.2) + this.alba * this.height * 0.3
     const pulso = 0.85 + 0.15 * Math.sin(this.time * 1.2)
 
     ctx.save()
     ctx.fillStyle = '#f1c66d'
-    ctx.globalAlpha = 0.07 * pulso
+    ctx.globalAlpha = 0.07 * pulso * visible
     ctx.beginPath()
     ctx.arc(x, y, 40, 0, Math.PI * 2)
     ctx.fill()
-    ctx.globalAlpha = 0.12 * pulso
+    ctx.globalAlpha = 0.12 * pulso * visible
     ctx.beginPath()
     ctx.arc(x, y, 25, 0, Math.PI * 2)
     ctx.fill()
-    ctx.globalAlpha = 0.92
+    ctx.globalAlpha = 0.92 * visible
     ctx.beginPath()
     ctx.arc(x, y, 14, 0, Math.PI * 2)
     ctx.fill()
-    ctx.globalAlpha = 0.18
+    ctx.globalAlpha = 0.18 * visible
     ctx.fillStyle = '#b8892b'
     ctx.beginPath()
     ctx.arc(x - 4, y + 3, 4, 0, Math.PI * 2)
     ctx.fill()
     ctx.beginPath()
     ctx.arc(x + 5, y - 4, 2.5, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.restore()
+  }
+
+  /** El sol sube desde detrás de las colinas cuando el alba ya está avanzada. */
+  dibujarSol(ctx) {
+    const t = (this.alba - 0.2) / 0.8
+    if (t <= 0) return
+    const x = this.width * 0.36
+    const y = this.groundY + 6 - suave(Math.min(1, t)) * this.height * 0.24
+
+    ctx.save()
+    const halo = ctx.createRadialGradient(x, y, 4, x, y, 110)
+    halo.addColorStop(0, 'rgba(255, 224, 150, 0.75)')
+    halo.addColorStop(1, 'rgba(255, 190, 110, 0)')
+    ctx.globalAlpha = Math.min(1, t * 1.4)
+    ctx.fillStyle = halo
+    ctx.fillRect(x - 120, y - 120, 240, 240)
+    ctx.fillStyle = '#fff1c4'
+    ctx.beginPath()
+    ctx.arc(x, y, 19, 0, Math.PI * 2)
     ctx.fill()
     ctx.restore()
   }
@@ -153,7 +198,7 @@ export class Background {
   }
 
   dibujarSuelo(ctx) {
-    ctx.fillStyle = '#07152c'
+    ctx.fillStyle = mezcla(SUELO_NOCHE, SUELO_ALBA, this.alba)
     ctx.fillRect(0, this.groundY, this.width, this.height - this.groundY)
 
     ctx.save()

@@ -29,8 +29,8 @@ export default function Locate() {
     return [...m.values()].sort((a, b) => a.titulo.localeCompare(b.titulo, 'es'))
   }, [data])
 
-  if (cargando && !data) return <Cargando />
-  if (error) return <ErrorCaja error={error} onReintentar={recargar} />
+  if (cargando && !data) return <div className="noche-pagina"><Cargando /></div>
+  if (error) return <div className="noche-pagina"><ErrorCaja error={error} onReintentar={recargar} /></div>
   if (!data) return null
 
   const nombre = (c) => data.find((r) => r.codigo === c)?.nombre
@@ -60,7 +60,7 @@ export default function Locate() {
   const colocados = new Set(Object.values(hechas))
 
   return (
-    <>
+    <div className="noche-pagina">
       <div className="titulo-pagina">
         <div className="contenedor">
           <h1>Ubica la leyenda</h1>
@@ -135,6 +135,6 @@ export default function Locate() {
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }

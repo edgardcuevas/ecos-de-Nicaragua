@@ -12,8 +12,19 @@
 export const SEPARACION_MIN = 1.15 // s entre llegadas consecutivas al jugador
 const ESPERA_MIN = 1.3 // s entre apariciones (el mínimo real lo impone la separación)
 const ESPERA_MAX = 2.5
-const PROB_ENEMIGO = 0.4
+const PESOS_BASE = { enemigo: 0.35, obstaculo: 0.4, liana: 0.25 }
 const ESPERA_INICIAL = 1.4
+
+function elegir(pesos) {
+  let total = 0
+  for (const k in pesos) total += pesos[k]
+  let r = Math.random() * total
+  for (const [k, v] of Object.entries(pesos)) {
+    r -= v
+    if (v > 0 && r <= 0) return k
+  }
+  return 'obstaculo'
+}
 
 export class Spawner {
   constructor() {
@@ -30,15 +41,16 @@ export class Spawner {
    *   speed: number,
    *   playerX: number,
    *   peligros: Array<{x:number, speedFactor?:number}>,
-   *   crear: (tipo: 'enemigo'|'obstaculo') => {x:number, speedFactor?:number},
+   *   crear: (tipo: 'enemigo'|'obstaculo'|'liana') => {x:number, speedFactor?:number},
+   *   pesos?: Record<string, number>, bloqueado?: boolean,
    * }} ctx
    * @returns la entidad creada, o null si todavía no toca.
    */
-  update(dt, { speed, playerX, peligros, crear }) {
+  update(dt, { speed, playerX, peligros, crear, pesos = PESOS_BASE, bloqueado = false }) {
     this.timer -= dt
-    if (this.timer > 0) return null
+    if (this.timer > 0 || bloqueado) return null
 
-    const tipo = Math.random() < PROB_ENEMIGO ? 'enemigo' : 'obstaculo'
+    const tipo = elegir(pesos)
     const nuevo = crear(tipo)
     this.separar(nuevo, speed, playerX, peligros)
     this.timer = ESPERA_MIN + Math.random() * (ESPERA_MAX - ESPERA_MIN)

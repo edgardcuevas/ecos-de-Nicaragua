@@ -8,7 +8,7 @@ export default function TriviaList() {
   const { premium } = useAuth()
   const { data, error, cargando, recargar } = useApi('/trivia')
   return (
-    <>
+    <div className="noche-pagina">
       <div className="titulo-pagina">
         <div className="contenedor">
           <h1>Trivias</h1>
@@ -22,7 +22,7 @@ export default function TriviaList() {
         {data?.length > 0 && (
           <div className="lista-trivias">
             {data.map((t) => (
-              <Link key={t.slug} to={`/trivias/${t.slug}`} className="tarjeta-ley">
+              <Link key={t.slug} to={`/trivias/${t.slug}`} className="tarjeta-ley tarjeta-ley--cartel">
                 <div className="tarjeta-ley__img"><ImagenLeyenda slug={t.slug} alt="" /></div>
                 <div className="tarjeta-ley__cuerpo">
                   <h3>{t.titulo}</h3>
@@ -37,6 +37,6 @@ export default function TriviaList() {
           </div>
         )}
       </div>
-    </>
+    </div>
   )
 }

@@ -206,3 +206,103 @@
 .noche-pagina .audio--bloqueado { background: rgb(241 198 109 / 0.07); border-color: rgb(241 198 109 / 0.45); border-left-color: var(--luna); }
 .noche-pagina .audio { margin-bottom: 2.25rem; }
 .noche-pagina .version { max-width: var(--ancho-lectura); }
+
+/* ---------- Mapa, trivias y "Ubica la leyenda" ---------- */
+.noche-pagina .suave { color: var(--n-niebla); }
+.noche-pagina .lista-trivias { gap: 2.5rem 1.75rem; }
+.noche-pagina .aviso--ok { background: rgb(46 160 98 / 0.12); border-left-color: #4fbf80; color: var(--n-hueso); }
+.noche-pagina .aviso--error { background: rgb(224 72 96 / 0.12); border-left-color: #ff7a8a; color: var(--n-hueso); }
+.noche-pagina .enlace-boton { font: inherit; padding: 0; border: 0; background: none; color: var(--luna); text-decoration: underline; text-underline-offset: 0.2em; cursor: pointer; min-height: 44px; text-align: left; }
+.noche-pagina .enlace-boton:hover { color: #fff; }
+
+/* Mapa */
+.noche-pagina .mapa-lienzo { background: radial-gradient(90% 90% at 70% 10%, rgb(18 32 79 / 0.9) 0%, rgb(5 10 28 / 0.9) 70%); border-color: var(--n-linea); }
+.noche-pagina .panel { background: rgb(18 32 79 / 0.4); border-color: var(--n-linea); color: var(--n-hueso); }
+.noche-pagina .panel h2 { font-size: 1.9rem; }
+.noche-pagina .lista-leyendas-region li { border-bottom-color: var(--n-linea); }
+.noche-pagina .lista-leyendas-region a { font-family: var(--f-leyenda); font-weight: 400; font-size: 1.4rem; }
+.noche-pagina .tabla-regiones th, .noche-pagina .tabla-regiones td { border-bottom-color: var(--n-linea); }
+.noche-pagina .tabla-regiones th { color: var(--n-hueso); }
+.noche-pagina .tabla-regiones td { color: var(--n-niebla); }
+
+/* Trivias */
+.noche-pagina .trivia__titulo { font-size: clamp(1.4rem, 3vw, 1.9rem); color: var(--n-niebla); }
+.noche-pagina .progreso { background: rgb(255 255 255 / 0.1); }
+.noche-pagina .progreso > i { background: var(--luna); }
+.noche-pagina .pregunta { font-size: clamp(1.7rem, 4.5vw, 2.6rem); line-height: 1.15; color: var(--n-hueso); font-family: var(--f-leyenda); font-weight: 400; font-style: italic; margin-bottom: 1.75rem; }
+.noche-pagina .opcion { background: rgb(255 255 255 / 0.04); border-color: var(--n-linea); color: var(--n-hueso); }
+.noche-pagina .opcion:hover { border-color: var(--n-niebla); background: rgb(255 255 255 / 0.07); }
+.noche-pagina .opcion:has(input:checked) { border-color: var(--luna); background: rgb(241 198 109 / 0.1); }
+.noche-pagina .opcion input { accent-color: var(--luna); }
+.noche-pagina .puntaje__num { font-family: var(--f-leyenda); font-weight: 400; color: var(--luna); font-size: clamp(3.4rem, 12vw, 6rem); }
+.noche-pagina .repaso li { background: rgb(18 32 79 / 0.4); border-color: var(--n-linea); }
+.noche-pagina .repaso h3 { font-family: var(--f-texto); font-size: 1.02rem; font-weight: 600; }
+.noche-pagina .repaso .ok { border-left-color: #4fbf80; }
+.noche-pagina .repaso .mal { border-left-color: #ff7a8a; }
+.noche-pagina .resp-ok { color: #86dba8; }
+.noche-pagina .resp-mal { color: #ff9aa8; }
+
+/* Ubica la leyenda */
+.noche-pagina .ficha-juego { background: rgb(255 255 255 / 0.04); border-color: var(--n-linea); }
+.noche-pagina .ficha-juego span { font-family: var(--f-leyenda); font-weight: 400; font-size: 1.25rem; color: var(--n-hueso); }
+.noche-pagina .ficha-juego:hover { border-color: var(--n-niebla); }
+.noche-pagina .ficha-juego[aria-pressed='true'] { border-color: var(--luna); background: rgb(241 198 109 / 0.1); }
+.noche-pagina .ficha-juego--hecha { border-color: #4fbf80; background: rgb(46 160 98 / 0.12); }
+.noche-pagina .ficha-juego--hecha small { color: #86dba8; font-family: var(--f-texto); }
+.noche-pagina .tabla-aviso { color: var(--n-niebla); }
+.noche-pagina .puntaje__num { line-height: 1; margin-bottom: 0.3em; }
+.noche-pagina .unidad--meta:hover { fill: #3a9468; }
+.noche-pagina .unidad--meta-mal:hover { fill: #a84848; }
+
+/* ---------- Cuenta, planes, ingreso, juego y administración ---------- */
+.noche-pagina { display: flow-root; }
+.noche-pagina .tarjeta-form { background: rgb(18 32 79 / 0.5); border-color: var(--n-linea); box-shadow: 0 30px 80px rgb(0 0 0 / 0.5); }
+.noche-pagina .tarjeta-form h1 { font-size: clamp(2rem, 5vw, 2.6rem); line-height: 1.05; margin-bottom: 0.4em; }
+.noche-pagina .campo label { color: var(--n-hueso); }
+.noche-pagina .campo small { color: var(--n-niebla); }
+.noche-pagina .pie-form { color: var(--n-niebla); }
+.noche-pagina .datos dt { color: var(--n-niebla); }
+.noche-pagina .datos dd { color: var(--n-hueso); }
+.noche-pagina .btn--luna { color: var(--n-0); }
+.noche-pagina .btn:disabled { opacity: 0.45; }
+
+/* Comparativa de planes */
+.noche-pagina .comparativa { background: rgb(18 32 79 / 0.3); border-color: var(--n-linea); }
+.noche-pagina .comparativa th, .noche-pagina .comparativa td { border-bottom-color: var(--n-linea); color: var(--n-niebla); }
+.noche-pagina .comparativa tbody th { color: var(--n-hueso); font-weight: 600; }
+.noche-pagina .comparativa thead th { background: rgb(18 32 79 / 0.8); color: var(--n-hueso); font-family: var(--f-leyenda); font-weight: 400; font-size: 1.25rem; }
+.noche-pagina .comparativa thead th:last-child { color: var(--luna); }
+.noche-pagina .comparativa td:last-child { background: rgb(241 198 109 / 0.06); color: var(--n-hueso); }
+
+/* Juego del runner */
+.noche-pagina .runner-cabecera h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.05; color: var(--n-hueso); }
+.noche-pagina .runner-canvas { border-color: var(--n-linea); box-shadow: 0 30px 80px rgb(0 0 0 / 0.55); }
+
+/* Administración */
+.noche-pagina .pestanas { border-bottom-color: var(--n-linea); }
+.noche-pagina .pestana { color: var(--n-niebla); }
+.noche-pagina .pestana:hover { color: var(--n-hueso); }
+.noche-pagina .pestana[aria-selected='true'] { color: var(--n-hueso); border-bottom-color: var(--luna); }
+.noche-pagina .tabla { background: transparent; }
+.noche-pagina .tabla th, .noche-pagina .tabla td { border-bottom-color: var(--n-linea); color: var(--n-hueso); }
+.noche-pagina .tabla th { background: rgb(18 32 79 / 0.7); }
+.noche-pagina .codigos-nuevos { background: var(--n-0); border: 1px solid var(--n-linea); }
+.noche-pagina .btn--peligro { color: #ff9aa8; border-color: rgb(255 122 138 / 0.6); }
+.noche-pagina .btn--peligro:hover { background: rgb(224 72 96 / 0.18); color: #ffc2cb; }
+.noche-pagina .modal-fondo { background: rgb(2 5 16 / 0.75); }
+.noche-pagina .modal { background: #0c1740; border: 1px solid var(--n-linea); color: var(--n-hueso); box-shadow: 0 30px 80px rgb(0 0 0 / 0.6); }
+.noche-pagina .paginacion { color: var(--n-niebla); }
+
+/* Navegación: con la sesión iniciada hay hasta 9 enlaces, así que el menú de escritorio
+   solo aparece cuando caben en una línea (>= 75rem). Antes se partían en dos líneas. */
+.marca, .nav a, .nav button { white-space: nowrap; }
+.nav a, .nav button { padding-inline: 0.65rem; }
+@media (min-width: 60rem) and (max-width: 74.99rem) {
+  .nav:not(.nav--abierto) { display: none; }
+  .menu-boton { display: grid; }
+}
+
+/* Página del juego: mismos títulos que el resto del sitio */
+.noche-pagina .runner-cabecera h1 { font-family: var(--f-leyenda); font-weight: 400; }
+.noche-pagina .runner-cabecera p, .noche-pagina .runner-ayuda { color: var(--n-niebla); }
+.noche-pagina .runner-overlay__titulo { font-family: var(--f-leyenda); font-weight: 400; }

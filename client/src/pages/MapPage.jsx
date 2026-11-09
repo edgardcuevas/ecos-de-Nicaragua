@@ -13,15 +13,15 @@ export default function MapPage() {
   const { data, error, cargando, recargar } = useApi('/regiones')
   const sel = params.get('region') || ''
 
-  if (cargando && !data) return <Cargando />
-  if (error) return <ErrorCaja error={error} onReintentar={recargar} />
+  if (cargando && !data) return <div className="noche-pagina"><Cargando /></div>
+  if (error) return <div className="noche-pagina"><ErrorCaja error={error} onReintentar={recargar} /></div>
   if (!data) return null
 
   const unidad = data.find((r) => r.codigo === sel)
   const elegir = (c) => setParams(c === sel ? {} : { region: c }, { replace: true })
 
   return (
-    <>
+    <div className="noche-pagina">
       <div className="titulo-pagina">
         <div className="contenedor">
           <h1>Mapa de Nicaragua</h1>
@@ -46,7 +46,7 @@ export default function MapPage() {
             }
           />
           <p style={{ marginTop: '1rem' }}>
-            <button type="button" className="btn btn--borde sobre-papel btn--chico" style={{ color: 'var(--noche)' }} aria-expanded={verLista} onClick={() => setVerLista((v) => !v)}>
+            <button type="button" className="btn btn--borde btn--chico" aria-expanded={verLista} onClick={() => setVerLista((v) => !v)}>
               {verLista ? 'Ocultar la lista' : 'Ver como lista'}
             </button>
           </p>
@@ -60,7 +60,7 @@ export default function MapPage() {
                 <tbody>
                   {data.map((r) => (
                     <tr key={r.codigo}>
-                      <th scope="row"><button type="button" className="filtro-chip" onClick={() => elegir(r.codigo)} style={{ border: 0, padding: 0, background: 'none', color: 'var(--azul)', textDecoration: 'underline', minHeight: 44 }}>{r.nombre}</button></th>
+                      <th scope="row"><button type="button" className="enlace-boton" onClick={() => elegir(r.codigo)}>{r.nombre}</button></th>
                       <td>{r.leyendas.length ? r.leyendas.map((l) => l.titulo).join(', ') : 'Sin leyendas documentadas'}</td>
                     </tr>
                   ))}
@@ -79,7 +79,7 @@ export default function MapPage() {
           ) : (
             <>
               <h2>{unidad.nombre}</h2>
-              <p style={{ color: 'var(--tinta-suave)' }}>{unidad.tipo === 'region_autonoma' ? 'Región autónoma' : 'Departamento'}</p>
+              <p>{unidad.tipo === 'region_autonoma' ? 'Región autónoma' : 'Departamento'}</p>
               {unidad.leyendas.length === 0 ? (
                 <p>Sin leyendas documentadas.</p>
               ) : (
@@ -90,7 +90,7 @@ export default function MapPage() {
                       <Verificacion nivel={l.nivelVerificacion} />
                       {necesitaAviso(l.nivelVerificacion) && <p className="aviso" style={{ margin: '0.5rem 0 0' }}>Esta relación todavía no está verificada.</p>}
                       {premium && l.nota && <p style={{ margin: '0.4rem 0 0', fontSize: '0.95rem' }}>{l.nota}</p>}
-                      <ul className="lista-limpia" style={{ marginTop: '0.4rem', fontSize: '0.9rem', color: 'var(--tinta-suave)' }}>
+                      <ul className="lista-limpia suave" style={{ marginTop: '0.4rem', fontSize: '0.9rem' }}>
                         {l.fuentes.map((f, i) => (
                           <li key={i}>
                             Fuente: {f.titulo}
@@ -104,7 +104,7 @@ export default function MapPage() {
                 </ul>
               )}
               {!premium && unidad.leyendas.length > 0 && (
-                <p style={{ marginTop: '1rem', fontSize: '0.93rem', color: 'var(--tinta-suave)' }}>
+                <p style={{ marginTop: '1rem', fontSize: '0.93rem' }}>
                   Con <Link to="/planes">premium</Link> ves además las notas y referencias completas de cada fuente.
                 </p>
               )}
@@ -112,6 +112,6 @@ export default function MapPage() {
           )}
         </section>
       </div>
-    </>
+    </div>
   )
 }
