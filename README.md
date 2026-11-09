@@ -143,7 +143,7 @@ La API usa sesiones con cookies (`HttpOnly`, `Secure` en producción, `SameSite=
 
 3. Tras login/registro, usar el nuevo `csrfToken` devuelto en la respuesta.
 
-Los métodos `GET` no exigen CSRF. Sin sesión, `POST /api/auth/logout`, `/api/auth/refresh` y `/api/premium/canjear` devuelven `401 SESION_REQUERIDA` (no `403 CSRF_INVALIDO`).
+Los métodos `GET` no exigen CSRF. Sin sesión, `POST /api/auth/logout`, `/api/auth/refresh`, `/api/premium/canjear` y `/api/runner/partidas` devuelven `401 SESION_REQUERIDA` (no `403 CSRF_INVALIDO`).
 
 ## Solución de problemas
 
@@ -179,4 +179,6 @@ Los errores tienen forma `{ error: { codigo, mensaje, detalles } }` con códigos
 
 ## Estado
 
-Backend MVP completado: entorno, seed, multimedia, health, autenticación con sesiones y CSRF, premium y canje de códigos, administración, seguridad y pruebas. Migraciones 001–004 aplicadas. `npm test` pasa completo. El frontend puede consumir la API en `http://localhost:3000` con el proxy de Vite.
+Backend MVP completado: entorno, seed, multimedia, health, autenticación con sesiones y CSRF, premium y canje de códigos, administración, seguridad, pruebas y progreso del runner. Migraciones 001–005 aplicadas. El frontend puede consumir la API en `http://localhost:3000` con el proxy de Vite.
+
+> Nota: `npm test` ejecuta `test:db:setup`, que valida los assets del seed. Si faltan los archivos `img/...` referenciados por `server/db/seed/leyendas.json`, el setup se detiene; la suite puede correrse contra una base de test ya sembrada.

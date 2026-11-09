@@ -4,7 +4,7 @@ Borrador para revisión del autor. MySQL 8 o superior, InnoDB, `utf8mb4`. Ya apl
 
 Si cambias el DDL, crea una migración nueva en `server/db/migrations/`; no edites una migración ya aplicada.
 
-Recorte aplicado: sin `municipios`, sin `materiales_educativos` y sin respuestas o progreso por usuario.
+Recorte aplicado: sin `municipios`, sin `materiales_educativos` y sin respuestas o progreso por usuario, salvo el progreso del runner (M11).
 
 ## Diagrama
 
@@ -14,6 +14,9 @@ erDiagram
   planes ||--o{ suscripciones : define
   usuarios ||--o{ codigos_activacion : canjea
   usuarios ||--o{ recuperacion_password : solicita
+  usuarios ||--|| runner_perfiles : progresa
+  usuarios ||--o{ runner_records : registra
+  usuarios ||--o{ runner_partidas : juega
 
   categorias ||--o{ leyendas : clasifica
   leyendas ||--o{ leyenda_regiones : ubica
@@ -73,6 +76,30 @@ erDiagram
     date fecha_inicio
     date fecha_fin
     enum estado
+  }
+  runner_perfiles {
+    bigint usuario_id PK
+    tinyint nivel_max_desbloqueado
+    timestamp actualizado_en
+  }
+  runner_records {
+    bigint usuario_id PK
+    tinyint nivel PK
+    int mejor_puntaje
+    int mejor_distancia
+    int victorias
+    int partidas
+  }
+  runner_partidas {
+    bigint id PK
+    bigint usuario_id FK
+    tinyint nivel
+    int puntaje
+    int distancia
+    smallint duracion_segundos
+    tinyint vidas_restantes
+    boolean victoria
+    timestamp creada_en
   }
 ```
 
@@ -269,6 +296,46 @@ CREATE TABLE recuperacion_password (
   KEY idx_recuperacion_usuario (usuario_id),
   CONSTRAINT fk_recuperacion_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE runner_perfiles (
+  usuario_id BIGINT UNSIGNED NOT NULL,
+  nivel_max_desbloqueado TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (usuario_id),
+  CONSTRAINT fk_runner_perfiles_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE runner_records (
+  usuario_id BIGINT UNSIGNED NOT NULL,
+  nivel TINYINT UNSIGNED NOT NULL,
+  mejor_puntaje INT UNSIGNED NOT NULL DEFAULT 0,
+  mejor_distancia INT UNSIGNED NOT NULL DEFAULT 0,
+  victorias INT UNSIGNED NOT NULL DEFAULT 0,
+  partidas INT UNSIGNED NOT NULL DEFAULT 0,
+  actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (usuario_id, nivel),
+  KEY idx_runner_records_ranking (nivel, mejor_puntaje DESC),
+  CONSTRAINT fk_runner_records_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE runner_partidas (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  usuario_id BIGINT UNSIGNED NOT NULL,
+  nivel TINYINT UNSIGNED NOT NULL,
+  puntaje INT UNSIGNED NOT NULL,
+  distancia INT UNSIGNED NOT NULL,
+  duracion_segundos SMALLINT UNSIGNED NOT NULL,
+  vidas_restantes TINYINT UNSIGNED NOT NULL,
+  victoria BOOLEAN NOT NULL DEFAULT FALSE,
+  creada_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_runner_partidas_usuario (usuario_id, creada_en),
+  KEY idx_runner_partidas_ranking (nivel, puntaje DESC),
+  CONSTRAINT fk_runner_partidas_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
 ## Reglas que el esquema debe respetar
@@ -279,7 +346,8 @@ CREATE TABLE recuperacion_password (
 - **Contraseñas y tokens:** `password_hash`, `codigo_hash` y `token_hash` guardan hashes, nunca valores en claro.
 - **Multimedia:** `imagenes.ruta` y `audios.ruta` guardan solo la ruta; el archivo vive fuera de MySQL.
 - **Una respuesta correcta por pregunta:** se valida en la aplicación; MySQL no lo garantiza con este diseño.
-- **Sin datos extra:** no hay tablas de municipios, materiales educativos, respuestas por usuario ni progreso.
+- **Progreso del runner aislado:** `runner_perfiles`, `runner_records` y `runner_partidas` se consultan siempre por `usuario_id`; un usuario no puede leer ni modificar el progreso de otro.
+- **Sin datos extra:** no hay tablas de municipios, materiales educativos, respuestas por usuario ni progreso de leyendas. La única excepción de progreso es la del runner (M11).
 
 ## Pendiente de decisión (no bloquea el borrador)
 

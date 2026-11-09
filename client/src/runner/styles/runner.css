@@ -189,3 +189,119 @@
 .runner-tactil__btn--salto { background: rgb(241 198 109 / 0.2); }
 .runner-tactil__btn:active { background: rgb(241 198 109 / 0.35); }
 @media (pointer: coarse) { .runner-tactil { display: flex; } }
+
+/* v3: campaña de noches, progreso y ranking */
+.runner-niveles {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  margin: 0 auto 0.75rem;
+  padding: 0.25rem 0 0.5rem;
+  scrollbar-width: thin;
+}
+.runner-nivel {
+  flex: 1 0 8.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--papel);
+  color: var(--tinta);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.runner-nivel:hover:not(:disabled) { border-color: var(--luna); transform: translateY(-1px); }
+.runner-nivel--activo { border-color: var(--luna); box-shadow: 0 0 0 1px var(--luna) inset; }
+.runner-nivel--bloqueado { opacity: 0.55; cursor: not-allowed; }
+.runner-nivel__num {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--tinta-suave);
+}
+.runner-nivel__nombre { font-weight: 700; font-size: 0.92rem; }
+.runner-nivel__meta { font-size: 0.78rem; color: var(--tinta-suave); }
+.runner-nivel--activo .runner-nivel__meta { color: var(--tinta); }
+
+.runner-overlay__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.4rem;
+}
+.runner-overlay__acciones .btn { margin-top: 0; }
+.runner-overlay__error {
+  margin: 0.2rem 0;
+  max-width: 26rem;
+  font-size: 0.9rem;
+  color: #ffb3c1;
+}
+
+.runner-ranking {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--papel);
+}
+.runner-ranking h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--f-titulo);
+  font-size: 1.2rem;
+  color: var(--noche);
+  text-align: center;
+}
+.runner-ranking__columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.runner-ranking h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--tinta-suave);
+}
+.runner-ranking ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.3rem;
+}
+.runner-ranking li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.35rem 0.45rem;
+  border-radius: 0.4rem;
+  background: rgb(0 19 58 / 0.04);
+}
+.runner-ranking li span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.runner-ranking li strong {
+  color: var(--noche);
+  font-variant-numeric: tabular-nums;
+}
+.runner-ranking li small {
+  grid-column: 1 / -1;
+  font-size: 0.72rem;
+  color: var(--tinta-suave);
+}
+.runner-ranking__vacio { margin: 0.25rem 0; font-size: 0.9rem; color: var(--tinta-suave); }
+@media (max-width: 30rem) {
+  .runner-ranking__columnas { grid-template-columns: 1fr; }
+  .runner-nivel { flex-basis: 7.5rem; }
+}

@@ -21,7 +21,7 @@ Al terminar este plan deben existir:
 
 **Criterio de éxito:** un desarrollador nuevo clona el repositorio, ejecuta `npm install`, `npm run setup` y `npm run dev`, y en menos de 10 minutos tiene la API y la base de datos funcionando con datos reales. El frontend puede construir todas sus pantallas contra esta API sin mocks.
 
-**Fuera de alcance:** pasarela de pago, app móvil, aula virtual, panel institucional, mapa de los 153 municipios, panel de edición de contenido cultural, progreso por usuario y material educativo. Tampoco se implementa frontend.
+**Fuera de alcance:** pasarela de pago, app móvil, aula virtual, panel institucional, mapa de los 153 municipios, panel de edición de contenido cultural, progreso por usuario (excepto el módulo M11 del runner) y material educativo. Tampoco se implementa frontend.
 
 # Arquitectura General
 
@@ -1736,6 +1736,169 @@ npm run test:db:setup    # crea/migra/carga la base de test
 - La suite se puede ejecutar en Windows, Linux y macOS.
 - No se exige una métrica de cobertura; se exigen los casos críticos listados.
 
+# Módulo 11 - Progreso del Runner (extensión)
+
+## Objetivo
+
+> Extensión posterior al MVP. Depende de M00, M06 y M07 funcionales.
+
+Guardar el progreso del minijuego «Huir de las Ceguas» por usuario, agregar una campaña de 5 noches y un ranking separado gratis/premium. El invitado solo juega la noche 1 y guarda su récord en el navegador.
+
+## Alcance
+
+- Progreso por usuario: nivel máximo desbloqueado, récords por nivel e historial de partidas.
+- Campaña de 5 noches con dificultad creciente.
+- Ranking por nivel separado en gratis y premium.
+- Sin monedas, sin logros y sin progreso de leyendas en este módulo.
+- El puntaje se calcula en el cliente; el servidor valida coherencia, no simula la partida.
+
+## Migración 005
+
+```sql
+CREATE TABLE runner_perfiles (
+  usuario_id BIGINT UNSIGNED NOT NULL,
+  nivel_max_desbloqueado TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (usuario_id),
+  CONSTRAINT fk_runner_perfiles_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE runner_records (
+  usuario_id BIGINT UNSIGNED NOT NULL,
+  nivel TINYINT UNSIGNED NOT NULL,
+  mejor_puntaje INT UNSIGNED NOT NULL DEFAULT 0,
+  mejor_distancia INT UNSIGNED NOT NULL DEFAULT 0,
+  victorias INT UNSIGNED NOT NULL DEFAULT 0,
+  partidas INT UNSIGNED NOT NULL DEFAULT 0,
+  actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (usuario_id, nivel),
+  KEY idx_runner_records_ranking (nivel, mejor_puntaje DESC),
+  CONSTRAINT fk_runner_records_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE runner_partidas (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  usuario_id BIGINT UNSIGNED NOT NULL,
+  nivel TINYINT UNSIGNED NOT NULL,
+  puntaje INT UNSIGNED NOT NULL,
+  distancia INT UNSIGNED NOT NULL,
+  duracion_segundos SMALLINT UNSIGNED NOT NULL,
+  vidas_restantes TINYINT UNSIGNED NOT NULL,
+  victoria BOOLEAN NOT NULL DEFAULT FALSE,
+  creada_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_runner_partidas_usuario (usuario_id, creada_en),
+  KEY idx_runner_partidas_ranking (nivel, puntaje DESC),
+  CONSTRAINT fk_runner_partidas_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+## Configuración de niveles
+
+`server/src/config/runner.js` es la fuente de verdad. El cliente consume la configuración por `GET /api/runner/estado`.
+
+| Nivel | Nombre | Duración | Rampa | Bonus amanecer | Bonus vida |
+|---|---|---|---|---|---|
+| 1 | La primera noche | 100 s | 0.6 %/s, tope x1.7 | 200 | 25 |
+| 2 | El camino al río | 110 s | 0.7 %/s, tope x1.8 | 250 | 25 |
+| 3 | La quebrada | 120 s | 0.8 %/s, tope x1.9 | 300 | 30 |
+| 4 | El monte | 135 s | 0.9 %/s, tope x2.0 | 350 | 30 |
+| 5 | El amanecer | 150 s | 1.0 %/s, tope x2.1 | 400 | 35 |
+
+Cada nivel define también `cierre`, `lianasDesde` y los pesos de aparición (`enemigo`, `obstaculo`, `liana`).
+
+## Rutas
+
+| Método | Ruta | Auth | CSRF | Función |
+|---|---|---|---|---|
+| GET | `/api/runner/estado` | Opcional | No | Niveles, candados, récords y victorias |
+| POST | `/api/runner/partidas` | Sí | Sí | Guardar partida y actualizar progreso |
+| GET | `/api/runner/partidas` | Sí | No | Historial paginado propio |
+| GET | `/api/runner/ranking` | No | No | Top por nivel, separado gratis/premium |
+
+## Controladores
+
+- `obtenerEstado`: arma niveles con `desbloqueado`, `mejorPuntaje`, `mejorDistancia`, `victorias` y `partidas`.
+- `registrarPartida`: valida, guarda, actualiza récord y desbloqueo, y devuelve el estado del nivel.
+- `listarPartidas`: historial del usuario autenticado, paginado.
+- `obtenerRanking`: top de gratis y premium para un nivel.
+
+## Servicios
+
+- `niveles`: devuelve la configuración y busca un nivel por id.
+- `obtenerEstado(usuarioId)`: lee `runner_perfiles`, `runner_records` y arma la respuesta.
+- `registrarPartida(usuarioId, datos, acceso)`: transacción con inserción, upsert de récord y desbloqueo.
+- `listarPartidas(usuarioId, { nivel, limit, offset })`.
+- `obtenerRanking(nivel, limit)`: usa `ROW_NUMBER()` particionado por plan vigente.
+- `validarPartida(datos, nivel, acceso)`: coherencia de puntaje, distancia, duración y vidas.
+
+## Validaciones
+
+- `nivel`: entero 1..5.
+- Nivel desbloqueado: `nivel <= nivel_max_desbloqueado`; el nivel 1 siempre está disponible.
+- Derrota: `vidasRestantes = 0` y `puntaje = distancia`.
+- Victoria: `vidasRestantes >= 1` y `puntaje = distancia + bonoAmanecer + vidasRestantes * bonoVida`.
+- `distancia <= ceil(230 * 1.2 * rampa.max * duracion / 10) + margen`.
+- `duracionSegundos <= duracion + 2` y `> 0`.
+- `vidasRestantes <= vidasMaximas(acceso.premium)`.
+- El `usuario_id` sale de `req.usuario.id`; nunca del body.
+- Zod estricto, sin campos desconocidos.
+- Rate limit específico en `POST /api/runner/partidas`.
+
+## Reglas de respuesta
+
+- `GET /estado` para invitado: `autenticado: false`, solo nivel 1 desbloqueado y sin récords.
+- `GET /estado` autenticado: todos los niveles con su estado real.
+- `POST /partidas` devuelve `partida`, `record`, `nuevoRecord`, `nivelDesbloqueado` y `nivelMaxDesbloqueado`.
+- `GET /partidas` solo devuelve las partidas del usuario autenticado.
+- `GET /ranking` devuelve `{ nivel, gratis: [...], premium: [...] }`; cada entrada incluye `posicion`, `nombreUsuario`, `puntaje` y `victorias`. Nunca correo ni ID.
+- Errores: `SESION_REQUERIDA` (401), `NIVEL_BLOQUEADO` (403), `PARTIDA_INVALIDA` (400), `VALIDACION` (400).
+
+## Archivos
+
+Nuevos:
+
+- `server/src/config/runner.js`
+- `server/src/routes/runner.routes.js`
+- `server/src/controllers/runner.controller.js`
+- `server/src/services/runner.service.js`
+- `server/src/schemas/runner.schema.js`
+- `server/db/migrations/005_runner_progreso.sql`
+- `server/tests/unit/runner-validation.test.js`
+- `server/tests/integration/runner.test.js`
+- `server/tests/api/runner.contract.test.js`
+- `client/src/runner/**` (refactor de niveles, guardado y ranking)
+
+Compartidos (A):
+
+- `server/src/routes/index.js`
+- `server/src/middleware/csrf.js`
+
+## Tareas
+
+- [x] M11-01 Documentar contratos, tablas y propiedad del módulo.
+- [x] M11-02 Migración `005_runner_progreso.sql`.
+- [x] M11-03 Configuración de las 5 noches y validadores.
+- [x] M11-04 Servicio, controlador, esquema y rutas.
+- [x] M11-05 Montar el router y ajustar CSRF.
+- [x] M11-06 Refactor del motor y del hook del runner.
+- [x] M11-07 Selector de niveles, guardado y ranking en React.
+- [x] M11-08 Pruebas unitarias, de integración y de contrato.
+- [x] M11-09 Actualizar `docs/esquema-bd.md`, `docs/handoff.md` y checklist final.
+
+## Definition of Done
+
+- `GET /api/runner/estado` responde para invitado y para usuario autenticado.
+- `POST /api/runner/partidas` exige sesión y CSRF.
+- Dos usuarios no comparten récords, historial ni desbloqueos.
+- El servidor rechaza niveles bloqueados y resultados incoherentes.
+- El ranking separa gratis y premium y no expone correos.
+- `npm test` y `npm run build` pasan.
+- No se editan migraciones anteriores.
+
 # Dependencias Globales
 
 | Módulo | Depende de | Motivo |
@@ -1751,6 +1914,7 @@ npm run test:db:setup    # crea/migra/carga la base de test
 | M08 — Administración | M06, M07, M09 | Roles, suscripciones y auditoría |
 | M09 — Seguridad (FASE TARDÍA) | M00, M02, M03, M04, M05, M06, M07 | Transversal; no inicia hasta que las APIs de negocio estén funcionales |
 | M10 — Pruebas | M02, M03, M04, M05, M06, M07 | Transversal; se completa al final |
+| M11 — Progreso del runner | M00, M06, M07 | Extensión del minijuego; sesión y premium ya funcionales |
 
 ## Módulos independientes
 
@@ -1807,7 +1971,7 @@ M08, M09 y M10 se activan cuando sus dependencias estén funcionales.
 
 ## Desarrollador C — Juego y multimedia
 
-**Módulos:** M04, M05, M10.
+**Módulos:** M04, M05, M10, M11.
 
 **Tareas:**
 
@@ -1815,8 +1979,11 @@ M08, M09 y M10 se activan cuando sus dependencias estén funcionales.
 - Importación y streaming de imágenes y audios.
 - Helpers y suite de pruebas.
 - Pruebas de contrato de todos los módulos al final.
+- Progreso del runner: configuración de niveles, API, cliente y pruebas.
 
-**Archivos propios:** `routes/trivia.routes.js`, `media.routes.js`; controladores, servicios, esquemas, `scripts/media-import.js`, `tests/helpers/*`, `tests/unit/*` (excepto seed), `tests/integration/trivia.test.js`, `media.test.js`, `tests/api/*`.
+**Archivos propios:** `routes/trivia.routes.js`, `media.routes.js`, `runner.routes.js`; controladores, servicios, esquemas, `scripts/media-import.js`, `tests/helpers/*`, `tests/unit/*` (excepto seed), `tests/integration/trivia.test.js`, `media.test.js`, `runner.test.js`, `tests/api/*`, `client/src/runner/**`.
+
+**Archivos compartidos que solicita a A:** `routes/index.js`, `middleware/csrf.js`, `db/migrations/005_runner_progreso.sql`.
 
 ## Desarrollador D — Identidad y acceso
 
@@ -1871,14 +2038,15 @@ M08, M09 y M10 se activan cuando sus dependencias estén funcionales.
 8. **M08 — Administración.** A implementa usuarios, roles, suscripciones, códigos y auditoría usando los servicios de D. *Puerta:* un admin activa premium y el cambio se ve en la siguiente petición.
 9. **M09 — Seguridad.** A revisa validación, SQL, rate limit, CORS, headers, cookies, logs y autorización. *Puerta:* checklist y pruebas de seguridad.
 10. **M10 — Pruebas.** C cierra la suite completa, helpers y contrato de todos los endpoints. *Puerta:* `npm test` verde desde base de test limpia.
-11. **Prueba de fuego.** Base vacía → `npm run setup` → `npm test` → `npm run dev`. *Puerta:* seed, migraciones, multimedia y health.
-12. **Verificación de contratos.** Recorrer todos los endpoints con free, premium y admin; comparar contra este documento. *Puerta:* sin campos faltantes ni códigos HTTP distintos.
-13. **Congelamiento.** Etiquetar `backend-mvp`, actualizar README y avisar al frontend. *Puerta:* no se cambian contratos sin nueva versión.
+11. **M11 — Progreso del runner.** Extensión posterior al MVP: migración 005, API, niveles y ranking. *Puerta:* dos usuarios aislados, invitado sin escrituras y ranking separado.
+12. **Prueba de fuego.** Base vacía → `npm run setup` → `npm test` → `npm run dev`. *Puerta:* seed, migraciones, multimedia y health.
+13. **Verificación de contratos.** Recorrer todos los endpoints con free, premium y admin; comparar contra este documento. *Puerta:* sin campos faltantes ni códigos HTTP distintos.
+14. **Congelamiento.** Etiquetar `backend-mvp`, actualizar README y avisar al frontend. *Puerta:* no se cambian contratos sin nueva versión.
 
 ## Ruta crítica
 
 ```text
-M00 → M01 → M06 → M07 → integración premium → M08 → M09 → M10 → congelamiento
+M00 → M01 → M06 → M07 → integración premium → M08 → M09 → M10 → M11 (extensión) → congelamiento
 ```
 
 M02, M03, M04 y M05 pueden avanzar en paralelo, pero no se consideran terminados hasta integrar M07 y pasar M10.
@@ -1888,7 +2056,7 @@ M02, M03, M04 y M05 pueden avanzar en paralelo, pero no se consideran terminados
 - No se empieza por el frontend.
 - No se implementa pago ni suscripción automática.
 - No se agrega edición de contenido.
-- No se agregan tablas de municipios, progreso o material educativo.
+- No se agregan tablas de municipios, progreso (salvo M11) o material educativo.
 - No se cambia el esquema base sin una migración nueva y aprobación de A.
 
 # Contratos de API
@@ -2603,6 +2771,145 @@ Todas las rutas: auth sí, rol `admin`, CSRF en mutaciones. Errores: `401 SESION
 
 No exponen endpoints propios. M09 aplica a todos los contratos anteriores; M10 verifica que cada uno cumpla código HTTP, forma de respuesta y campos prohibidos.
 
+## M11 — Progreso del runner
+
+### `GET /api/runner/estado`
+
+- Auth: opcional. CSRF: no.
+- Query: sin parámetros.
+- Response `200` para invitado:
+
+```json
+{
+  "data": {
+    "autenticado": false,
+    "nivelMaxDesbloqueado": 1,
+    "totalNiveles": 5,
+    "niveles": [
+      {
+        "id": 1,
+        "nombre": "La primera noche",
+        "descripcion": "Sobrevive hasta que cante el gallo.",
+        "duracionSegundos": 100,
+        "cierreSegundos": 5,
+        "lianasDesdeSegundos": 12,
+        "rampa": { "porSegundo": 0.006, "max": 1.7 },
+        "bonos": { "amanecer": 200, "vida": 25 },
+        "pesos": { "enemigo": 0.35, "obstaculo": 0.4, "liana": 0.25 },
+        "desbloqueado": true,
+        "mejorPuntaje": 0,
+        "mejorDistancia": 0,
+        "victorias": 0,
+        "partidas": 0
+      }
+    ]
+  }
+}
+```
+
+- El ejemplo abrevia `niveles[]` con una sola entrada. La respuesta real incluye siempre las 5 noches; para el invitado, las noches 2–5 llegan con `desbloqueado: false`.
+- Para usuario autenticado devuelve los 5 niveles con su `desbloqueado` real y sus récords.
+- Campos obligatorios: `autenticado`, `nivelMaxDesbloqueado`, `totalNiveles`, `niveles[]`.
+- Nunca devuelve correo, ID de usuario ni datos de otro jugador.
+
+### `POST /api/runner/partidas`
+
+- Auth: sí. CSRF: sí.
+- Request:
+
+```json
+{
+  "nivel": 1,
+  "puntaje": 4230,
+  "distancia": 4005,
+  "duracionSegundos": 100,
+  "vidasRestantes": 2,
+  "victoria": true
+}
+```
+
+- Response `201`:
+
+```json
+{
+  "data": {
+    "partida": {
+      "id": 12,
+      "nivel": 1,
+      "puntaje": 4230,
+      "distancia": 4005,
+      "duracionSegundos": 100,
+      "vidasRestantes": 2,
+      "victoria": true,
+      "creadaEn": "2026-11-08T12:00:00.000Z"
+    },
+    "record": {
+      "nivel": 1,
+      "mejorPuntaje": 4230,
+      "mejorDistancia": 4005,
+      "victorias": 2,
+      "partidas": 6
+    },
+    "nuevoRecord": true,
+    "nivelDesbloqueado": 2,
+    "nivelMaxDesbloqueado": 2
+  }
+}
+```
+
+- `nivelDesbloqueado` es `null` si la partida no desbloqueó nada.
+- Errores: `SESION_REQUERIDA` (401), `NIVEL_NO_ENCONTRADO` (404), `NIVEL_BLOQUEADO` (403), `PARTIDA_INVALIDA` (400), `VALIDACION` (400).
+- El servidor ignora cualquier `usuarioId` enviado por el cliente.
+
+### `GET /api/runner/partidas`
+
+- Auth: sí. CSRF: no.
+- Query: `nivel` (opcional, 1..5), `limit` (1..50, por defecto 20), `offset` (>= 0, por defecto 0).
+- Response `200`:
+
+```json
+{
+  "data": [
+    {
+      "id": 12,
+      "nivel": 1,
+      "puntaje": 4230,
+      "distancia": 4005,
+      "duracionSegundos": 100,
+      "vidasRestantes": 2,
+      "victoria": true,
+      "creadaEn": "2026-11-08T12:00:00.000Z"
+    }
+  ],
+  "meta": { "total": 1, "limit": 20, "offset": 0 }
+}
+```
+
+- Solo devuelve las partidas del usuario autenticado.
+
+### `GET /api/runner/ranking`
+
+- Auth: no. CSRF: no.
+- Query: `nivel` (1..5, obligatorio), `limit` (1..50, por defecto 10).
+- Response `200`:
+
+```json
+{
+  "data": {
+    "nivel": 1,
+    "gratis": [
+      { "posicion": 1, "nombreUsuario": "ana", "puntaje": 5000, "victorias": 3 }
+    ],
+    "premium": [
+      { "posicion": 1, "nombreUsuario": "carlos", "puntaje": 6200, "victorias": 5 }
+    ]
+  }
+}
+```
+
+- El plan se determina por la suscripción vigente, no por `usuarios.rol`.
+- Nunca devuelve correo, ID de usuario ni fecha de suscripción.
+
 ## Resumen de endpoints
 
 | Módulo | Método | Ruta | Auth | Premium |
@@ -2638,6 +2945,10 @@ No exponen endpoints propios. M09 aplica a todos los contratos anteriores; M10 v
 | M08 | POST | `/api/admin/codigos` | Admin | No |
 | M08 | GET | `/api/admin/codigos` | Admin | No |
 | M08 | GET | `/api/admin/auditoria` | Admin | No |
+| M11 | GET | `/api/runner/estado` | Opcional | Opcional |
+| M11 | POST | `/api/runner/partidas` | Sí | No |
+| M11 | GET | `/api/runner/partidas` | Sí | No |
+| M11 | GET | `/api/runner/ranking` | No | No |
 
 # Convenciones del Proyecto
 
@@ -2660,6 +2971,7 @@ server/
 │  │  ├─ media.routes.js
 │  │  ├─ auth.routes.js
 │  │  ├─ premium.routes.js
+│  │  ├─ runner.routes.js
 │  │  └─ admin.routes.js
 │  ├─ controllers/
 │  │  ├─ leyendas.controller.js
@@ -2669,6 +2981,7 @@ server/
 │  │  ├─ media.controller.js
 │  │  ├─ auth.controller.js
 │  │  ├─ premium.controller.js
+│  │  ├─ runner.controller.js
 │  │  └─ admin.controller.js
 │  ├─ services/
 │  │  ├─ leyendas.service.js
@@ -2681,6 +2994,7 @@ server/
 │  │  ├─ planes.service.js
 │  │  ├─ suscripciones.service.js
 │  │  ├─ codigos.service.js
+│  │  ├─ runner.service.js
 │  │  ├─ admin.service.js
 │  │  └─ auditoria.service.js
 │  ├─ schemas/
@@ -2690,6 +3004,7 @@ server/
 │  │  ├─ media.schema.js
 │  │  ├─ auth.schema.js
 │  │  ├─ premium.schema.js
+│  │  ├─ runner.schema.js
 │  │  └─ admin.schema.js
 │  ├─ middleware/
 │  │  ├─ auth.js
@@ -2834,7 +3149,7 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 
 ## 2. Base de datos y seed
 
-- [x] Las migraciones 001, 002, 003 y 004 se aplican desde una base vacía y son idempotentes.
+- [x] Las migraciones 001, 002, 003, 004 y 005 se aplican desde una base vacía y son idempotentes.
 - [x] `npm run db:seed:validate` termina con `Seed válido`.
 - [x] `npm run db:seed` dos veces deja los mismos conteos.
 - [x] Existen 17 regiones, 4 categorías, 6 leyendas, al menos 6 fuentes, 6 imágenes principales, 6 audios, 30 preguntas y 120 opciones.
@@ -2932,6 +3247,16 @@ Guardar en el PR o en el README de cierre:
 - Checklist de seguridad de M09.
 - Confirmación de que no hay secretos en el repositorio.
 
+## 10. Progreso del runner (M11)
+
+- [x] `GET /api/runner/estado` responde para invitado y para usuario autenticado.
+- [x] `POST /api/runner/partidas` exige sesión y CSRF.
+- [x] Dos usuarios no comparten récords, historial ni desbloqueos.
+- [x] El servidor rechaza niveles bloqueados y resultados incoherentes.
+- [x] El ranking separa gratis y premium y no expone correos.
+- [x] `npm test` y `npm run build` pasan (ver nota de entorno en `docs/handoff.md`).
+- [x] La migración 005 se aplica desde una base vacía sin editar migraciones anteriores.
+
 ## Decisiones abiertas que no bloquean
 
 Estas decisiones se resuelven con el autor; el plan tiene un valor inicial para no detenerse:
@@ -2943,7 +3268,7 @@ Estas decisiones se resuelven con el autor; el plan tiene un valor inicial para 
 | Dominio definitivo | `http://localhost:5173` en desarrollo | `.env` |
 | Panel visual de administración | API solamente; frontend posterior | Fuera de este backend |
 | Material educativo | Fuera del MVP; sin tabla | No implementar |
-| Progreso por usuario | Fuera del MVP; sin tabla | No implementar |
+| Progreso por usuario | Fuera del MVP general; el runner lo implementa en M11 | `runner_perfiles`, `runner_records`, `runner_partidas` |
 
 ## Regla final
 

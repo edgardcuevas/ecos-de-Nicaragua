@@ -74,8 +74,9 @@ client/src/
 | R08 | UI React (score, vidas, Game Over, start) | R00 | `RunnerGame.jsx` |
 | R09 | Assets (sprites, audio) | — | `assets/` |
 | R10 | Integración a la app (ruta + navegación) | R00, R08 | `App.jsx`, `Layout.jsx` |
+| R11 | Progreso por usuario, niveles y ranking | R00, R07, R08, M06, M07 | `server/`, `runner/` |
 
-R01–R04 y R09 son paralelizables. R05 depende de R01–R03. R07 depende de R01. R08 depende de R00.
+R01–R04 y R09 son paralelizables. R05 depende de R01–R03. R07 depende de R01. R08 depende de R00. R11 depende de que existan autenticación y premium funcionales (M06 y M07).
 
 ## 6. Estructura de carpetas
 
@@ -153,10 +154,11 @@ Assets en WebP/PNG optimizados, < 200 KB totales.
 
 ## 10. Integración con el backend
 
-- Al montar `RunnerGame.jsx`, consultar `GET /api/premium/mi-suscripcion` (o `/api/auth/me`).
+- Al montar `RunnerGame.jsx`, consultar `GET /api/auth/me` (la sesión ya resuelve `accesoPremium`).
 - Pasar `premium: boolean` al engine como config.
 - El engine ajusta el sistema de vidas según `premium`.
-- No se requieren cambios en el backend.
+- R00–R10 no requieren cambios en el backend.
+- R11 sí agrega API y tablas propias para guardar el progreso por usuario; se detalla en la sección 12.
 
 ## 11. Restricciones
 
@@ -164,3 +166,79 @@ Assets en WebP/PNG optimizados, < 200 KB totales.
 - No instalar dependencias nuevas.
 - El juego debe ser completamente desmontable (sin side effects globales).
 - Respetar la identidad visual de Ecos de Nicaragua (colores, tipografía).
+
+## 12. Progreso por usuario y niveles (R11)
+
+Extensión posterior al runner base. Permite que cada cuenta tenga su propio progreso y
+que la campaña avance por noches. El invitado solo juega la noche 1 y guarda su récord
+en el navegador; para desbloquear el resto necesita cuenta.
+
+### 12.1 Campaña de 5 noches
+
+| Nivel | Nombre | Duración | Dificultad |
+|---|---|---|---|
+| 1 | La primera noche | 100 s | actual |
+| 2 | El camino al río | 110 s | rampa y obstáculos algo mayores |
+| 3 | La quebrada | 120 s | lianas antes y más Ceguas |
+| 4 | El monte | 135 s | rampa alta |
+| 5 | El amanecer | 150 s | máxima dificultad |
+
+Reglas:
+
+- Ganar la noche N desbloquea la N+1. Perder no desbloquea.
+- El servidor valida que el nivel esté desbloqueado; el cliente no puede saltarse candados.
+- Premium conserva su ventaja de 7 vidas frente a 5, pero no desbloquea niveles.
+- El ranking se separa en gratis y premium por nivel.
+
+### 12.2 Tablas nuevas
+
+Migración `005_runner_progreso.sql`:
+
+- `runner_perfiles`: `usuario_id` (PK/FK), `nivel_max_desbloqueado`, `actualizado_en`.
+- `runner_records`: `usuario_id` + `nivel` (PK), `mejor_puntaje`, `mejor_distancia`, `victorias`, `partidas`, `actualizado_en`.
+- `runner_partidas`: historial de cada partida con nivel, puntaje, distancia, duración, vidas restantes y victoria.
+
+Todas las tablas usan `ON DELETE CASCADE` hacia `usuarios`.
+
+### 12.3 Endpoints
+
+| Método | Ruta | Auth | Función |
+|---|---|---|---|
+| GET | `/api/runner/estado` | Opcional | Niveles con candado, récord y victorias |
+| POST | `/api/runner/partidas` | Sí + CSRF | Guardar resultado y actualizar progreso |
+| GET | `/api/runner/partidas` | Sí | Historial paginado propio |
+| GET | `/api/runner/ranking` | Público | Top por nivel, separado gratis/premium |
+
+El `usuario_id` sale siempre de la sesión, nunca del cuerpo de la petición.
+
+### 12.4 Validación del servidor
+
+- `nivel` entre 1 y 5 y desbloqueado para el usuario.
+- Derrota: `vidasRestantes = 0` y `puntaje = distancia`.
+- Victoria: `vidasRestantes >= 1` y `puntaje = distancia + bonoAmanecer + vidasRestantes * bonoVida`.
+- `distancia` dentro del máximo teórico del nivel, con margen.
+- `duracionSegundos` dentro de la duración del nivel (+2 s de margen).
+- Esquemas Zod estrictos, consultas parametrizadas y rate limit en el POST.
+
+El puntaje nace en el cliente; el servidor solo comprueba coherencia. No es anti-cheat real.
+
+### 12.5 Tareas
+
+- [x] R11-01 Documentar contratos, tablas y propiedad del módulo.
+- [x] R11-02 Migración `005_runner_progreso.sql`.
+- [x] R11-03 Configuración de las 5 noches en el servidor.
+- [x] R11-04 Servicio, controlador, esquema y rutas de `/api/runner`.
+- [x] R11-05 Refactor del motor para recibir la configuración de cada nivel.
+- [x] R11-06 Selector de niveles, guardado y ranking en React.
+- [x] R11-07 Pruebas unitarias, de integración y de contrato.
+- [x] R11-08 Actualizar `docs/esquema-bd.md`, `docs/handoff.md` y checklist final.
+
+### 12.6 Definition of Done de R11
+
+- [x] El progreso persiste tras recargar y cerrar sesión.
+- [x] Dos cuentas distintas tienen récords y desbloqueos independientes.
+- [x] Un invitado juega la noche 1 sin crear filas en la base.
+- [x] Ganar desbloquea la siguiente noche; perder no.
+- [x] El ranking muestra solo nombre de usuario, puntaje y victorias, separado por plan.
+- [x] El servidor rechaza niveles bloqueados y resultados incoherentes.
+- [x] `npm test` y `npm run build` pasan (ver nota de entorno en `docs/handoff.md`).

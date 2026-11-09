@@ -11,27 +11,10 @@ function leerSilencioInicial() {
   }
 }
 
-const CLAVE_RECORD = 'ecos.runner.record'
-
-function leerRecord() {
-  try {
-    return Number(localStorage.getItem(CLAVE_RECORD)) || 0
-  } catch {
-    return 0
-  }
-}
-
-function guardarRecord(valor) {
-  try {
-    localStorage.setItem(CLAVE_RECORD, String(valor))
-  } catch {
-    /* sin almacenamiento: el récord dura solo esta visita */
-  }
-}
-
-export function useRunner(canvasRef, { premium = false } = {}) {
+export function useRunner(canvasRef, { premium = false, onFinish = null } = {}) {
   const gameRef = useRef(null)
   const premiumRef = useRef(premium)
+  const finishRef = useRef(onFinish)
   const [running, setRunning] = useState(false)
   const [paused, setPaused] = useState(false)
   const [fps, setFps] = useState(0)
@@ -39,21 +22,19 @@ export function useRunner(canvasRef, { premium = false } = {}) {
   const [score, setScore] = useState(0)
   const [gameOver, setGameOver] = useState(false)
   const [resultado, setResultado] = useState(null)
-  const [record, setRecord] = useState(leerRecord)
   const [silencio, setSilencio] = useState(() => leerSilencioInicial())
 
+  useEffect(() => {
+    finishRef.current = onFinish
+  }, [onFinish])
+
   const alGameOver = useCallback((info) => {
-    const previo = leerRecord()
-    const nuevo = (info.score ?? 0) > previo
-    if (nuevo) {
-      guardarRecord(info.score)
-      setRecord(info.score)
-    }
     setGameOver(true)
-    setResultado({ ...info, nuevoRecord: nuevo })
+    setResultado(info)
     setScore(info.score ?? 0)
     setRunning(false)
     setPaused(false)
+    finishRef.current?.(info)
   }, [])
 
   useEffect(() => {
@@ -98,8 +79,9 @@ export function useRunner(canvasRef, { premium = false } = {}) {
     gameRef.current?.setPremium(premium)
   }, [premium])
 
-  const start = useCallback(() => {
-    gameRef.current?.start()
+  const start = useCallback((nivel) => {
+    if (!nivel) return
+    gameRef.current?.start(nivel)
     setRunning(true)
     setPaused(false)
     setGameOver(false)
@@ -151,7 +133,6 @@ export function useRunner(canvasRef, { premium = false } = {}) {
   const agachar = useCallback((on) => gameRef.current?.duck(on), [])
 
   return {
-    record,
     silencio,
     toggleSilencio,
     saltar,

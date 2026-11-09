@@ -1,7 +1,8 @@
 # AGENTS.md — Ecos de Nicaragua
 
 ## Estado actual
-- Fase 0 completada: `client/` (React 19 + Vite 8), `server/` (Express 5) y base MySQL con esquema y seed aplicados. Aún no hay rutas de contenido ni tests.
+- Fase 0 completada: `client/` (React 19 + Vite 8), `server/` (Express 5) y base MySQL con esquema y seed aplicados.
+- Implementados M06 (autenticación), M07 (premium), M08 (administración) y M11 (progreso del runner), con suite de pruebas en `server/tests`.
 - Handoff detallado para retomar: [`docs/handoff.md`](docs/handoff.md).
 - El roadmap, los docs y el contenido del producto están en **español**; mantén ese idioma en la documentación y en todo texto visible al usuario.
 
@@ -10,8 +11,8 @@
 - Servidor: `cd server && npm install && npm run dev` → http://localhost:3000 (`node --watch`).
 - Vite redirige `/api` a `http://localhost:3000`; no hace falta CORS en desarrollo.
 - `.env` va en la raíz (copia `.env.example`); el servidor carga `../../.env` explícitamente. Entrecomilla valores con `#` (dotenv los corta como comentario).
-- Base de datos (MySQL 8+): `cd server && npm run db:migrate`, luego `npm run db:seed`. `db:migrate` es idempotente; `db:seed` solo carga las 17 regiones por ahora.
-- No hay tests ni linter configurados todavía. Si se agregan, documenta aquí el comando exacto.
+- Base de datos (MySQL 8+): `cd server && npm run db:migrate`, luego `npm run db:seed`. `db:migrate` es idempotente; el seed carga regiones, categorías, leyendas, fuentes, preguntas y planes.
+- Tests: `cd server && npm test` (unitarias + integración + contrato). Requiere una base `ecos_nicaragua_test` y los assets referenciados por `server/db/seed/leyendas.json`. Comandos parciales: `npm run test:unit`, `npm run test:integration`.
 
 ## Fuente de verdad
 
@@ -71,6 +72,7 @@ Este bloque convierte `AGENTS.md` en el punto de entrada para cualquier agente n
 | M08 | Administración | A | M06, M07, M09 |
 | M09 | Seguridad (FASE TARDÍA) | A (transversal) | M02, M03, M04, M05, M06, M07 |
 | M10 | Pruebas backend | C (transversal) | M02, M03, M04, M05, M06, M07 |
+| M11 | Progreso del runner | C | M00, M06, M07 |
 
 ## Desarrollador A — Fundación e integración
 
@@ -90,6 +92,7 @@ Este bloque convierte `AGENTS.md` en el punto de entrada para cualquier agente n
 - `server/scripts/setup.js`, `migrate.js`, `seed.js`, `validate-seed.js`, `reset-db.js`, `media-import.js`, `create-admin.js`.
 - `server/src/routes/admin.routes.js`, `server/src/controllers/admin.controller.js`, `server/src/services/admin.service.js`, `server/src/services/auditoria.service.js`, `server/src/schemas/admin.schema.js`.
 - `server/db/migrations/004_*`.
+- `server/db/migrations/005_*` y el ajuste de `server/src/middleware/csrf.js` para M11, solicitados por C.
 - Pruebas de administración y seguridad.
 
 **Archivos restringidos:** archivos específicos de B, C y D (leyendas, regiones, trivia, media, auth, premium) salvo integración aprobada; migraciones ya aplicadas (001); archivos de contenido cultural de `docs/`.
@@ -109,15 +112,18 @@ Este bloque convierte `AGENTS.md` en el punto de entrada para cualquier agente n
 
 ## Desarrollador C — Juego y multimedia
 
-**Módulos asignados:** M04, M05, M10.
+**Módulos asignados:** M04, M05, M10, M11.
 
-**Tareas que puede tocar:** todas las tareas con prefijo `M04-`, `M05-` y `M10-` en `roadmap.backend.md`.
+**Tareas que puede tocar:** todas las tareas con prefijo `M04-`, `M05-`, `M10-` y `M11-` en `roadmap.backend.md`.
 
 **Archivos permitidos:**
-- `server/src/routes/trivia.routes.js`, `media.routes.js`.
-- Sus controladores, servicios y esquemas: `trivia.*`, `media.*`.
+- `server/src/routes/trivia.routes.js`, `media.routes.js`, `runner.routes.js`.
+- Sus controladores, servicios y esquemas: `trivia.*`, `media.*`, `runner.*`.
+- `server/src/config/runner.js`.
 - `server/scripts/media-import.js`.
-- `server/tests/helpers/*`, `server/tests/unit/*` (excepto seed), `server/tests/integration/trivia.test.js`, `media.test.js`, `server/tests/api/*`.
+- `client/src/runner/**` para las tareas M11.
+- `server/tests/helpers/*`, `server/tests/unit/*` (excepto seed), `server/tests/integration/trivia.test.js`, `media.test.js`, `runner.test.js`, `server/tests/api/*`.
+- La migración 005 y el ajuste de CSRF los aplica A; C entrega el código y solicita el cambio.
 
 **Archivos restringidos:** archivos compartidos, migraciones, JSON de seed, scripts compartidos y archivos de A, B y D.
 
