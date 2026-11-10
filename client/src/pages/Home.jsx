@@ -59,6 +59,7 @@ const ATAJOS = [
   { to: '/trivias', titulo: 'Trivias', texto: 'Cinco preguntas por leyenda, con explicación al terminar.' },
   { to: '/ubica', titulo: 'Ubica la leyenda', texto: 'Lleva cada leyenda al lugar donde está documentada.' },
   { to: '/runner', titulo: 'Huir de las Ceguas', texto: 'Corre de noche, salta los obstáculos y no dejes que las Ceguas te alcancen.' },
+  { to: '/padre-sin-cabeza', titulo: 'El Padre sin Cabeza', texto: 'Recorre el pueblo a oscuras hasta que cante el gallo. Cuidado con el perro y la campana.' },
 ]
 
 export default function Home() {

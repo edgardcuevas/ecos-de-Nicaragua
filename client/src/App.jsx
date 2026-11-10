@@ -17,6 +17,7 @@ const Account = lazy(() => import('./pages/Account.jsx'))
 const Plans = lazy(() => import('./pages/Plans.jsx'))
 const Admin = lazy(() => import('./pages/Admin.jsx'))
 const RunnerGame = lazy(() => import('./runner/RunnerGame.jsx'))
+const PadreGame = lazy(() => import('./padre/PadreGame.jsx'))
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="cuenta" element={<Account />} />
           <Route path="admin" element={<Admin />} />
           <Route path="runner" element={<RunnerGame />} />
+          <Route path="padre-sin-cabeza" element={<PadreGame />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

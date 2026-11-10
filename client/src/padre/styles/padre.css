@@ -1,0 +1,49 @@
+.padre-canvas {
+  aspect-ratio: 320 / 192;
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.padre-tactil {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.75rem 0;
+  touch-action: none;
+}
+.padre-palanca {
+  position: relative;
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: 50%;
+  border: 1px solid rgb(241 198 109 / 0.45);
+  background: rgb(10 20 50 / 0.7);
+  touch-action: none;
+}
+.padre-palanca__perilla {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3rem;
+  height: 3rem;
+  margin: -1.5rem 0 0 -1.5rem;
+  border-radius: 50%;
+  background: rgb(154 123 255 / 0.6);
+  border: 1px solid #c9b8ff;
+  pointer-events: none;
+}
+.padre-tactil__tajo {
+  width: 6.5rem;
+  height: 6.5rem;
+  border-radius: 50%;
+  border: 2px solid #8a1424;
+  background: rgb(138 20 36 / 0.5);
+  color: #f1e6c8;
+  font: inherit;
+  font-weight: 700;
+  touch-action: none;
+  user-select: none;
+}
+.padre-tactil__tajo:active { background: rgb(176 20 31 / 0.8); }
+@media (pointer: coarse) { .padre-tactil { display: flex; } }
+
