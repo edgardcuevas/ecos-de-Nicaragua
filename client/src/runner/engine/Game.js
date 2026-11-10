@@ -10,7 +10,7 @@ import { Input } from './Input.js'
 import { colisionaJugador } from './Collision.js'
 import { Spawner } from './Spawner.js'
 import { Sonido } from './Sound.js'
-import { vidasMaximas, factorVelocidad } from '../config.js'
+import { vidasMaximas, factorVelocidad, NOCHE } from '../config.js'
 
 export class Game {
   constructor(canvas, { premium = false, onLivesChange = null, onGameOver = null, onScore = null } = {}) {
@@ -21,7 +21,6 @@ export class Game {
     this.rafId = null
     this.lastTime = 0
     this.elapsed = 0
-    this.nivel = null
     this.fps = 0
     this._fpsFrames = 0
     this._fpsAccum = 0
@@ -88,9 +87,8 @@ export class Game {
     this.spawner.reset()
   }
 
-  start(nivel = this.nivel) {
-    if (!nivel || this.running) return
-    this.nivel = nivel
+  start() {
+    if (this.running) return
     this.running = true
     this.paused = false
     this.lastTime = 0
@@ -177,11 +175,10 @@ export class Game {
   }
 
   update(dt) {
-    if (this.gameOver || !this.nivel) return
-    const nivel = this.nivel
+    if (this.gameOver) return
     this.player.update(dt)
-    this.progreso = Math.min(1, this.elapsed / nivel.duracionSegundos)
-    this.speed = 230 * this.player.scale * factorVelocidad(this.elapsed, nivel.rampa)
+    this.progreso = Math.min(1, this.elapsed / NOCHE.segundos)
+    this.speed = 230 * this.player.scale * factorVelocidad(this.elapsed)
     this.background.update(dt, this.speed)
 
     this.distance += (this.speed * dt) / 10 // 10 px = 1 m
@@ -200,11 +197,8 @@ export class Game {
       speed: this.speed,
       playerX: this.player.x,
       peligros: [...this.enemies, ...this.obstacles],
-      pesos: {
-        ...nivel.pesos,
-        liana: this.elapsed >= nivel.lianasDesdeSegundos ? nivel.pesos.liana : 0,
-      },
-      bloqueado: nivel.duracionSegundos - this.elapsed < nivel.cierreSegundos, // el final es limpio: no salen peligros nuevos
+      pesos: { enemigo: 0.35, obstaculo: 0.4, liana: this.elapsed >= NOCHE.lianasDesde ? 0.25 : 0 },
+      bloqueado: NOCHE.segundos - this.elapsed < NOCHE.cierre, // el final es limpio: no salen peligros nuevos
       crear: (tipo) => {
         if (tipo === 'enemigo') return this.spawnEnemy()
         return this.spawnObstacle(tipo === 'liana' ? 3 : Math.floor(Math.random() * 3))
@@ -222,7 +216,7 @@ export class Game {
       if (this.ayuda.t <= 0) this.ayuda = null
     }
     this.detectCollisions()
-    if (!this.gameOver && this.elapsed >= nivel.duracionSegundos) this.amanecer()
+    if (!this.gameOver && this.elapsed >= NOCHE.segundos) this.amanecer()
   }
 
   /** Cantó el gallo: se acabó la noche y ganas. */
@@ -230,12 +224,10 @@ export class Game {
     this.gameOver = true
     this.victoria = true
     this.progreso = 1
-    this.score =
-      Math.floor(this.distance) + this.nivel.bonos.amanecer + this.lives * this.nivel.bonos.vida
+    this.score = Math.floor(this.distance) + NOCHE.bonoAmanecer + this.lives * NOCHE.bonoVida
     this.sound.amanecer()
     this.onScore?.(this.score)
     this.onGameOver?.({
-      nivel: this.nivel.id,
       victoria: true,
       lives: this.lives,
       score: this.score,
@@ -273,7 +265,6 @@ export class Game {
       this.score = Math.floor(this.distance)
       this.onScore?.(this.score)
       this.onGameOver?.({
-        nivel: this.nivel?.id ?? null,
         victoria: false,
         lives: 0,
         score: this.score,
@@ -327,7 +318,7 @@ export class Game {
     this.obstacles.push(obstacle)
     if (variant === 3 && !this._ayudaVista) {
       this._ayudaVista = true
-      this.ayuda = { texto: 'Una liana: agáchate con ↓ o S', t: 3.2 }
+      this.ayuda = { texto: window.matchMedia?.('(pointer: coarse)').matches ? 'Una liana: usa el botón Agacharse' : 'Una liana: agáchate con ↓ o S', t: 3.2 }
     }
     return obstacle
   }

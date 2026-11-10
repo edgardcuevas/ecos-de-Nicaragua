@@ -11,10 +11,28 @@ function leerSilencioInicial() {
   }
 }
 
-export function useRunner(canvasRef, { premium = false, onFinish = null } = {}) {
+const CLAVE_RECORD = 'ecos.runner.record'
+
+function leerRecord() {
+  try {
+    return Number(localStorage.getItem(CLAVE_RECORD)) || 0
+  } catch {
+    return 0
+  }
+}
+
+function guardarRecord(valor) {
+  try {
+    localStorage.setItem(CLAVE_RECORD, String(valor))
+  } catch {
+    /* sin almacenamiento: el récord dura solo esta visita */
+  }
+}
+
+export function useRunner(canvasRef, { premium = false, pantallaCompleta = false } = {}) {
   const gameRef = useRef(null)
+  const fsRef = useRef(pantallaCompleta)
   const premiumRef = useRef(premium)
-  const finishRef = useRef(onFinish)
   const [running, setRunning] = useState(false)
   const [paused, setPaused] = useState(false)
   const [fps, setFps] = useState(0)
@@ -22,19 +40,21 @@ export function useRunner(canvasRef, { premium = false, onFinish = null } = {}) 
   const [score, setScore] = useState(0)
   const [gameOver, setGameOver] = useState(false)
   const [resultado, setResultado] = useState(null)
+  const [record, setRecord] = useState(leerRecord)
   const [silencio, setSilencio] = useState(() => leerSilencioInicial())
 
-  useEffect(() => {
-    finishRef.current = onFinish
-  }, [onFinish])
-
   const alGameOver = useCallback((info) => {
+    const previo = leerRecord()
+    const nuevo = (info.score ?? 0) > previo
+    if (nuevo) {
+      guardarRecord(info.score)
+      setRecord(info.score)
+    }
     setGameOver(true)
-    setResultado(info)
+    setResultado({ ...info, nuevoRecord: nuevo })
     setScore(info.score ?? 0)
     setRunning(false)
     setPaused(false)
-    finishRef.current?.(info)
   }, [])
 
   useEffect(() => {
@@ -54,7 +74,9 @@ export function useRunner(canvasRef, { premium = false, onFinish = null } = {}) 
       const parent = canvas.parentElement
       const rect = canvas.getBoundingClientRect()
       const w = Math.round(rect.width) || parent?.clientWidth || 640
-      const h = Math.min(360, window.innerHeight * 0.5)
+      const h = fsRef.current
+        ? Math.round(parent?.clientHeight || window.innerHeight)
+        : Math.min(360, window.innerHeight * 0.5)
       game.resize(w, h)
     }
     resize()
@@ -73,15 +95,22 @@ export function useRunner(canvasRef, { premium = false, onFinish = null } = {}) 
     }
   }, [canvasRef, alGameOver])
 
+  // Al entrar o salir de pantalla completa el escenario cambia de tamaño: recalcular el lienzo
+  // cuando el navegador termine la transición (y de nuevo si gira el teléfono).
+  useEffect(() => {
+    fsRef.current = pantallaCompleta
+    const avisos = [120, 450].map((ms) => setTimeout(() => window.dispatchEvent(new Event('resize')), ms))
+    return () => avisos.forEach(clearTimeout)
+  }, [pantallaCompleta])
+
   // El estado premium puede resolverse después del montaje (auth).
   useEffect(() => {
     premiumRef.current = premium
     gameRef.current?.setPremium(premium)
   }, [premium])
 
-  const start = useCallback((nivel) => {
-    if (!nivel) return
-    gameRef.current?.start(nivel)
+  const start = useCallback(() => {
+    gameRef.current?.start()
     setRunning(true)
     setPaused(false)
     setGameOver(false)
@@ -133,6 +162,7 @@ export function useRunner(canvasRef, { premium = false, onFinish = null } = {}) 
   const agachar = useCallback((on) => gameRef.current?.duck(on), [])
 
   return {
+    record,
     silencio,
     toggleSilencio,
     saltar,

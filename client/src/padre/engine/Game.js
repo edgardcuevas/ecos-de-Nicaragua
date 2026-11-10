@@ -101,7 +101,7 @@ export class Game {
     this.maxLives = vidasMaximas(this.premium)
     this.lives = this.maxLives
     this.reiniciar()
-    this.mostrarAyuda('Tajo: Espacio, J o clic. ¡Que no te vea el pueblo!', 4)
+    this.mostrarAyuda(window.matchMedia?.('(pointer: coarse)').matches ? 'Toca Tajo para atacar. ¡Que no te vea el pueblo!' : 'Tajo: Espacio, J o clic. ¡Que no te vea el pueblo!', 4)
     this.sound.activar()
     this.onLivesChange?.(this.lives)
     this.onScore?.(0)

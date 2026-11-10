@@ -4,6 +4,9 @@ import { NavLink } from 'react-router-dom'
 import { useAuth } from '../auth.jsx'
 import { usePadre } from './usePadre.js'
 import { vidasMaximas, NOCHE } from './config.js'
+import { useTactil, usePantallaCompleta } from '../juego/pantallaCompleta.js'
+import { BarraEstadio, AvisoGirar } from '../juego/BarraEstadio.jsx'
+import '../juego/juego.css'
 import '../runner/styles/runner.css'
 import './styles/padre.css'
 
@@ -50,12 +53,36 @@ function Palanca({ onMover }) {
 
 export default function PadreGame() {
   const canvasRef = useRef(null)
+  const estadioRef = useRef(null)
+  const tactil = useTactil()
+  const { activa: fs, entrar, alternar } = usePantallaCompleta(estadioRef)
   const { premium } = useAuth()
   const { running, paused, lives, score, gameOver, resultado, record, silencio, start, stop, togglePause, toggleSilencio, mover, atacar } =
     usePadre(canvasRef, { premium })
   const maxVidas = vidasMaximas(premium)
   const victoria = Boolean(resultado?.victoria)
   const overlay = !running || paused || gameOver
+
+  const comenzarEnPantallaCompleta = async () => {
+    await entrar()
+    start()
+  }
+
+  const controlesTactiles = (
+    <div className="padre-tactil">
+      <Palanca onMover={mover} />
+      <button
+        type="button"
+        className="padre-tactil__tajo"
+        onPointerDown={(e) => {
+          e.preventDefault()
+          atacar()
+        }}
+      >
+        Tajo
+      </button>
+    </div>
+  )
 
   return (
     <div className="noche-pagina">
@@ -69,7 +96,7 @@ export default function PadreGame() {
           <p>Recorre el pueblo en la oscuridad. Que no te detengan antes de que cante el gallo.</p>
         </header>
 
-        <div className="runner-escenario">
+        <div ref={estadioRef} className={`runner-escenario estadio ${fs ? 'estadio--fs' : ''}`}>
           <canvas ref={canvasRef} className="runner-canvas padre-canvas" role="img" aria-label="Área de juego de El Padre sin Cabeza">
             Tu navegador no permite dibujar el juego en canvas.
           </canvas>
@@ -117,35 +144,50 @@ export default function PadreGame() {
               ) : (
                 <>
                   <p className="runner-overlay__titulo">La noche es tuya</p>
-                  <p className="runner-overlay__detalle">
-                    Muévete con <kbd>WASD</kbd> o las flechas y da tajos con <kbd>Espacio</kbd>. Sobrevive {NOCHE.segundos} s hasta el
-                    amanecer. Los aldeanos corren a esconderse: alcánzalos antes.
-                  </p>
-                  <button type="button" className="btn btn--luna" onClick={start}>
-                    Comenzar
-                  </button>
+                  {tactil ? (
+                    <p className="runner-overlay__detalle">
+                      Mueve la <strong>palanca</strong> para caminar y toca <strong>Tajo</strong> para atacar. Sobrevive {NOCHE.segundos} s
+                      hasta el amanecer. Los aldeanos corren a esconderse: alcánzalos antes.
+                    </p>
+                  ) : (
+                    <p className="runner-overlay__detalle">
+                      Muévete con <kbd>WASD</kbd> o las flechas y da tajos con <kbd>Espacio</kbd>. Sobrevive {NOCHE.segundos} s hasta el
+                      amanecer. Los aldeanos corren a esconderse: alcánzalos antes.
+                    </p>
+                  )}
+                  {tactil && !fs ? (
+                    <div className="runner-overlay__botones">
+                      <button type="button" className="btn btn--luna" onClick={comenzarEnPantallaCompleta}>
+                        Jugar en pantalla completa
+                      </button>
+                      <button type="button" className="btn btn--borde" onClick={start}>
+                        Jugar aquí
+                      </button>
+                    </div>
+                  ) : (
+                    <button type="button" className="btn btn--luna" onClick={start}>
+                      Comenzar
+                    </button>
+                  )}
                 </>
               )}
             </div>
           )}
+          <BarraEstadio activa={fs} alternarPantalla={alternar} running={running} paused={paused} alternarPausa={togglePause} />
+          {fs && controlesTactiles}
+          {fs && <AvisoGirar />}
         </div>
 
-        <div className="padre-tactil">
-          <Palanca onMover={mover} />
-          <button
-            type="button"
-            className="padre-tactil__tajo"
-            onPointerDown={(e) => {
-              e.preventDefault()
-              atacar()
-            }}
-          >
-            Tajo
-          </button>
-        </div>
+        {!fs && controlesTactiles}
 
         <p className="runner-ayuda">
-          Mueve con <kbd>WASD</kbd> / flechas · Tajo con <kbd>Espacio</kbd>, <kbd>J</kbd> o clic. Cuidado: el perro ladra, la campana te frena y el agua bendita quema.
+          {tactil ? (
+            <>Cuidado: el perro ladra, la campana te frena y el agua bendita quema. Mejor en pantalla completa y con el teléfono girado.</>
+          ) : (
+            <>
+              Mueve con <kbd>WASD</kbd> / flechas · Tajo con <kbd>Espacio</kbd>, <kbd>J</kbd> o clic. Cuidado: el perro ladra, la campana te frena y el agua bendita quema.
+            </>
+          )}
         </p>
 
         <div className="runner-controls">
@@ -157,6 +199,9 @@ export default function PadreGame() {
           </button>
           <button type="button" className="btn btn--borde" onClick={stop} disabled={!running}>
             Detener
+          </button>
+          <button type="button" className="btn btn--borde" onClick={alternar}>
+            Pantalla completa
           </button>
           <button type="button" className="btn btn--borde" onClick={toggleSilencio} aria-pressed={silencio}>
             {silencio ? 'Sonido: no' : 'Sonido: sí'}
