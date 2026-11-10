@@ -777,7 +777,7 @@ export class Game {
     this.gameOver = true
     this.victoria = false
     this.sound.derrota()
-    this.onGameOver?.(this.resultado())
+    setTimeout(() => this.onGameOver?.(this.resultado()), 0)
     this.render()
     this.stop()
   }
@@ -790,7 +790,7 @@ export class Game {
     this.score += this.config.bonos.amanecer + this.lives * this.config.bonos.vida
     this.sound.amanecer()
     this.onScore?.(this.score)
-    this.onGameOver?.(this.resultado())
+    setTimeout(() => this.onGameOver?.(this.resultado()), 0)
     this.render()
     this.stop()
   }

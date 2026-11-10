@@ -481,6 +481,29 @@ export default function PadreGame() {
             </div>
           )}
 
+{gameOver && (
+            <div className="runner-overlay padre-overlay">
+              <p className="runner-overlay__titulo">
+                {victoria ? 'Canta el gallo' : enInfinito ? 'La noche sin fin terminó' : 'El pueblo te detuvo'}
+              </p>
+              <p className="runner-overlay__detalle">
+                {enInfinito
+                  ? `Superaste ${resultado?.rondas ?? 0} ${resultado?.rondas === 1 ? 'ronda' : 'rondas'}.`
+                  : victoria
+                    ? 'El Padre se desvanece con la primera luz.'
+                    : 'Aguanta un poco más y vuelve a intentarlo.'}
+              </p>
+              <div className="padre-inicio__acciones">
+                <button type="button" className="btn btn--luna" onClick={start}>
+                  Reintentar
+                </button>
+                <button type="button" className="btn btn--borde" onClick={stop}>
+                  Elegir otra noche
+                </button>
+              </div>
+            </div>
+          )}
+
           <BarraEstadio
             activa={fs}
             alternarPantalla={alternar}
