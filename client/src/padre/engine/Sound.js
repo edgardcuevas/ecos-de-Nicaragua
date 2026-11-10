@@ -88,6 +88,14 @@ export class Sonido {
     this._tono({ tipo: 'sine', desde: 1320, hasta: 1290, dur: 0.6, vol: 0.03 })
   }
   agua() { this._ruido({ dur: 0.2, vol: 0.04, filtro: 5000 }) }
+  campanillaSuave() {
+    this._tono({ tipo: 'sine', desde: 1760, hasta: 1700, dur: 0.35, vol: 0.025 })
+  }
+  campanilla() {
+    this._tono({ tipo: 'sine', desde: 2093, hasta: 2060, dur: 0.5, vol: 0.05 })
+    this._tono({ tipo: 'sine', desde: 2637, hasta: 2600, dur: 0.4, vol: 0.035, retraso: 0.08 })
+    this._tono({ tipo: 'sine', desde: 3136, hasta: 3100, dur: 0.35, vol: 0.02, retraso: 0.16 })
+  }
   derrota() { this._tono({ tipo: 'sawtooth', desde: 320, hasta: 60, dur: 0.8, vol: 0.07 }) }
   amanecer() {
     this._tono({ tipo: 'triangle', desde: 520, hasta: 980, dur: 0.14, vol: 0.08 })

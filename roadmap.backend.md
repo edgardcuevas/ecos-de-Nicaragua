@@ -21,7 +21,7 @@ Al terminar este plan deben existir:
 
 **Criterio de éxito:** un desarrollador nuevo clona el repositorio, ejecuta `npm install`, `npm run setup` y `npm run dev`, y en menos de 10 minutos tiene la API y la base de datos funcionando con datos reales. El frontend puede construir todas sus pantallas contra esta API sin mocks.
 
-**Fuera de alcance:** pasarela de pago, app móvil, aula virtual, panel institucional, mapa de los 153 municipios, panel de edición de contenido cultural, progreso por usuario (excepto el módulo M11 del runner) y material educativo. Tampoco se implementa frontend.
+**Fuera de alcance:** pasarela de pago, app móvil, aula virtual, panel institucional, mapa de los 153 municipios, panel de edición de contenido cultural, progreso por usuario (excepto los módulos M11 del runner y M12 de El Padre sin Cabeza) y material educativo. Tampoco se implementa frontend.
 
 # Arquitectura General
 
@@ -61,6 +61,8 @@ No se usa ORM. Las consultas son SQL parametrizado con `mysql2/promise`. Los con
   - `002`: `leyendas.alcance`, `fuentes.clave`, `imagenes.es_premium` y sus índices.
   - `003`: tabla `sesiones` y columna `usuarios.sesion_version`.
   - `004`: tabla `auditoria_admin`.
+  - `005`: tablas `runner_perfiles`, `runner_records` y `runner_partidas` (M11).
+  - `006`: tablas `padre_perfiles`, `padre_records` y `padre_partidas` (M12).
 - El seed es idempotente y versionado en `server/db/seed/`. La base guarda rutas de archivos, nunca los archivos.
 - Las fechas de suscripción se comparan con `CURDATE()`; los permisos se leen en cada petición, no se guardan en la sesión.
 
@@ -1899,6 +1901,220 @@ Compartidos (A):
 - `npm test` y `npm run build` pasan.
 - No se editan migraciones anteriores.
 
+# Módulo 12 - Progreso de El Padre sin Cabeza (extensión)
+
+## Objetivo
+
+> Extensión posterior al MVP. Depende de M00, M06 y M07 funcionales. El diseño completo vive en `roadmap.padre.md`.
+
+Guardar el progreso del minijuego «El Padre sin Cabeza» por usuario, agregar una campaña de 5 niveles, un modo infinito por rondas, un ítem que recupera vidas y un ranking separado gratis/premium. El invitado solo juega el nivel 1 de la campaña y guarda su récord en el navegador.
+
+## Alcance
+
+- Progreso por usuario: nivel máximo desbloqueado, récords por modo/nivel e historial de partidas.
+- Campaña de 5 niveles con dificultad creciente.
+- Modo infinito por rondas de 30 s con 4 s de descanso.
+- El Rosario del Padre: recupera 1 vida y puede superar el máximo base.
+- Ranking por modo y nivel, separado en gratis y premium.
+- Sin monedas, sin logros y sin inventario permanente.
+- El puntaje se calcula en el cliente; el servidor valida coherencia, no simula la partida.
+
+## Migración 006
+
+```sql
+CREATE TABLE padre_perfiles (
+  usuario_id BIGINT UNSIGNED NOT NULL,
+  nivel_max_desbloqueado TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (usuario_id),
+  CONSTRAINT chk_padre_perfiles_nivel CHECK (nivel_max_desbloqueado BETWEEN 1 AND 5),
+  CONSTRAINT fk_padre_perfiles_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE padre_records (
+  usuario_id BIGINT UNSIGNED NOT NULL,
+  modo ENUM('campana', 'infinita') NOT NULL,
+  nivel TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  mejor_puntaje INT UNSIGNED NOT NULL DEFAULT 0,
+  mejor_rondas INT UNSIGNED NOT NULL DEFAULT 0,
+  victorias INT UNSIGNED NOT NULL DEFAULT 0,
+  partidas INT UNSIGNED NOT NULL DEFAULT 0,
+  actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (usuario_id, modo, nivel),
+  KEY idx_padre_records_ranking (modo, nivel, mejor_puntaje DESC),
+  CONSTRAINT chk_padre_records_modo CHECK (
+    (modo = 'campana' AND nivel BETWEEN 1 AND 5)
+    OR (modo = 'infinita' AND nivel = 0)
+  ),
+  CONSTRAINT fk_padre_records_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE padre_partidas (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  usuario_id BIGINT UNSIGNED NOT NULL,
+  modo ENUM('campana', 'infinita') NOT NULL,
+  nivel TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  puntaje INT UNSIGNED NOT NULL,
+  rondas INT UNSIGNED NOT NULL DEFAULT 0,
+  duracion_segundos SMALLINT UNSIGNED NOT NULL,
+  vidas_restantes TINYINT UNSIGNED NOT NULL,
+  objetos_usados TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  aldeanos INT UNSIGNED NOT NULL DEFAULT 0,
+  perro INT UNSIGNED NOT NULL DEFAULT 0,
+  monaguillo INT UNSIGNED NOT NULL DEFAULT 0,
+  beata INT UNSIGNED NOT NULL DEFAULT 0,
+  valiente INT UNSIGNED NOT NULL DEFAULT 0,
+  salvados INT UNSIGNED NOT NULL DEFAULT 0,
+  victoria BOOLEAN NOT NULL DEFAULT FALSE,
+  creada_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_padre_partidas_usuario (usuario_id, creada_en),
+  KEY idx_padre_partidas_ranking (modo, nivel, puntaje DESC),
+  CONSTRAINT chk_padre_partidas_modo CHECK (
+    (modo = 'campana' AND nivel BETWEEN 1 AND 5)
+    OR (modo = 'infinita' AND nivel = 0)
+  ),
+  CONSTRAINT fk_padre_partidas_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+`nivel = 0` identifica la fila del modo infinito. Todas las consultas se filtran por `usuario_id`.
+
+## Configuración de la campaña
+
+`server/src/config/padre.js` es la fuente de verdad. El cliente la recibe por `GET /api/padre/estado` y mantiene un fallback en `client/src/padre/config.js`.
+
+| Nivel | Nombre | Duración | Aldeanos | Máx. enemigos | Spawn | Bonus amanecer | Bonus vida | Rosarios |
+|---|---|---|---|---|---|---|---|---|
+| 1 | El atrio de León Viejo | 90 s | 8 | 1 → 4 | 7.5 → 4.5 s | 200 | 25 | 2 |
+| 2 | Las calles de León | 105 s | 9 | 1 → 5 | 6.8 → 4.0 s | 250 | 25 | 2 |
+| 3 | El cementerio | 120 s | 10 | 1 → 6 | 6.0 → 3.5 s | 300 | 30 | 2 |
+| 4 | La ribera del Xolotlán | 135 s | 11 | 1 → 7 | 5.2 → 3.0 s | 350 | 30 | 1 |
+| 5 | La última campana | 150 s | 12 | 1 → 8 | 4.4 → 2.5 s | 400 | 35 | 1 |
+
+Cada nivel incluye `enemigos` (nombre, hp, radio, velocidad, puntos, aviso, `desde` y `peso`), `maxEnemigos: { inicial, maximo, cada }`, `esperaSpawn: { inicial, min, porSegundo }`, `velocidadEnemigos` y `objetos: { max, cada }`.
+
+## Modo infinito
+
+- Cada ronda dura 30 s; el descanso dura 4 s.
+- La ronda 1 usa la dificultad del nivel 1.
+- Solo termina al quedarse sin vidas; no hay victoria.
+- Al superar una ronda se suman 150 puntos.
+- Escalado para la ronda `r`:
+
+```text
+aldeanos         = min(16, 8 + floor((r - 1) / 3))
+maxEnemigos      = min(12, 4 + floor((r - 1) / 2))
+esperaSpawn      = max(2.2, 7.5 - (r - 1) * 0.25)
+velocidad        = 1 + min(0.4, (r - 1) * 0.02)
+perro.desde      = max(2, 8 - (r - 1) * 0.5)
+monaguillo.desde = max(4, 14 - (r - 1) * 0.8)
+beata.desde      = max(6, 20 - (r - 1))
+valiente.desde   = max(8, 26 - (r - 1) * 1.2)
+```
+
+`configuracionRonda(ronda)` existe en servidor y cliente y debe devolver los mismos valores.
+
+## El Rosario del Padre
+
+- Recupera 1 vida y puede superar el máximo base: `vidasMaximas(premium) + objetosUsados`.
+- Solo hay un rosario activo a la vez; desaparece a los 20 s.
+- Aparece cerca del atrio, el cementerio o las puertas del pueblo, con luz propia.
+- Campaña: el cliente intenta generarlo según `objetos.max` y `objetos.cada`.
+- Infinito: cada 3 rondas superadas, al empezar la ronda siguiente, con un máximo de 10 por partida.
+- El servidor rechaza vidas extra que no estén justificadas por `objetosUsados`.
+
+## Puntaje y validación
+
+```text
+base = aldeanos * 10 + perro * 25 + monaguillo * 30 + beata * 40 + valiente * 100
+
+bonos = campaña y victoria: bonos.amanecer + vidasRestantes * bonos.vida
+        campaña y derrota:  0
+        infinita:           150 * rondas
+
+minimo = base + bonos
+maximo = base * comboMax + bonos      // comboMax = 5
+```
+
+- Victoria de campaña: `vidasRestantes >= 1` y `duracionSegundos >= duracion - 1`.
+- Derrota de campaña: `vidasRestantes = 0`.
+- Infinito: `victoria = false`, `vidasRestantes = 0`.
+- `objetosUsados` se limita por nivel o por rondas y por la duración jugada.
+- `aldeanos + salvados` y el total de enemigos se limitan por la duración y la dificultad.
+- Zod estricto: sin campos desconocidos; `usuarioId` en el body se rechaza.
+
+## Rutas
+
+| Método | Ruta | Auth | CSRF | Función |
+|---|---|---|---|---|
+| GET | `/api/padre/estado` | Opcional | No | Configuración, niveles, candados, récords e infinito |
+| POST | `/api/padre/partidas` | Sí | Sí | Validar, guardar y desbloquear |
+| GET | `/api/padre/partidas` | Sí | No | Historial propio paginado |
+| GET | `/api/padre/ranking` | No | No | Top por modo/nivel, separado gratis/premium |
+
+## Servicios y reglas de respuesta
+
+- `obtenerEstado(usuarioId)`: para invitado devuelve solo el nivel 1 y el infinito bloqueado; para usuario autenticado, desbloqueos y récords reales.
+- `registrarPartida(usuarioId, datos, acceso)`: transacción con inserción, upsert de récord y desbloqueo del siguiente nivel al ganar.
+- `listarPartidas(usuarioId, filtros)`: solo filas del usuario autenticado.
+- `obtenerRanking({ modo, nivel, limit })`: usa `ROW_NUMBER()` particionado por plan vigente.
+- `POST /partidas` devuelve `partida`, `record`, `nuevoRecord`, `nivelDesbloqueado` y `nivelMaxDesbloqueado`.
+- El ranking devuelve `{ modo, nivel, gratis, premium }`; cada entrada incluye `posicion`, `nombreUsuario`, `puntaje`, `rondas` y `victorias`. Nunca correo ni ID.
+- Errores: `SESION_REQUERIDA` (401), `NIVEL_NO_ENCONTRADO` (404), `NIVEL_BLOQUEADO` (403), `PARTIDA_INVALIDA` (400), `VALIDACION` (400), `DEMASIADAS_PETICIONES` (429).
+
+## Archivos
+
+Nuevos:
+
+- `server/src/config/padre.js`
+- `server/src/routes/padre.routes.js`
+- `server/src/controllers/padre.controller.js`
+- `server/src/services/padre.service.js`
+- `server/src/schemas/padre.schema.js`
+- `server/db/migrations/006_padre_progreso.sql`
+- `server/tests/unit/padre-validation.test.js`
+- `server/tests/integration/padre.test.js`
+- `server/tests/api/padre.contract.test.js`
+- `client/src/padre/**` (configuración, motor, hook, UI y ranking)
+
+Compartidos (A):
+
+- `server/src/routes/index.js`
+- `server/src/middleware/csrf.js`
+
+## Tareas
+
+- [x] M12-01 Documentar contrato, tablas, propiedad y reglas de invitado.
+- [x] M12-02 Migración `006_padre_progreso.sql`.
+- [x] M12-03 Configuración de los 5 niveles, infinito, Rosario y validadores puros.
+- [x] M12-04 Esquemas Zod, servicio, controlador y rutas.
+- [x] M12-05 Montar el router y añadir la ruta a CSRF.
+- [x] M12-06 Refactorizar configuración y motor para la campaña por niveles.
+- [x] M12-07 Implementar el Rosario, su aparición, recogida, HUD y sonido.
+- [x] M12-08 Implementar estado, guardado, récords, candados y modo invitado en React.
+- [x] M12-09 Implementar el modo infinito por rondas y su récord.
+- [x] M12-10 Implementar el ranking en la UI.
+- [x] M12-11 Pruebas unitarias, de integración y de contrato.
+- [x] M12-12 Actualizar documentación y ejecutar `npm run build` y pruebas.
+- [ ] M12-13 Prueba manual en navegador con dos cuentas y un invitado.
+
+## Definition of Done
+
+- El invitado solo juega el nivel 1; el modo infinito y los niveles 2–5 están bloqueados y muestran el aviso de inicio de sesión.
+- Un usuario autenticado tiene desbloqueos, récords e historial propios.
+- Dos usuarios no comparten ningún dato de progreso.
+- Ganar desbloquea el siguiente nivel; perder no.
+- El servidor rechaza niveles bloqueados, resultados incoherentes, vidas extra sin rosarios y partidas con duración o estadísticas imposibles.
+- El modo infinito funciona por rondas, escala la dificultad y guarda el récord por rondas.
+- El Rosario recupera vidas, se cuenta en el HUD y se valida en el servidor.
+- El ranking separa gratis/premium y no expone correos ni IDs.
+- `npm run build` y las pruebas nuevas pasan.
+- No se editaron migraciones anteriores.
+
 # Dependencias Globales
 
 | Módulo | Depende de | Motivo |
@@ -1915,6 +2131,7 @@ Compartidos (A):
 | M09 — Seguridad (FASE TARDÍA) | M00, M02, M03, M04, M05, M06, M07 | Transversal; no inicia hasta que las APIs de negocio estén funcionales |
 | M10 — Pruebas | M02, M03, M04, M05, M06, M07 | Transversal; se completa al final |
 | M11 — Progreso del runner | M00, M06, M07 | Extensión del minijuego; sesión y premium ya funcionales |
+| M12 — Progreso de El Padre sin Cabeza | M00, M06, M07, M11 (patrón) | Extensión del minijuego; reutiliza el patrón de M11 |
 
 ## Módulos independientes
 
@@ -1971,7 +2188,7 @@ M08, M09 y M10 se activan cuando sus dependencias estén funcionales.
 
 ## Desarrollador C — Juego y multimedia
 
-**Módulos:** M04, M05, M10, M11.
+**Módulos:** M04, M05, M10, M11, M12.
 
 **Tareas:**
 
@@ -1980,10 +2197,11 @@ M08, M09 y M10 se activan cuando sus dependencias estén funcionales.
 - Helpers y suite de pruebas.
 - Pruebas de contrato de todos los módulos al final.
 - Progreso del runner: configuración de niveles, API, cliente y pruebas.
+- Progreso de El Padre sin Cabeza: campaña, infinito, Rosario, cliente y pruebas.
 
-**Archivos propios:** `routes/trivia.routes.js`, `media.routes.js`, `runner.routes.js`; controladores, servicios, esquemas, `scripts/media-import.js`, `tests/helpers/*`, `tests/unit/*` (excepto seed), `tests/integration/trivia.test.js`, `media.test.js`, `runner.test.js`, `tests/api/*`, `client/src/runner/**`.
+**Archivos propios:** `routes/trivia.routes.js`, `media.routes.js`, `runner.routes.js`, `padre.routes.js`; controladores, servicios, esquemas, `config/runner.js`, `config/padre.js`, `scripts/media-import.js`, `tests/helpers/*`, `tests/unit/*` (excepto seed), `tests/integration/trivia.test.js`, `media.test.js`, `runner.test.js`, `padre.test.js`, `tests/api/*`, `client/src/runner/**`, `client/src/padre/**`.
 
-**Archivos compartidos que solicita a A:** `routes/index.js`, `middleware/csrf.js`, `db/migrations/005_runner_progreso.sql`.
+**Archivos compartidos que solicita a A:** `routes/index.js`, `middleware/csrf.js`, `db/migrations/005_runner_progreso.sql`, `db/migrations/006_padre_progreso.sql`.
 
 ## Desarrollador D — Identidad y acceso
 
@@ -2039,14 +2257,15 @@ M08, M09 y M10 se activan cuando sus dependencias estén funcionales.
 9. **M09 — Seguridad.** A revisa validación, SQL, rate limit, CORS, headers, cookies, logs y autorización. *Puerta:* checklist y pruebas de seguridad.
 10. **M10 — Pruebas.** C cierra la suite completa, helpers y contrato de todos los endpoints. *Puerta:* `npm test` verde desde base de test limpia.
 11. **M11 — Progreso del runner.** Extensión posterior al MVP: migración 005, API, niveles y ranking. *Puerta:* dos usuarios aislados, invitado sin escrituras y ranking separado.
-12. **Prueba de fuego.** Base vacía → `npm run setup` → `npm test` → `npm run dev`. *Puerta:* seed, migraciones, multimedia y health.
-13. **Verificación de contratos.** Recorrer todos los endpoints con free, premium y admin; comparar contra este documento. *Puerta:* sin campos faltantes ni códigos HTTP distintos.
-14. **Congelamiento.** Etiquetar `backend-mvp`, actualizar README y avisar al frontend. *Puerta:* no se cambian contratos sin nueva versión.
+12. **M12 — Progreso de El Padre sin Cabeza.** Extensión posterior al MVP: migración 006, API, campaña, infinito, Rosario y ranking. *Puerta:* invitado solo nivel 1, dos usuarios aislados y ranking separado.
+13. **Prueba de fuego.** Base vacía → `npm run setup` → `npm test` → `npm run dev`. *Puerta:* seed, migraciones, multimedia y health.
+14. **Verificación de contratos.** Recorrer todos los endpoints con free, premium y admin; comparar contra este documento. *Puerta:* sin campos faltantes ni códigos HTTP distintos.
+15. **Congelamiento.** Etiquetar `backend-mvp`, actualizar README y avisar al frontend. *Puerta:* no se cambian contratos sin nueva versión.
 
 ## Ruta crítica
 
 ```text
-M00 → M01 → M06 → M07 → integración premium → M08 → M09 → M10 → M11 (extensión) → congelamiento
+M00 → M01 → M06 → M07 → integración premium → M08 → M09 → M10 → M11 (extensión) → M12 (extensión) → congelamiento
 ```
 
 M02, M03, M04 y M05 pueden avanzar en paralelo, pero no se consideran terminados hasta integrar M07 y pasar M10.
@@ -2056,7 +2275,7 @@ M02, M03, M04 y M05 pueden avanzar en paralelo, pero no se consideran terminados
 - No se empieza por el frontend.
 - No se implementa pago ni suscripción automática.
 - No se agrega edición de contenido.
-- No se agregan tablas de municipios, progreso (salvo M11) o material educativo.
+- No se agregan tablas de municipios, progreso (salvo M11 y M12) o material educativo.
 - No se cambia el esquema base sin una migración nueva y aprobación de A.
 
 # Contratos de API
@@ -2910,6 +3129,204 @@ No exponen endpoints propios. M09 aplica a todos los contratos anteriores; M10 v
 - El plan se determina por la suscripción vigente, no por `usuarios.rol`.
 - Nunca devuelve correo, ID de usuario ni fecha de suscripción.
 
+## M12 — Progreso de El Padre sin Cabeza
+
+### `GET /api/padre/estado`
+
+- Auth: opcional. CSRF: no.
+- Query: sin parámetros.
+- Response `200` para invitado (ejemplo abreviado; la respuesta real incluye los 5 niveles):
+
+```json
+{
+  "data": {
+    "autenticado": false,
+    "nivelMaxDesbloqueado": 1,
+    "totalNiveles": 5,
+    "infinito": {
+      "desbloqueado": false,
+      "requiereCuenta": true,
+      "rondaSegundos": 30,
+      "descansoSegundos": 4,
+      "maxRondas": 120,
+      "maxDuracionSegundos": 3600,
+      "bonoRonda": 150,
+      "mejorPuntaje": 0,
+      "mejorRondas": 0,
+      "partidas": 0
+    },
+    "niveles": [
+      {
+        "id": 1,
+        "nombre": "El atrio de León Viejo",
+        "descripcion": "La primera noche. El Padre despierta entre las ruinas y el pueblo apenas comienza a temerle.",
+        "duracionSegundos": 90,
+        "aldeanos": 8,
+        "maxEnemigos": { "inicial": 1, "maximo": 4, "cada": 20 },
+        "esperaSpawn": { "inicial": 7.5, "min": 4.5, "porSegundo": 0.03 },
+        "velocidadEnemigos": 0.9,
+        "enemigos": {
+          "perro": { "nombre": "Perro", "desde": 10, "peso": 0.4, "hp": 1, "r": 4, "vel": 80, "puntos": 25, "aviso": "Un perro: su ladrido alerta al pueblo" }
+        },
+        "bonos": { "amanecer": 200, "vida": 25 },
+        "objetos": { "max": 2, "cada": 45 },
+        "desbloqueado": true,
+        "mejorPuntaje": 0,
+        "victorias": 0,
+        "partidas": 0
+      }
+    ],
+    "objetos": {
+      "rosario": {
+        "id": "rosario",
+        "nombre": "El Rosario del Padre",
+        "descripcion": "Un rosario de cuentas gastadas. Al recogerlo, el Padre recupera una vida.",
+        "vida": 1,
+        "duracion": 20,
+        "maxActivos": 1
+      }
+    },
+    "constantes": {
+      "vidas": { "gratis": 5, "premium": 7 },
+      "jugador": { "vel": 72, "r": 4, "alcance": 22, "enfriamiento": 0.42, "invulnerable": 1.4 },
+      "aldeanos": { "miedo": 58, "puntos": 10, "comboMax": 5, "comboVentana": 2.5, "reaparicionMin": 3 },
+      "puntos": { "aldeano": 10, "perro": 25, "monaguillo": 30, "beata": 40, "valiente": 100 },
+      "infinito": { "rondaSegundos": 30, "descansoSegundos": 4, "maxRondas": 120, "maxDuracionSegundos": 3600, "bonoRonda": 150 },
+      "objetos": { "rosario": { "id": "rosario", "nombre": "El Rosario del Padre", "vida": 1, "duracion": 20 } },
+      "totalNiveles": 5
+    }
+  }
+}
+```
+
+- Para invitado, los niveles 2–5 llegan con `desbloqueado: false` y `infinito.desbloqueado: false`.
+- Para usuario autenticado, `infinito.desbloqueado` es `true` y los niveles traen sus récords reales.
+- Nunca devuelve correo ni ID de usuario.
+
+### `POST /api/padre/partidas`
+
+- Auth: sí. CSRF: sí.
+- Request de campaña:
+
+```json
+{
+  "modo": "campana",
+  "nivel": 1,
+  "puntaje": 1450,
+  "duracionSegundos": 90,
+  "rondas": 0,
+  "vidasRestantes": 3,
+  "objetosUsados": 1,
+  "estadisticas": { "aldeanos": 42, "perro": 3, "monaguillo": 2, "beata": 1, "valiente": 0, "salvados": 5 },
+  "victoria": true
+}
+```
+
+- Request de infinito (sin `nivel`):
+
+```json
+{
+  "modo": "infinita",
+  "puntaje": 3200,
+  "duracionSegundos": 128,
+  "rondas": 3,
+  "vidasRestantes": 0,
+  "objetosUsados": 1,
+  "estadisticas": { "aldeanos": 61, "perro": 5, "monaguillo": 4, "beata": 2, "valiente": 1, "salvados": 8 },
+  "victoria": false
+}
+```
+
+- Response `201`:
+
+```json
+{
+  "data": {
+    "partida": {
+      "id": 21,
+      "modo": "campana",
+      "nivel": 1,
+      "puntaje": 1450,
+      "rondas": 0,
+      "duracionSegundos": 90,
+      "vidasRestantes": 3,
+      "objetosUsados": 1,
+      "victoria": true,
+      "creadaEn": "2026-11-09T12:00:00.000Z"
+    },
+    "record": {
+      "modo": "campana",
+      "nivel": 1,
+      "mejorPuntaje": 1450,
+      "mejorRondas": 0,
+      "victorias": 1,
+      "partidas": 1
+    },
+    "nuevoRecord": true,
+    "nivelDesbloqueado": 2,
+    "nivelMaxDesbloqueado": 2
+  }
+}
+```
+
+- `nivelDesbloqueado` es `null` si no se desbloqueó nada; en infinito siempre es `null`.
+- `nuevoRecord` en campaña: `puntaje > mejorPuntaje`. En infinito: más rondas, o las mismas con más puntaje.
+- Errores: `SESION_REQUERIDA` (401), `NIVEL_NO_ENCONTRADO` (404), `NIVEL_BLOQUEADO` (403), `PARTIDA_INVALIDA` (400), `VALIDACION` (400), `DEMASIADAS_PETICIONES` (429).
+- El esquema estricto rechaza cualquier `usuarioId` enviado por el cliente.
+
+### `GET /api/padre/partidas`
+
+- Auth: sí. CSRF: no.
+- Query: `modo` (opcional, `campana` o `infinita`), `nivel` (opcional, 1..5; solo con `modo=campana`), `limit` (1..50, por defecto 20), `offset` (>= 0, por defecto 0).
+- Response `200`:
+
+```json
+{
+  "data": [
+    {
+      "id": 21,
+      "modo": "campana",
+      "nivel": 1,
+      "puntaje": 1450,
+      "rondas": 0,
+      "duracionSegundos": 90,
+      "vidasRestantes": 3,
+      "objetosUsados": 1,
+      "victoria": true,
+      "creadaEn": "2026-11-09T12:00:00.000Z"
+    }
+  ],
+  "meta": { "total": 1, "limit": 20, "offset": 0 }
+}
+```
+
+- Solo devuelve las partidas del usuario autenticado.
+
+### `GET /api/padre/ranking`
+
+- Auth: no. CSRF: no.
+- Query: `modo` (obligatorio), `nivel` (obligatorio en campaña, prohibido en infinito), `limit` (1..50, por defecto 10).
+- Response `200` de campaña:
+
+```json
+{
+  "data": {
+    "modo": "campana",
+    "nivel": 1,
+    "gratis": [
+      { "posicion": 1, "nombreUsuario": "ana", "puntaje": 5000, "rondas": 0, "victorias": 3 }
+    ],
+    "premium": [
+      { "posicion": 1, "nombreUsuario": "carlos", "puntaje": 6200, "rondas": 0, "victorias": 5 }
+    ]
+  }
+}
+```
+
+- En infinito, `nivel` es `0` y las entradas se ordenan por `rondas` y luego por `puntaje`.
+- El plan se determina por la suscripción vigente, no por `usuarios.rol`.
+- Nunca devuelve correo, ID de usuario ni fecha de suscripción.
+
 ## Resumen de endpoints
 
 | Módulo | Método | Ruta | Auth | Premium |
@@ -2949,6 +3366,10 @@ No exponen endpoints propios. M09 aplica a todos los contratos anteriores; M10 v
 | M11 | POST | `/api/runner/partidas` | Sí | No |
 | M11 | GET | `/api/runner/partidas` | Sí | No |
 | M11 | GET | `/api/runner/ranking` | No | No |
+| M12 | GET | `/api/padre/estado` | Opcional | Opcional |
+| M12 | POST | `/api/padre/partidas` | Sí | No |
+| M12 | GET | `/api/padre/partidas` | Sí | No |
+| M12 | GET | `/api/padre/ranking` | No | No |
 
 # Convenciones del Proyecto
 
@@ -3149,7 +3570,7 @@ El backend se considera terminado cuando se cumplen todos los puntos siguientes.
 
 ## 2. Base de datos y seed
 
-- [x] Las migraciones 001, 002, 003, 004 y 005 se aplican desde una base vacía y son idempotentes.
+- [x] Las migraciones 001, 002, 003, 004, 005 y 006 se aplican desde una base vacía y son idempotentes.
 - [x] `npm run db:seed:validate` termina con `Seed válido`.
 - [x] `npm run db:seed` dos veces deja los mismos conteos.
 - [x] Existen 17 regiones, 4 categorías, 6 leyendas, al menos 6 fuentes, 6 imágenes principales, 6 audios, 30 preguntas y 120 opciones.
@@ -3257,6 +3678,19 @@ Guardar en el PR o en el README de cierre:
 - [x] `npm test` y `npm run build` pasan (ver nota de entorno en `docs/handoff.md`).
 - [x] La migración 005 se aplica desde una base vacía sin editar migraciones anteriores.
 
+## 11. Progreso de El Padre sin Cabeza (M12)
+
+- [x] `GET /api/padre/estado` responde para invitado y para usuario autenticado.
+- [x] El invitado solo recibe el nivel 1 y el modo infinito bloqueado.
+- [x] `POST /api/padre/partidas` exige sesión y CSRF.
+- [x] Dos usuarios no comparten récords, historial ni desbloqueos.
+- [x] El servidor rechaza niveles bloqueados, resultados incoherentes y vidas extra sin rosarios.
+- [x] El modo infinito guarda rondas y valida coherencia con la duración.
+- [x] El ranking separa gratis y premium y no expone correos ni IDs.
+- [x] Las pruebas de M12 y `npm run build` pasan (ver nota de entorno en `docs/handoff.md`).
+- [x] La migración 006 se aplica desde una base vacía sin editar migraciones anteriores.
+- [ ] Prueba manual en navegador: invitado, dos cuentas, Rosario, infinito, ranking y móvil.
+
 ## Decisiones abiertas que no bloquean
 
 Estas decisiones se resuelven con el autor; el plan tiene un valor inicial para no detenerse:
@@ -3268,7 +3702,7 @@ Estas decisiones se resuelven con el autor; el plan tiene un valor inicial para 
 | Dominio definitivo | `http://localhost:5173` en desarrollo | `.env` |
 | Panel visual de administración | API solamente; frontend posterior | Fuera de este backend |
 | Material educativo | Fuera del MVP; sin tabla | No implementar |
-| Progreso por usuario | Fuera del MVP general; el runner lo implementa en M11 | `runner_perfiles`, `runner_records`, `runner_partidas` |
+| Progreso por usuario | Fuera del MVP general; el runner lo implementa en M11 y El Padre sin Cabeza en M12 | `runner_perfiles`, `runner_records`, `runner_partidas`, `padre_perfiles`, `padre_records`, `padre_partidas` |
 
 ## Regla final
 

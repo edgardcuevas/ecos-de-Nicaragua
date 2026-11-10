@@ -2,7 +2,7 @@
 
 ## Estado actual
 - Fase 0 completada: `client/` (React 19 + Vite 8), `server/` (Express 5) y base MySQL con esquema y seed aplicados.
-- Implementados M06 (autenticación), M07 (premium), M08 (administración) y M11 (progreso del runner), con suite de pruebas en `server/tests`.
+- Implementados M06 (autenticación), M07 (premium), M08 (administración), M11 (progreso del runner) y M12 (progreso de El Padre sin Cabeza), con suite de pruebas en `server/tests`.
 - Handoff detallado para retomar: [`docs/handoff.md`](docs/handoff.md).
 - El roadmap, los docs y el contenido del producto están en **español**; mantén ese idioma en la documentación y en todo texto visible al usuario.
 
@@ -73,6 +73,7 @@ Este bloque convierte `AGENTS.md` en el punto de entrada para cualquier agente n
 | M09 | Seguridad (FASE TARDÍA) | A (transversal) | M02, M03, M04, M05, M06, M07 |
 | M10 | Pruebas backend | C (transversal) | M02, M03, M04, M05, M06, M07 |
 | M11 | Progreso del runner | C | M00, M06, M07 |
+| M12 | Progreso de El Padre sin Cabeza | C | M00, M06, M07, M11 (patrón) |
 
 ## Desarrollador A — Fundación e integración
 
@@ -93,6 +94,7 @@ Este bloque convierte `AGENTS.md` en el punto de entrada para cualquier agente n
 - `server/src/routes/admin.routes.js`, `server/src/controllers/admin.controller.js`, `server/src/services/admin.service.js`, `server/src/services/auditoria.service.js`, `server/src/schemas/admin.schema.js`.
 - `server/db/migrations/004_*`.
 - `server/db/migrations/005_*` y el ajuste de `server/src/middleware/csrf.js` para M11, solicitados por C.
+- `server/db/migrations/006_*` y el ajuste de `server/src/middleware/csrf.js` para M12, solicitados por C.
 - Pruebas de administración y seguridad.
 
 **Archivos restringidos:** archivos específicos de B, C y D (leyendas, regiones, trivia, media, auth, premium) salvo integración aprobada; migraciones ya aplicadas (001); archivos de contenido cultural de `docs/`.
@@ -112,18 +114,19 @@ Este bloque convierte `AGENTS.md` en el punto de entrada para cualquier agente n
 
 ## Desarrollador C — Juego y multimedia
 
-**Módulos asignados:** M04, M05, M10, M11.
+**Módulos asignados:** M04, M05, M10, M11, M12.
 
-**Tareas que puede tocar:** todas las tareas con prefijo `M04-`, `M05-`, `M10-` y `M11-` en `roadmap.backend.md`.
+**Tareas que puede tocar:** todas las tareas con prefijo `M04-`, `M05-`, `M10-`, `M11-` y `M12-` en `roadmap.backend.md`.
 
 **Archivos permitidos:**
-- `server/src/routes/trivia.routes.js`, `media.routes.js`, `runner.routes.js`.
-- Sus controladores, servicios y esquemas: `trivia.*`, `media.*`, `runner.*`.
-- `server/src/config/runner.js`.
+- `server/src/routes/trivia.routes.js`, `media.routes.js`, `runner.routes.js`, `padre.routes.js`.
+- Sus controladores, servicios y esquemas: `trivia.*`, `media.*`, `runner.*`, `padre.*`.
+- `server/src/config/runner.js`, `server/src/config/padre.js`.
 - `server/scripts/media-import.js`.
 - `client/src/runner/**` para las tareas M11.
-- `server/tests/helpers/*`, `server/tests/unit/*` (excepto seed), `server/tests/integration/trivia.test.js`, `media.test.js`, `runner.test.js`, `server/tests/api/*`.
-- La migración 005 y el ajuste de CSRF los aplica A; C entrega el código y solicita el cambio.
+- `client/src/padre/**` para las tareas M12.
+- `server/tests/helpers/*`, `server/tests/unit/*` (excepto seed), `server/tests/integration/trivia.test.js`, `media.test.js`, `runner.test.js`, `padre.test.js`, `server/tests/api/*`.
+- Las migraciones 005 y 006 y el ajuste de CSRF los aplica A; C entrega el código y solicita el cambio.
 
 **Archivos restringidos:** archivos compartidos, migraciones, JSON de seed, scripts compartidos y archivos de A, B y D.
 

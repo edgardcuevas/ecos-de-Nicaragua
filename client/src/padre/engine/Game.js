@@ -1,10 +1,23 @@
 // engine/Game.js
-// El Padre sin Cabeza recorre el pueblo de noche. Vista cenital en píxeles, 120 s hasta el alba.
+// El Padre sin Cabeza recorre el pueblo de noche. Vista cenital en píxeles.
+// Campaña de 5 niveles, modo infinito por rondas y El Rosario del Padre.
 import { Input } from './Input.js'
 import { Sonido } from './Sound.js'
 import { Mundo } from './Mundo.js'
 import * as S from './Sprites.js'
-import { VISTA, MUNDO, NOCHE, JUGADOR, ALDEANOS, ENEMIGOS, vidasMaximas, maxEnemigos, esperaSpawn } from '../config.js'
+import {
+  VISTA,
+  MUNDO,
+  JUGADOR,
+  ALDEANOS,
+  INFINITO,
+  OBJETOS,
+  configuracionNivel,
+  configuracionRonda,
+  esperaSpawn,
+  topeEnemigos,
+  vidasMaximas,
+} from '../config.js'
 
 const rand = (a, b) => a + Math.random() * (b - a)
 const suave = (t) => {
@@ -13,8 +26,14 @@ const suave = (t) => {
 }
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y)
 
+// Tiempo que tarda en aparecer el primer rosario y entre uno y otro.
+const intervaloRosario = (config) => config.duracion / (config.objetos.max + 1)
+
 export class Game {
-  constructor(canvas, { premium = false, onLivesChange = null, onGameOver = null, onScore = null } = {}) {
+  constructor(
+    canvas,
+    { premium = false, onLivesChange = null, onGameOver = null, onScore = null, onObjetos = null, onRonda = null } = {},
+  ) {
     this.canvas = canvas
     canvas.width = VISTA.w
     canvas.height = VISTA.h
@@ -23,10 +42,12 @@ export class Game {
     this.onLivesChange = onLivesChange
     this.onGameOver = onGameOver
     this.onScore = onScore
+    this.onObjetos = onObjetos
+    this.onRonda = onRonda
 
     this.premium = premium
-    this.maxLives = vidasMaximas(premium)
-    this.lives = this.maxLives
+    this.maxLivesBase = vidasMaximas(premium)
+    this.lives = this.maxLivesBase
     this.running = false
     this.paused = false
     this.gameOver = false
@@ -38,6 +59,10 @@ export class Game {
     this._fpsFrames = 0
     this._fpsAccum = 0
     this.tiempo = 0 // reloj de animación
+
+    this.modo = 'campana'
+    this.nivel = 1
+    this.config = configuracionNivel(1)
 
     this.mundo = new Mundo()
     this.mundo.construirFondo()
@@ -57,6 +82,14 @@ export class Game {
     return this.running && !this.paused && !this.gameOver
   }
 
+  get enDescanso() {
+    return this.modo === 'infinita' && this.descanso > 0
+  }
+
+  get vidasTope() {
+    return this.maxLivesBase + this.objetosUsados
+  }
+
   reiniciar() {
     this.player = {
       x: 320, y: 230, r: JUGADOR.r, facing: { x: 0, y: 1 }, moviendo: false,
@@ -70,6 +103,7 @@ export class Game {
     this.cuerpos = []
     this.textos = []
     this.ondas = []
+    this.rosarios = []
     this.colaAldeanos = []
     this.cam = { x: 320 - VISTA.w / 2, y: 230 - VISTA.h / 2 }
     this.progreso = 0
@@ -87,24 +121,60 @@ export class Game {
     this.avisados = new Set()
     this.victoria = false
     this.gameOver = false
-    for (let i = 0; i < ALDEANOS.cantidad; i++) this.crearAldeano(this.mundo.puntoDeCamino())
+
+    this.estadisticas = { aldeanos: 0, perro: 0, monaguillo: 0, beata: 0, valiente: 0 }
+    this.objetosUsados = 0
+    this.objetosGenerados = 0
+    this.ronda = 1
+    this.rondasSuperadas = 0
+    this.rondaT = 0
+    this.descanso = 0
+    this.objetoT = this.modo === 'campana' ? intervaloRosario(this.config) : 0
+
+    const cantidad = this.config.aldeanos
+    for (let i = 0; i < cantidad; i++) this.crearAldeano(this.mundo.puntoDeCamino())
   }
 
   // ---------------------------------------------------------------- ciclo de vida
-  start() {
+  start(modo = 'campana', nivel = 1, configuracionExterna = null) {
     if (this.running) return
+    // La configuración de campaña puede venir del servidor (fuente de verdad).
+    // El modo infinito siempre se calcula en el cliente ronda a ronda.
+    const config =
+      modo === 'infinita'
+        ? configuracionRonda(1)
+        : configuracionExterna ?? configuracionNivel(nivel)
+    if (!config) return
+
+    this.modo = modo === 'infinita' ? 'infinita' : 'campana'
+    this.nivel = this.modo === 'campana' ? config.id : 0
+    this.config = config
+
     this.running = true
     this.paused = false
     this.lastTime = 0
     this.elapsed = 0
     this.fps = 0
-    this.maxLives = vidasMaximas(this.premium)
-    this.lives = this.maxLives
+    this.maxLivesBase = vidasMaximas(this.premium)
+    this.lives = this.maxLivesBase
     this.reiniciar()
-    this.mostrarAyuda(window.matchMedia?.('(pointer: coarse)').matches ? 'Toca Tajo para atacar. ¡Que no te vea el pueblo!' : 'Tajo: Espacio, J o clic. ¡Que no te vea el pueblo!', 4)
+    this.mostrarAyuda(
+      window.matchMedia?.('(pointer: coarse)').matches
+        ? 'Toca Tajo para atacar. ¡Que no te vea el pueblo!'
+        : 'Tajo: Espacio, J o clic. ¡Que no te vea el pueblo!',
+      4,
+    )
     this.sound.activar()
     this.onLivesChange?.(this.lives)
+    this.onObjetos?.(0)
     this.onScore?.(0)
+    this.onRonda?.({
+      ronda: 1,
+      superadas: 0,
+      descanso: false,
+      modo: this.modo,
+      nivel: this.nivel,
+    })
     this.rafId = requestAnimationFrame((t) => this.loop(t))
   }
 
@@ -145,11 +215,14 @@ export class Game {
   }
 
   setPremium(v) {
-    const antes = this.maxLives
+    const antes = this.maxLivesBase
     this.premium = Boolean(v)
-    this.maxLives = vidasMaximas(this.premium)
-    if (this.running && !this.gameOver) this.lives = Math.min(this.maxLives, Math.max(1, this.lives + this.maxLives - antes))
-    else this.lives = this.maxLives
+    this.maxLivesBase = vidasMaximas(this.premium)
+    if (this.running && !this.gameOver) {
+      this.lives = Math.min(this.vidasTope, Math.max(1, this.lives + this.maxLivesBase - antes))
+    } else {
+      this.lives = this.maxLivesBase
+    }
     this.onLivesChange?.(this.lives)
   }
 
@@ -160,15 +233,31 @@ export class Game {
   // ---------------------------------------------------------------- actualización
   update(dt) {
     if (this.gameOver) return
-    this.progreso = Math.min(1, this.elapsed / NOCHE.segundos)
-    this.alba = suave((this.progreso - 0.8) / 0.2)
+
+    if (this.modo === 'campana') {
+      this.progreso = Math.min(1, this.elapsed / this.config.duracion)
+      this.alba = suave((this.progreso - 0.8) / 0.2)
+    } else {
+      this.alba = 0
+      if (this.descanso > 0) {
+        this.descanso = Math.max(0, this.descanso - dt)
+        if (this.descanso === 0) this.iniciarRonda()
+      } else {
+        this.rondaT += dt
+        if (this.rondaT >= this.config.duracion) this.terminarRonda()
+      }
+      this.progreso = this.descanso > 0 ? 0 : Math.min(1, this.rondaT / this.config.duracion)
+    }
 
     this.tickJugador(dt)
     this.tickAldeanos(dt)
-    this.tickEnemigos(dt)
-    this.tickProyectiles(dt)
+    this.tickObjetos(dt)
+    if (!this.enDescanso && !this.gameOver) {
+      this.tickEnemigos(dt)
+      this.tickProyectiles(dt)
+      this.tickSpawn(dt)
+    }
     this.tickEfectos(dt)
-    this.tickSpawn(dt)
 
     if (this.comboT > 0) {
       this.comboT -= dt
@@ -185,7 +274,53 @@ export class Game {
     this.cam.x += (tx - this.cam.x) * k
     this.cam.y += (ty - this.cam.y) * k
 
-    if (!this.gameOver && this.elapsed >= NOCHE.segundos) this.amanecer()
+    if (this.modo === 'campana' && this.elapsed >= this.config.duracion) this.amanecer()
+  }
+
+  terminarRonda() {
+    this.rondasSuperadas += 1
+    this.score += INFINITO.bonoRonda
+    this.onScore?.(this.score)
+    this.enemigos.length = 0
+    this.proyectiles.length = 0
+    this.ronda += 1
+    this.rondaT = 0
+    this.descanso = INFINITO.descansoSegundos
+    this.spawnT = 1.5
+    this.flash = 0.2
+    this.mostrarAyuda(`Ronda ${this.rondasSuperadas} superada · +${INFINITO.bonoRonda}`, 3)
+    this.onRonda?.({
+      ronda: this.ronda,
+      superadas: this.rondasSuperadas,
+      descanso: true,
+      modo: this.modo,
+      nivel: 0,
+    })
+  }
+
+  iniciarRonda() {
+    this.config = configuracionRonda(this.ronda)
+    this.rondaT = 0
+    this.spawnT = Math.min(2.4, this.config.esperaSpawn.min)
+    this.combo = 0
+    this.comboT = 0
+    while (this.aldeanos.length < this.config.aldeanos) this.crearAldeano(this.mundo.puertaAlAzar())
+    // Cada 3 rondas superadas aparece un rosario al empezar la ronda siguiente,
+    // así queda tiempo de sobra para encontrarlo antes de que se desvanezca.
+    if (
+      this.rondasSuperadas > 0 &&
+      this.rondasSuperadas % INFINITO.objetosCadaRondas === 0
+    ) {
+      this.intentarRosario()
+    }
+    this.mostrarAyuda(`Ronda ${this.ronda}`, 2)
+    this.onRonda?.({
+      ronda: this.ronda,
+      superadas: this.rondasSuperadas,
+      descanso: false,
+      modo: this.modo,
+      nivel: 0,
+    })
   }
 
   vectorEntrada() {
@@ -228,7 +363,7 @@ export class Game {
   }
 
   atacar() {
-    if (!this.activo) return false
+    if (!this.activo || this.enDescanso) return false
     const p = this.player
     if (p.cd > 0) return false
     p.cd = JUGADOR.enfriamiento
@@ -287,7 +422,7 @@ export class Game {
         if (a.estado === 'huir' && l < 6) {
           this.aldeanos.splice(this.aldeanos.indexOf(a), 1)
           this.salvados++
-          this.colaAldeanos.push(rand(3, 6))
+          this.colaAldeanos.push(rand(ALDEANOS.reaparicionMin, 6))
           continue
         }
         if (a.estado === 'vagar' && l <= 4) {
@@ -307,7 +442,7 @@ export class Game {
       this.colaAldeanos[i] -= dt
       if (this.colaAldeanos[i] <= 0) {
         this.colaAldeanos.splice(i, 1)
-        if (this.aldeanos.length < ALDEANOS.cantidad) this.crearAldeano(this.mundo.puertaAlAzar())
+        if (this.aldeanos.length < this.config.aldeanos) this.crearAldeano(this.mundo.puertaAlAzar())
       }
     }
   }
@@ -315,7 +450,8 @@ export class Game {
   matarAldeano(a) {
     this.aldeanos.splice(this.aldeanos.indexOf(a), 1)
     this.muertos++
-    this.colaAldeanos.push(rand(4, 7))
+    this.estadisticas.aldeanos++
+    this.colaAldeanos.push(rand(ALDEANOS.reaparicionMin + 1, 7))
     this.sangre(a.x, a.y - 5, 14)
     this.cuerpos.push({ x: a.x, y: a.y, color: a.color })
     if (this.cuerpos.length > 30) this.cuerpos.shift()
@@ -350,11 +486,85 @@ export class Game {
     while (this.manchas.length > 240) this.manchas.shift()
   }
 
+  // ---------------------------------------------------------------- Rosario del Padre
+  /** Punto accesible cerca del atrio, el cementerio o las puertas del pueblo. */
+  puntoRosario() {
+    const candidatos = [
+      { x: 320, y: 92 },
+      { x: 320, y: 112 },
+      { x: 320, y: 186 },
+      { x: 300, y: 176 },
+      { x: 340, y: 176 },
+    ]
+    for (const p of this.mundo.puertas) candidatos.push({ x: p.x, y: p.y + 6 })
+    const validos = candidatos.filter((p) => !this.mundo.choca(p.x, p.y, 6))
+    if (!validos.length) return this.mundo.puntoDeCamino()
+    // Preferir los puntos temáticos más cercanos evita que el rosario aparezca
+    // al otro lado del mapa y se pierda antes de que el jugador lo encuentre.
+    const p = this.player
+    const cercanos = validos
+      .map((punto) => ({ ...punto, d: Math.hypot(punto.x - p.x, punto.y - p.y) }))
+      .sort((a, b) => a.d - b.d)
+      .slice(0, Math.min(6, validos.length))
+    return cercanos[Math.floor(Math.random() * cercanos.length)]
+  }
+
+  intentarRosario() {
+    if (this.rosarios.length > 0) return false
+    if (this.objetosGenerados >= this.config.objetos.max) return false
+    const pos = this.puntoRosario()
+    this.rosarios.push({
+      x: pos.x,
+      y: pos.y,
+      t: 0,
+      vida: OBJETOS.rosario.duracion,
+      fase: rand(0, 6),
+    })
+    this.objetosGenerados += 1
+    this.sound.campanillaSuave?.()
+    this.mostrarAyuda('El Rosario del Padre apareció: sigue la luz', 4)
+    return true
+  }
+
+  tickObjetos(dt) {
+    if (this.modo === 'campana') {
+      this.objetoT -= dt
+      if (this.objetoT <= 0) {
+        this.intentarRosario()
+        this.objetoT = intervaloRosario(this.config)
+      }
+    }
+    const p = this.player
+    for (const o of [...this.rosarios]) {
+      o.t += dt
+      if (o.t >= o.vida) {
+        this.rosarios.splice(this.rosarios.indexOf(o), 1)
+        continue
+      }
+      if (Math.hypot(o.x - p.x, o.y - p.y) < 10) {
+        this.rosarios.splice(this.rosarios.indexOf(o), 1)
+        this.recogerRosario()
+      }
+    }
+  }
+
+  recogerRosario() {
+    const p = this.player
+    this.objetosUsados += 1
+    this.lives += OBJETOS.rosario.vida
+    this.textos.push({ x: p.x, y: p.y - 24, txt: '+1 vida', t: 0, c: '#ffd98a' })
+    this.mostrarAyuda('El Rosario del Padre te devuelve una vida', 3)
+    this.sound.campanilla()
+    this.onObjetos?.(this.objetosUsados)
+    this.onLivesChange?.(this.lives)
+  }
+
   // ---------------------------------------------------------------- enemigos
   tickSpawn(dt) {
+    const t = this.modo === 'infinita' ? this.rondaT : this.elapsed
     this.spawnT -= dt
-    if (this.spawnT > 0 || this.enemigos.length >= maxEnemigos(this.elapsed)) return
-    const disp = Object.entries(ENEMIGOS).filter(([, d]) => this.elapsed >= d.desde)
+    if (this.spawnT > 0 || this.enemigos.length >= topeEnemigos(this.config, t)) return
+    const disp = Object.entries(this.config.enemigos).filter(([, d]) => t >= d.desde)
     if (!disp.length) return
     let r = Math.random() * disp.reduce((s, [, d]) => s + d.peso, 0)
     let tipo = disp[0][0]
@@ -366,7 +576,7 @@ export class Game {
       }
     }
     this.crearEnemigo(tipo)
-    this.spawnT = esperaSpawn(this.elapsed) * rand(0.9, 1.3)
+    this.spawnT = esperaSpawn(this.config, t) * rand(0.9, 1.3)
   }
 
   puntoFueraDePantalla() {
@@ -389,11 +599,11 @@ export class Game {
   }
 
   crearEnemigo(tipo) {
-    const def = ENEMIGOS[tipo]
+    const def = this.config.enemigos[tipo]
     const pos = this.puntoFueraDePantalla()
     this.enemigos.push({
-      tipo, x: pos.x, y: pos.y, r: def.r, hp: def.hp, vel: def.vel, dir: 1,
-      t: rand(1.2, 2.2), ladro: 0, toca: 0, carga: 0, kx: 0, ky: 0, kn: 0, stun: 0, atasco: 0,
+      tipo, x: pos.x, y: pos.y, r: def.r, hp: def.hp, vel: def.vel * this.config.velocidadEnemigos,
+      dir: 1, t: rand(1.2, 2.2), ladro: 0, toca: 0, carga: 0, kx: 0, ky: 0, kn: 0, stun: 0, atasco: 0,
     })
     if (!this.avisados.has(tipo)) {
       this.avisados.add(tipo)
@@ -482,7 +692,8 @@ export class Game {
     this.sangre(e.x, e.y - 5, 8)
     if (e.hp <= 0) {
       this.enemigos.splice(this.enemigos.indexOf(e), 1)
-      this.puntuar(ENEMIGOS[e.tipo].puntos, e.x, e.y - 16)
+      this.estadisticas[e.tipo] = (this.estadisticas[e.tipo] ?? 0) + 1
+      this.puntuar(this.config.enemigos[e.tipo].puntos, e.x, e.y - 16)
       this.sound.muerte()
       this.sangre(e.x, e.y - 5, 10)
       this.cuerpos.push({ x: e.x, y: e.y, color: 1 })
@@ -539,7 +750,7 @@ export class Game {
   // ---------------------------------------------------------------- daño y fin
   danar(origen) {
     const p = this.player
-    if (p.inv > 0 || this.gameOver) return
+    if (p.inv > 0 || this.gameOver || this.enDescanso) return
     this.lives = Math.max(0, this.lives - 1)
     p.inv = JUGADOR.invulnerable
     const dx = p.x - origen.x
@@ -576,7 +787,7 @@ export class Game {
     this.victoria = true
     this.progreso = 1
     this.alba = 1
-    this.score += NOCHE.bonoAmanecer + this.lives * NOCHE.bonoVida
+    this.score += this.config.bonos.amanecer + this.lives * this.config.bonos.vida
     this.sound.amanecer()
     this.onScore?.(this.score)
     this.onGameOver?.(this.resultado())
@@ -586,8 +797,17 @@ export class Game {
 
   resultado() {
     return {
-      victoria: this.victoria, lives: this.lives, score: this.score, muertos: this.muertos,
-      salvados: this.salvados, elapsed: this.elapsed,
+      modo: this.modo,
+      nivel: this.modo === 'campana' ? this.nivel : 0,
+      victoria: this.victoria,
+      lives: this.lives,
+      score: this.score,
+      muertos: this.muertos,
+      salvados: this.salvados,
+      elapsed: Math.round(this.elapsed),
+      rondas: this.modo === 'infinita' ? this.rondasSuperadas : 0,
+      objetosUsados: this.objetosUsados,
+      estadisticas: { ...this.estadisticas, salvados: this.salvados },
     }
   }
 
@@ -618,6 +838,7 @@ export class Game {
       const fn = { perro: S.perro, monaguillo: S.monaguillo, beata: S.beata, valiente: S.valiente }[e.tipo]
       lista.push({ y: e.y, dibujar: () => fn(ctx, e, t) })
     }
+    for (const o of this.rosarios) lista.push({ y: o.y, dibujar: () => S.rosario(ctx, o, t) })
     lista.push({ y: this.player.y, dibujar: () => S.jugador(ctx, { ...this.player }, t, this.alba) })
     lista.sort((a, b) => a.y - b.y)
     for (const o of lista) o.dibujar(ctx, t)
@@ -705,6 +926,7 @@ export class Game {
     for (const e of this.enemigos) luz(e.x, e.y - 6, e.tipo === 'valiente' ? 30 : 17, 0.7)
     for (const q of this.proyectiles) luz(q.x, q.y, 14, 0.8)
     for (const c of this.cuerpos) luz(c.x, c.y, 8, 0.25)
+    for (const o of this.rosarios) luz(o.x, o.y - 4, 26, 0.95)
     ctx.drawImage(this.oscuro, 0, 0)
   }
 
@@ -719,12 +941,43 @@ export class Game {
 
     ctx.textAlign = 'center'
     ctx.font = 'bold 8px monospace'
+
+    if (this.modo === 'infinita') {
+      ctx.fillStyle = '#f1c66d'
+      ctx.fillText(`RONDA ${this.ronda}`, VISTA.w / 2, 16)
+      if (this.descanso > 0) {
+        ctx.fillStyle = '#dfe8f7'
+        ctx.fillText(`DESCANSO ${Math.ceil(this.descanso)}`, VISTA.w / 2, 28)
+      }
+    }
+
+    if (this.rosarios.length) {
+      let cercano = this.rosarios[0]
+      let mejor = Infinity
+      for (const o of this.rosarios) {
+        const d = Math.hypot(o.x - this.player.x, o.y - this.player.y)
+        if (d < mejor) {
+          mejor = d
+          cercano = o
+        }
+      }
+      const rumbos = ['E', 'SE', 'S', 'SO', 'O', 'NO', 'N', 'NE']
+      const ang = Math.atan2(cercano.y - this.player.y, cercano.x - this.player.x)
+      const rumbo = rumbos[((Math.round(ang / (Math.PI / 4)) % 8) + 8) % 8]
+      ctx.fillStyle = '#ffd98a'
+      ctx.fillText(
+        `✝ Rosario al ${rumbo} · ${Math.round(mejor)} px`,
+        VISTA.w / 2,
+        this.modo === 'infinita' ? 40 : 20,
+      )
+    }
+
     if (this.combo >= 2) {
       ctx.globalAlpha = Math.min(1, this.comboT / 0.6)
       ctx.fillStyle = '#000'
-      ctx.fillText(`COMBO x${this.combo}`, VISTA.w / 2 + 1, 23)
+      ctx.fillText(`COMBO x${this.combo}`, VISTA.w / 2 + 1, 33)
       ctx.fillStyle = '#f1c66d'
-      ctx.fillText(`COMBO x${this.combo}`, VISTA.w / 2, 22)
+      ctx.fillText(`COMBO x${this.combo}`, VISTA.w / 2, 32)
       ctx.globalAlpha = 1
     }
     if (this.ayuda) {

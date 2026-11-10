@@ -11,6 +11,7 @@ const RUTAS_PROTEGIDAS = new Set([
   '/api/auth/refresh',
   '/api/premium/canjear',
   '/api/runner/partidas',
+  '/api/padre/partidas',
 ])
 
 function esRutaProtegida(path) {

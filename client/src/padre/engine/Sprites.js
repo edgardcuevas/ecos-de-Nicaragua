@@ -190,3 +190,26 @@ export function aguaBendita(ctx, p, t) {
   R(ctx, '#bfefff', p.x - 1, p.y - 1, 3, 3)
   R(ctx, '#ffffff', p.x, p.y - 2 - (Math.floor(t * 20) % 2), 1, 1)
 }
+
+// El Rosario del Padre: una cruz pequeña con cuentas que brillan en la oscuridad.
+export function rosario(ctx, o, t) {
+  const { x, y } = o
+  const pulso = 0.55 + 0.35 * Math.sin(t * 5 + (o.fase ?? 0))
+  sombra(ctx, x, y, 6)
+  ctx.globalAlpha = pulso * 0.45
+  ctx.fillStyle = '#ffd98a'
+  ctx.beginPath()
+  ctx.arc(x, y - 6, 9, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.globalAlpha = 1
+  // cruz
+  R(ctx, '#e8c46a', x - 1, y - 13, 2, 8)
+  R(ctx, '#f4e0a0', x - 4, y - 10, 8, 2)
+  // cuentas
+  R(ctx, '#f4e0a0', x - 5, y - 5, 2, 2)
+  R(ctx, '#f4e0a0', x - 2, y - 3, 2, 2)
+  R(ctx, '#f4e0a0', x + 1, y - 3, 2, 2)
+  R(ctx, '#f4e0a0', x + 4, y - 5, 2, 2)
+  // destello
+  if (Math.floor(t * 6 + (o.fase ?? 0)) % 3 === 0) R(ctx, '#ffffff', x, y - 15, 1, 1)
+}

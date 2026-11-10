@@ -1,3 +1,8 @@
+/* ---------- Página, escenario y controles táctiles ---------- */
+.padre-pagina {
+  max-width: 58rem;
+}
+
 .padre-canvas {
   aspect-ratio: 320 / 192;
   height: auto;
@@ -44,6 +49,593 @@
   touch-action: none;
   user-select: none;
 }
-.padre-tactil__tajo:active { background: rgb(176 20 31 / 0.8); }
-@media (pointer: coarse) { .padre-tactil { display: flex; } }
+.padre-tactil__tajo:active {
+  background: rgb(176 20 31 / 0.8);
+}
+@media (pointer: coarse) {
+  .padre-tactil {
+    display: flex;
+  }
+}
 
+/* ---------- Aviso de invitado y estado de la API ---------- */
+.padre-aviso {
+  margin: 0 0 1.1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgb(241 198 109 / 0.4);
+  border-left: 4px solid var(--luna);
+  border-radius: 0 var(--radio) var(--radio) 0;
+  background: rgb(241 198 109 / 0.08);
+  color: var(--n-hueso);
+  font-size: 0.95rem;
+}
+.padre-aviso a {
+  font-weight: 600;
+}
+
+/* ---------- Selección de modo y noche ---------- */
+.padre-seleccion {
+  margin: 1.1rem 0 0;
+  padding: 1rem 1.1rem 1.15rem;
+  border: 1px solid var(--n-linea);
+  border-radius: var(--radio);
+  background: rgb(10 20 51 / 0.55);
+}
+.padre-seleccion__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+}
+.padre-seleccion__cabecera h2 {
+  margin: 0;
+  font-family: var(--f-leyenda);
+  font-weight: 400;
+  font-size: 1.7rem;
+  color: var(--n-hueso);
+}
+.padre-seleccion__cargando {
+  color: var(--n-niebla);
+  font-size: 0.85rem;
+}
+
+.padre-modos {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.7rem;
+}
+.padre-tab {
+  min-height: 40px;
+  padding: 0.4rem 0.95rem;
+  border: 1px solid var(--n-linea);
+  border-radius: 999px;
+  background: rgb(18 32 79 / 0.45);
+  color: var(--n-niebla);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+.padre-tab:hover:not(:disabled) {
+  border-color: rgb(241 198 109 / 0.6);
+  color: var(--n-hueso);
+}
+.padre-tab[aria-pressed='true'] {
+  border-color: var(--luna);
+  background: var(--luna);
+  color: var(--n-0);
+  font-weight: 600;
+}
+.padre-tab:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.padre-tab--nivel {
+  min-height: 36px;
+  font-size: 0.82rem;
+  padding: 0.3rem 0.7rem;
+}
+
+/* Noches compactas: el detalle vive en el resumen, no en cada tarjeta. */
+.padre-niveles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.45rem;
+}
+.padre-nivel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 42px;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--n-linea);
+  border-radius: var(--radio);
+  background: rgb(18 32 79 / 0.45);
+  color: var(--n-hueso);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.padre-nivel:hover:not(:disabled) {
+  border-color: rgb(241 198 109 / 0.55);
+  background: rgb(18 32 79 / 0.75);
+}
+.padre-nivel--activo {
+  border-color: var(--luna);
+  background: rgb(241 198 109 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(241 198 109 / 0.35);
+}
+.padre-nivel--bloqueado {
+  opacity: 0.62;
+  cursor: not-allowed;
+  border-style: dashed;
+}
+.padre-nivel__numero {
+  flex: 0 0 auto;
+  min-width: 1rem;
+  font-family: var(--f-leyenda);
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--luna);
+}
+.padre-nivel__nombre {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.82rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.padre-nivel__candado {
+  flex: 0 0 auto;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #f0a6b0;
+}
+
+.padre-infinito {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--n-linea);
+  border-radius: var(--radio);
+  background: linear-gradient(120deg, rgb(139 107 217 / 0.16), rgb(18 32 79 / 0.5));
+  color: var(--n-hueso);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.padre-infinito:hover:not(:disabled) {
+  border-color: rgb(241 198 109 / 0.55);
+}
+.padre-infinito--bloqueado {
+  opacity: 0.68;
+  cursor: not-allowed;
+  border-style: dashed;
+}
+.padre-infinito__marca {
+  flex: 0 0 auto;
+  font-family: var(--f-leyenda);
+  font-size: 2.7rem;
+  line-height: 0.9;
+  color: var(--luna);
+}
+.padre-infinito__cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  min-width: 0;
+}
+.padre-infinito__nombre {
+  font-weight: 600;
+  font-size: 1rem;
+}
+.padre-infinito__meta {
+  font-size: 0.84rem;
+  color: var(--n-niebla);
+}
+.padre-infinito__record {
+  font-size: 0.84rem;
+  color: var(--luna);
+}
+.padre-infinito__candado {
+  font-size: 0.84rem;
+  color: #f0a6b0;
+}
+
+/* ---------- Resumen de la noche elegida ---------- */
+.padre-resumen {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(15rem, 1fr);
+  align-items: start;
+  gap: 1rem;
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--n-linea);
+}
+.padre-resumen__texto h3 {
+  margin: 0 0 0.3rem;
+  font-family: var(--f-leyenda);
+  font-weight: 400;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  color: var(--luna);
+}
+.padre-resumen__texto p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--n-niebla);
+}
+.padre-resumen__datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin: 0;
+}
+.padre-resumen__datos > div {
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--n-linea);
+  border-radius: var(--radio);
+  background: rgb(5 10 28 / 0.4);
+}
+.padre-resumen__datos dt {
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--n-niebla);
+}
+.padre-resumen__datos dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--n-hueso);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Antes de comenzar ---------- */
+.padre-inicio {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--n-linea);
+}
+.padre-inicio__nota {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--n-niebla);
+}
+.padre-inicio__nota strong {
+  color: var(--n-hueso);
+}
+.padre-inicio__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+.padre-bloqueo {
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgb(240 166 176 / 0.5);
+  border-left: 4px solid #f0a6b0;
+  border-radius: 0 var(--radio) var(--radio) 0;
+  background: rgb(240 166 176 / 0.08);
+}
+.padre-bloqueo p {
+  margin: 0 0 0.35rem;
+  font-size: 0.9rem;
+  color: var(--n-hueso);
+}
+
+/* ---------- HUD del juego ---------- */
+.padre-hud {
+  align-items: flex-start;
+}
+.padre-hud__izquierda {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.padre-hud__modo {
+  font-size: 0.95rem;
+}
+.padre-hud__modo strong {
+  margin-left: 0.15rem;
+  font-size: 1.45rem;
+  color: var(--luna);
+}
+.padre-hud__descanso {
+  font-style: normal;
+  color: var(--luna);
+  font-size: 0.82rem;
+}
+.padre-hud__puntaje {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  opacity: 0.9;
+}
+.padre-hud__derecha {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.padre-hud__objetos {
+  padding: 0.05rem 0.45rem;
+  border: 1px solid rgb(241 198 109 / 0.55);
+  border-radius: 999px;
+  background: rgb(5 10 28 / 0.6);
+  color: var(--luna);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Pausa: ocupa solo el escenario y no se desborda sobre el selector. */
+.padre-overlay {
+  gap: 0.5rem;
+  overflow-y: auto;
+  padding: 1rem;
+  background: rgb(5 10 28 / 0.94);
+}
+
+/* ---------- Resultado de la partida ---------- */
+.padre-resultado {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1rem;
+  padding: 1rem 1.1rem 1.15rem;
+  border: 1px solid var(--n-linea);
+  border-radius: var(--radio);
+  background: rgb(10 20 51 / 0.7);
+}
+.padre-resultado__etiqueta {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--luna);
+}
+.padre-resultado h2 {
+  margin: 0;
+  font-family: var(--f-leyenda);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  line-height: 1.15;
+  color: var(--n-hueso);
+}
+.padre-resultado__detalle {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--n-niebla);
+}
+.padre-resultado__record {
+  margin: 0;
+  font-weight: 700;
+  color: var(--luna);
+}
+.padre-resultado__datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 0.4rem;
+  margin: 0.2rem 0;
+}
+.padre-resultado__datos > div {
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--n-linea);
+  border-radius: var(--radio);
+  background: rgb(5 10 28 / 0.4);
+}
+.padre-resultado__datos dt {
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--n-niebla);
+}
+.padre-resultado__datos dd {
+  margin: 0.1rem 0 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--n-hueso);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Estado del guardado ---------- */
+.padre-guardado {
+  margin: 0.25rem 0 0;
+  max-width: 32rem;
+  font-size: 0.88rem;
+  color: #dfe8f7;
+}
+.padre-guardado a {
+  color: var(--luna);
+  font-weight: 600;
+}
+.padre-guardado--ok {
+  color: #8fe0b0;
+}
+.padre-guardado--error {
+  color: #ff9aa6;
+}
+.padre-guardado--invitado {
+  color: #f1d79a;
+}
+
+/* ---------- Ayuda plegada ---------- */
+.padre-ayuda {
+  margin-top: 0.9rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--n-linea);
+  border-radius: var(--radio);
+  background: rgb(10 20 51 / 0.45);
+  color: var(--n-niebla);
+  font-size: 0.88rem;
+}
+.padre-ayuda summary {
+  cursor: pointer;
+  color: var(--n-hueso);
+  font-weight: 600;
+}
+.padre-ayuda p {
+  margin: 0.5rem 0 0;
+}
+
+/* ---------- Ranking ---------- */
+.padre-ranking {
+  margin-top: 2rem;
+  padding: 1.25rem 1.25rem 1.35rem;
+  border: 1px solid var(--n-linea);
+  border-radius: var(--radio);
+  background: rgb(10 20 51 / 0.55);
+}
+.padre-ranking__cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.padre-ranking__cabecera h2 {
+  margin: 0 0 0.25rem;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  color: var(--n-hueso);
+}
+.padre-ranking__cabecera p {
+  margin: 0;
+  max-width: 34rem;
+  font-size: 0.9rem;
+}
+.padre-ranking__tabs {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.padre-ranking__niveles {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-top: 0.9rem;
+}
+.padre-ranking__tablas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.padre-ranking__bloque {
+  padding: 0.8rem 0.9rem 0.9rem;
+  border: 1px solid var(--n-linea);
+  border-radius: var(--radio);
+  background: rgb(5 10 28 / 0.45);
+}
+.padre-ranking__titulo {
+  margin: 0 0 0.55rem;
+  font-family: var(--f-leyenda);
+  font-weight: 400;
+  font-size: 1.3rem;
+  color: var(--luna);
+}
+.padre-ranking__tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.padre-ranking__tabla thead th {
+  padding: 0.3rem 0.3rem 0.4rem;
+  border-bottom: 1px solid var(--n-linea);
+  color: var(--n-niebla);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: left;
+}
+.padre-ranking__tabla tbody th,
+.padre-ranking__tabla tbody td {
+  padding: 0.38rem 0.3rem;
+  border-bottom: 1px solid rgb(159 176 216 / 0.12);
+  text-align: left;
+}
+.padre-ranking__tabla tbody tr:last-child th,
+.padre-ranking__tabla tbody tr:last-child td {
+  border-bottom: 0;
+}
+.padre-ranking__jugador {
+  max-width: 10rem;
+  overflow: hidden;
+  color: var(--n-hueso);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.padre-ranking__posicion {
+  width: 2rem;
+  color: var(--luna);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.padre-ranking__marca {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--n-hueso);
+}
+.padre-ranking__vacio {
+  margin: 0.4rem 0;
+  color: var(--n-niebla);
+  font-size: 0.88rem;
+}
+.padre-ranking__error {
+  color: #ff9aa6;
+}
+.padre-ranking__nota {
+  margin: 0.85rem 0 0;
+  font-size: 0.82rem;
+  color: var(--n-niebla);
+}
+
+@media (max-width: 48rem) {
+  .padre-resumen {
+    grid-template-columns: 1fr;
+  }
+  .padre-seleccion__cargando {
+    margin-left: 0;
+  }
+}
+@media (max-width: 40rem) {
+  .padre-seleccion {
+    padding: 0.9rem 0.85rem 1rem;
+  }
+  .padre-niveles {
+    grid-template-columns: 1fr;
+  }
+  .padre-resumen__datos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .padre-ranking {
+    padding: 1rem 0.9rem;
+  }
+  .padre-ranking__tablas {
+    grid-template-columns: 1fr;
+  }
+  .padre-hud__modo {
+    font-size: 0.85rem;
+  }
+  .padre-hud__modo strong {
+    font-size: 1.15rem;
+  }
+  .padre-hud__objetos {
+    font-size: 0.85rem;
+  }
+}

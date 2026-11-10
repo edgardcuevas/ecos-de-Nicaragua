@@ -179,6 +179,6 @@ Los errores tienen forma `{ error: { codigo, mensaje, detalles } }` con códigos
 
 ## Estado
 
-Backend MVP completado: entorno, seed, multimedia, health, autenticación con sesiones y CSRF, premium y canje de códigos, administración, seguridad, pruebas y progreso del runner. Migraciones 001–005 aplicadas. El frontend puede consumir la API en `http://localhost:3000` con el proxy de Vite.
+Backend MVP completado: entorno, seed, multimedia, health, autenticación con sesiones y CSRF, premium y canje de códigos, administración, seguridad, pruebas, progreso del runner y progreso de El Padre sin Cabeza. Migraciones 001–006 aplicadas. El frontend puede consumir la API en `http://localhost:3000` con el proxy de Vite.
 
 > Nota: `npm test` ejecuta `test:db:setup`, que valida los assets del seed. Si faltan los archivos `img/...` referenciados por `server/db/seed/leyendas.json`, el setup se detiene; la suite puede correrse contra una base de test ya sembrada.

@@ -9,6 +9,7 @@ import mediaRoutes from './media.routes.js'
 import authRoutes from './auth.routes.js'
 import premiumRoutes from './premium.routes.js'
 import runnerRoutes from './runner.routes.js'
+import padreRoutes from './padre.routes.js'
 import adminRoutes from './admin.routes.js'
 
 const router = Router()
@@ -22,6 +23,7 @@ router.use('/media', mediaRoutes)
 router.use('/auth', authRoutes)
 router.use('/premium', premiumRoutes)
 router.use('/runner', runnerRoutes)
+router.use('/padre', padreRoutes)
 router.use('/admin', adminRoutes)
 
 export default router

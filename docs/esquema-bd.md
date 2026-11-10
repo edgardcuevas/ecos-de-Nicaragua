@@ -4,7 +4,7 @@ Borrador para revisión del autor. MySQL 8 o superior, InnoDB, `utf8mb4`. Ya apl
 
 Si cambias el DDL, crea una migración nueva en `server/db/migrations/`; no edites una migración ya aplicada.
 
-Recorte aplicado: sin `municipios`, sin `materiales_educativos` y sin respuestas o progreso por usuario, salvo el progreso del runner (M11).
+Recorte aplicado: sin `municipios`, sin `materiales_educativos` y sin respuestas o progreso por usuario, salvo el progreso del runner (M11) y el de El Padre sin Cabeza (M12).
 
 ## Diagrama
 
@@ -17,6 +17,9 @@ erDiagram
   usuarios ||--|| runner_perfiles : progresa
   usuarios ||--o{ runner_records : registra
   usuarios ||--o{ runner_partidas : juega
+  usuarios ||--|| padre_perfiles : progresa
+  usuarios ||--o{ padre_records : registra
+  usuarios ||--o{ padre_partidas : juega
 
   categorias ||--o{ leyendas : clasifica
   leyendas ||--o{ leyenda_regiones : ubica
@@ -98,6 +101,33 @@ erDiagram
     int distancia
     smallint duracion_segundos
     tinyint vidas_restantes
+    boolean victoria
+    timestamp creada_en
+  }
+  padre_perfiles {
+    bigint usuario_id PK
+    tinyint nivel_max_desbloqueado
+    timestamp actualizado_en
+  }
+  padre_records {
+    bigint usuario_id PK
+    enum modo PK
+    tinyint nivel PK
+    int mejor_puntaje
+    int mejor_rondas
+    int victorias
+    int partidas
+  }
+  padre_partidas {
+    bigint id PK
+    bigint usuario_id FK
+    enum modo
+    tinyint nivel
+    int puntaje
+    int rondas
+    smallint duracion_segundos
+    tinyint vidas_restantes
+    tinyint objetos_usados
     boolean victoria
     timestamp creada_en
   }
@@ -336,6 +366,64 @@ CREATE TABLE runner_partidas (
   CONSTRAINT fk_runner_partidas_usuario
     FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE padre_perfiles (
+  usuario_id BIGINT UNSIGNED NOT NULL,
+  nivel_max_desbloqueado TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (usuario_id),
+  CONSTRAINT chk_padre_perfiles_nivel CHECK (nivel_max_desbloqueado BETWEEN 1 AND 5),
+  CONSTRAINT fk_padre_perfiles_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE padre_records (
+  usuario_id BIGINT UNSIGNED NOT NULL,
+  modo ENUM('campana', 'infinita') NOT NULL,
+  nivel TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  mejor_puntaje INT UNSIGNED NOT NULL DEFAULT 0,
+  mejor_rondas INT UNSIGNED NOT NULL DEFAULT 0,
+  victorias INT UNSIGNED NOT NULL DEFAULT 0,
+  partidas INT UNSIGNED NOT NULL DEFAULT 0,
+  actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (usuario_id, modo, nivel),
+  KEY idx_padre_records_ranking (modo, nivel, mejor_puntaje DESC),
+  CONSTRAINT chk_padre_records_modo CHECK (
+    (modo = 'campana' AND nivel BETWEEN 1 AND 5)
+    OR (modo = 'infinita' AND nivel = 0)
+  ),
+  CONSTRAINT fk_padre_records_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE padre_partidas (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  usuario_id BIGINT UNSIGNED NOT NULL,
+  modo ENUM('campana', 'infinita') NOT NULL,
+  nivel TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  puntaje INT UNSIGNED NOT NULL,
+  rondas INT UNSIGNED NOT NULL DEFAULT 0,
+  duracion_segundos SMALLINT UNSIGNED NOT NULL,
+  vidas_restantes TINYINT UNSIGNED NOT NULL,
+  objetos_usados TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  aldeanos INT UNSIGNED NOT NULL DEFAULT 0,
+  perro INT UNSIGNED NOT NULL DEFAULT 0,
+  monaguillo INT UNSIGNED NOT NULL DEFAULT 0,
+  beata INT UNSIGNED NOT NULL DEFAULT 0,
+  valiente INT UNSIGNED NOT NULL DEFAULT 0,
+  salvados INT UNSIGNED NOT NULL DEFAULT 0,
+  victoria BOOLEAN NOT NULL DEFAULT FALSE,
+  creada_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_padre_partidas_usuario (usuario_id, creada_en),
+  KEY idx_padre_partidas_ranking (modo, nivel, puntaje DESC),
+  CONSTRAINT chk_padre_partidas_modo CHECK (
+    (modo = 'campana' AND nivel BETWEEN 1 AND 5)
+    OR (modo = 'infinita' AND nivel = 0)
+  ),
+  CONSTRAINT fk_padre_partidas_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
 ## Reglas que el esquema debe respetar
@@ -347,7 +435,9 @@ CREATE TABLE runner_partidas (
 - **Multimedia:** `imagenes.ruta` y `audios.ruta` guardan solo la ruta; el archivo vive fuera de MySQL.
 - **Una respuesta correcta por pregunta:** se valida en la aplicación; MySQL no lo garantiza con este diseño.
 - **Progreso del runner aislado:** `runner_perfiles`, `runner_records` y `runner_partidas` se consultan siempre por `usuario_id`; un usuario no puede leer ni modificar el progreso de otro.
-- **Sin datos extra:** no hay tablas de municipios, materiales educativos, respuestas por usuario ni progreso de leyendas. La única excepción de progreso es la del runner (M11).
+- **Progreso de El Padre aislado:** `padre_perfiles`, `padre_records` y `padre_partidas` también se filtran siempre por `usuario_id`; el ranking público solo expone el nombre de usuario y las marcas, nunca el correo ni el ID.
+- **Modo de El Padre:** en `padre_records` y `padre_partidas`, `modo = 'campana'` exige `nivel` entre 1 y 5, y `modo = 'infinita'` exige `nivel = 0`.
+- **Sin datos extra:** no hay tablas de municipios, materiales educativos, respuestas por usuario ni progreso de leyendas. Las únicas excepciones de progreso son las del runner (M11) y las de El Padre sin Cabeza (M12).
 
 ## Pendiente de decisión (no bloquea el borrador)
 
