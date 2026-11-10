@@ -1,0 +1,98 @@
+/* Ecos de Nicaragua — celebración al desbloquear el premium.
+   Noche + luna dorada que se alza + ondas que se expanden (los "ecos") + luciérnagas. */
+
+.pd {
+  position: fixed; inset: 0; z-index: 1000; overflow-y: auto; overflow-x: hidden;
+  display: grid; place-items: center; padding: 2rem 1.25rem;
+  background: radial-gradient(ellipse at 50% 30%, var(--n-2) 0%, var(--n-1) 42%, var(--n-0) 100%);
+  color: var(--n-hueso);
+  animation: pd-entra 0.8s ease-out both;
+}
+.pd--sale { animation: pd-sale 0.45s ease-in forwards; }
+
+/* Aura violeta lejana (la Cegua) en el borde inferior, muy tenue. */
+.pd__niebla {
+  position: absolute; inset: auto -10% -25% -10%; height: 55%; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 100%, rgb(139 107 217 / 0.28) 0%, transparent 65%);
+  animation: pd-respira 7s ease-in-out infinite;
+}
+
+.pd__cielo { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.pd__estrella {
+  position: absolute; border-radius: 50%; background: var(--n-hueso);
+  animation: pd-titila var(--dur) ease-in-out var(--del) infinite;
+}
+.pd__luciernaga {
+  position: absolute; bottom: -1rem; border-radius: 50%; opacity: 0;
+  background: var(--luna); box-shadow: 0 0 0.6rem 0.15rem rgb(241 198 109 / 0.75);
+  animation: pd-vuela var(--dur) ease-in var(--del) infinite;
+}
+
+.pd__caja { position: relative; z-index: 1; width: min(100%, 36rem); text-align: center; }
+
+/* ---------- Luna ---------- */
+.pd__luna-zona { position: relative; width: 11rem; height: 11rem; margin: 0 auto 1.5rem; display: grid; place-items: center; }
+.pd__luna {
+  position: relative; width: 7.5rem; height: 7.5rem;
+  filter: drop-shadow(0 0 1.6rem rgb(241 198 109 / 0.65));
+  animation: pd-luna 1.6s cubic-bezier(0.2, 0.8, 0.25, 1) 0.3s both, pd-brilla 4s ease-in-out 1.9s infinite;
+}
+.pd__anillo {
+  position: absolute; inset: 0; margin: auto; width: 7.5rem; height: 7.5rem; border-radius: 50%;
+  border: 1.5px solid rgb(241 198 109 / 0.7); opacity: 0;
+  animation: pd-eco 4.2s ease-out var(--d) infinite;
+}
+.pd__rayos {
+  position: absolute; inset: -4rem; border-radius: 50%; opacity: 0;
+  background: repeating-conic-gradient(from 0deg, rgb(241 198 109 / 0.22) 0deg 4deg, transparent 4deg 18deg);
+  -webkit-mask: radial-gradient(circle, #000 12%, transparent 62%); mask: radial-gradient(circle, #000 12%, transparent 62%);
+  animation: pd-aparece 1.6s ease-out 0.9s forwards, pd-gira 60s linear infinite;
+}
+
+/* ---------- Texto ---------- */
+.pd__item { animation: pd-sube 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0s) both; }
+.pd__sobre { font-family: var(--f-titulo); font-size: 0.85rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--luna); margin: 0 0 0.75rem; }
+.pd__titulo {
+  font-family: var(--f-leyenda); font-weight: 400; letter-spacing: 0; line-height: 1.05; margin: 0 0 1rem;
+  font-size: clamp(2.3rem, 7vw, 3.7rem); text-wrap: balance;
+  background: linear-gradient(100deg, var(--n-hueso) 35%, #fff6d8 48%, var(--luna) 56%, var(--n-hueso) 70%) 100% 0 / 260% 100%;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+  animation: pd-sube 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 1.3s both, pd-destello 2.4s ease-in-out 2s both;
+}
+.pd__sub { font-size: 1.1rem; color: var(--n-niebla); max-width: 28rem; margin: 0 auto 1.5rem; }
+.pd__lista { list-style: none; margin: 0 auto 1.25rem; padding: 0; max-width: 28rem; text-align: left; }
+.pd__lista li { padding: 0.6rem 0.25rem; border-bottom: 1px solid var(--n-linea); color: var(--n-hueso); }
+.pd__lista li span { color: var(--luna); margin-right: 0.5rem; }
+.pd__dias { font-size: 0.95rem; color: var(--luna); margin: 0 0 1.25rem; }
+.pd__botones { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-top: 1.5rem; }
+
+/* Mismo botón dorado de .noche-pagina */
+.pd .btn--noche { background: var(--luna); color: var(--n-0); }
+.pd .btn--noche:hover { background: #f7d98e; color: var(--n-0); box-shadow: 0 0 32px rgb(241 198 109 / 0.4); }
+.pd .btn--borde { color: var(--n-hueso); }
+
+/* ---------- Animaciones ---------- */
+@keyframes pd-entra { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pd-sale { to { opacity: 0; transform: scale(1.03); } }
+@keyframes pd-sube { from { opacity: 0; transform: translateY(1.2rem); } to { opacity: 1; transform: none; } }
+@keyframes pd-luna { from { opacity: 0; transform: translateY(7rem) scale(0.55); } to { opacity: 1; transform: none; } }
+@keyframes pd-brilla { 0%, 100% { filter: drop-shadow(0 0 1.2rem rgb(241 198 109 / 0.5)); } 50% { filter: drop-shadow(0 0 2.4rem rgb(241 198 109 / 0.9)); } }
+@keyframes pd-eco { 0% { opacity: 0; transform: scale(0.8); } 12% { opacity: 0.75; } 100% { opacity: 0; transform: scale(2.6); } }
+@keyframes pd-aparece { to { opacity: 1; } }
+@keyframes pd-gira { to { transform: rotate(360deg); } }
+@keyframes pd-titila { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.9; } }
+@keyframes pd-respira { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+@keyframes pd-destello { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+@keyframes pd-vuela {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.6); }
+  15% { opacity: 1; }
+  80% { opacity: 0.8; }
+  100% { opacity: 0; transform: translate(var(--deriva), -92vh) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pd, .pd * { animation: none !important; }
+  .pd__anillo, .pd__luciernaga, .pd__rayos { display: none; }
+  .pd__estrella { opacity: 0.6; }
+  .pd__titulo { background-position: 0 0; }
+}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth.jsx'
 import { Luna } from './ui.jsx'
+import PremiumDesbloqueado from './PremiumDesbloqueado.jsx'
 
 export default function Layout() {
   const { usuario, esAdmin, premium, salir, cargando } = useAuth()
@@ -80,6 +81,7 @@ export default function Layout() {
           </div>
         </div>
       </footer>
+      <PremiumDesbloqueado />
     </div>
   )
 }
